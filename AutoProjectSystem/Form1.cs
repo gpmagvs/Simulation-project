@@ -2,6 +2,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+
+using System.Net.Http;
+using System.Threading.Tasks;
+using AutoProjectSystem.Controllers;
+using System.Drawing.Text;
+using System.Security.Cryptography.X509Certificates;
+
 namespace AutoProjectSystem
 {
     public partial class Form1 : Form
@@ -11,6 +18,12 @@ namespace AutoProjectSystem
             InitializeComponent();
         }
         private string currentFolderPath = "";
+        private AGVSController APIController = new AGVSController();
+
+
+
+
+
         private void Form1_Load(object sender, EventArgs e)
         {
             //string folderPath = @"C:\Users\user\Desktop\測試環境";
@@ -93,8 +106,11 @@ namespace AutoProjectSystem
                 textBox_content.AppendText($"{prefix}{val.ToJsonString()}{Environment.NewLine}");
             }
         }
-       
-        
-        
+        private void btn_APItest_Click(object sender, EventArgs e)
+        {
+            // string net = "locaohost:5216";  // 預設 URL，可以從其他控制項獲取用戶輸入的 URL;
+            APIController.APITestAsync();
+        }
+
     }
 }

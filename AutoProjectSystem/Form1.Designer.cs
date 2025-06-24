@@ -32,6 +32,7 @@
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
             richTextBox_content = new RichTextBox();
+            bnt_APItest = new Button();
             SuspendLayout();
             // 
             // btn_chooseproject
@@ -69,11 +70,22 @@
             richTextBox_content.TabIndex = 6;
             richTextBox_content.Text = "";
             // 
+            // bnt_APItest
+            // 
+            bnt_APItest.Location = new Point(549, 43);
+            bnt_APItest.Name = "bnt_APItest";
+            bnt_APItest.Size = new Size(84, 23);
+            bnt_APItest.TabIndex = 7;
+            bnt_APItest.Text = "api_test";
+            bnt_APItest.UseVisualStyleBackColor = true;
+            bnt_APItest.Click += btn_APItest_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1089, 603);
+            Controls.Add(bnt_APItest);
             Controls.Add(richTextBox_content);
             Controls.Add(textBox_content);
             Controls.Add(textBox_appsetting);
@@ -89,5 +101,6 @@
         private TextBox textBox_appsetting;
         private TextBox textBox_content;
         private RichTextBox richTextBox_content;
+        private Button bnt_APItest;
     }
 }
