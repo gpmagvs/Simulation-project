@@ -39,17 +39,36 @@ namespace AutoProjectSystem
         }
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
+            //if (listBoxFiles.SelectedItem is string filePath && File.Exists(filePath))
+            //{
+            //    string content = File.ReadAllText(filePath);
+            //    textBoxContent.Text = content;
+            //}
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Title = "選擇檔案";
-                openFileDialog.Filter = "所有檔案 (*.*)|*.*"; // 可依需求調整檔案類型
+                openFileDialog.Title = "選擇JSON檔案";
+                openFileDialog.Filter = "JSON檔案 (*.json)|*.json|所有檔案 (*.*)|*.*";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    // 只顯示檔案名稱
-                    //textBox_appsetting.Text = Path.GetFileName(openFileDialog.FileName);
-                    textBox_appsetting.Text = openFileDialog.FileName;
-                    // 若要顯示完整路徑，請改為 openFileDialog.FileName
+                    string filePath = openFileDialog.FileName;
+                    // 修正：顯示完整路徑
+                    textBox_appsetting.Text = filePath;
+
+                    // 讀取並解析JSON
+                    try
+                    {
+                        string content = File.ReadAllText(filePath);
+                        textBox_content.Text = content;
+
+                        // 使用 JsonNode 解析並遞迴顯示
+                        //var node = JsonNode.Parse(jsonText);
+                        //DisplayJsonNode(node, "");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("讀取或解析JSON失敗: " + ex.Message);
+                    }
                 }
             }
         }
@@ -106,11 +125,58 @@ namespace AutoProjectSystem
                 textBox_content.AppendText($"{prefix}{val.ToJsonString()}{Environment.NewLine}");
             }
         }
-        private void btn_APItest_Click(object sender, EventArgs e)
+        private async void btn_APItest_Click(object sender, EventArgs e)
         {
             // string net = "locaohost:5216";  // 預設 URL，可以從其他控制項獲取用戶輸入的 URL;
             APIController.APITestAsync();
-        }
 
+
+            string result = await APIController.APITestAsync();
+            richTextBox_content.Text = result;
+
+        }
+        private async void btn_ConfigSave_Click(object sender, EventArgs e)
+        {
+            // 取得剛剛讀取的檔案路徑
+            string filePath = textBox_appsetting.Text;
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
+            {
+                var result = MessageBox.Show($"確定要覆蓋並儲存此檔案嗎？\n{filePath}", "確認儲存", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    try
+                    {
+                        File.WriteAllText(filePath, textBox_content.Text);
+                        MessageBox.Show("儲存成功: " + filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("保存配置文件時出錯: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("請選擇一個有效的配置文件。");
+            }
+        }
+        private async void btn_RestartAGVS_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show("確定是否重啟派車系統?", "確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                // 在這裡執行重啟派車系統的程式碼
+                // 例如：await APIController.RestartAGVSAsync();
+                APIController.RestartAGVS();
+                MessageBox.Show("已執行重啟派車系統。");
+            }
+            else
+            {
+                // 取消，不做任何事
+                MessageBox.Show("已取消，下次別亂按");
+            }
+
+
+        }
     }
 }
