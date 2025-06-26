@@ -167,7 +167,10 @@ namespace AutoProjectSystem
             {
                 // 在這裡執行重啟派車系統的程式碼
                 // 例如：await APIController.RestartAGVSAsync();
-                APIController.RestartAGVS();
+                string response = await APIController.RestartAGVS();
+                //richTextBox_content.Text = response;
+                richTextBox_content.AppendText(response + Environment.NewLine);
+                //APIController.RestartAGVS();
                 MessageBox.Show("已執行重啟派車系統。");
             }
             else
