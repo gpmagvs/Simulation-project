@@ -135,6 +135,16 @@ namespace AutoProjectSystem
             richTextBox_content.Text = result;
 
         }
+        private async void btn_AGVStatus_Click(object sender, EventArgs e)
+        {
+            string result  = await APIController.APIAGVStatus();
+            //APIController.APIAGVStatus();
+            richTextBox_AGVStatus.AppendText(result + Environment.NewLine);
+
+
+            //string result = await APIController.APITestAsync();
+            //richTextBox_content.Text = result;
+        }
         private async void btn_ConfigSave_Click(object sender, EventArgs e)
         {
             // 取得剛剛讀取的檔案路徑

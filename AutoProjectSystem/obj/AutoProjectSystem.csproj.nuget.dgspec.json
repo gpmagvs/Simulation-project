@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Downloads\\repo\\欣興電\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj": {}
+    "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Downloads\\repo\\欣興電\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj": {
+    "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Downloads\\repo\\欣興電\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj",
+        "projectUniqueName": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj",
         "projectName": "AutoProjectSystem",
-        "projectPath": "C:\\Users\\user\\Downloads\\repo\\欣興電\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj",
+        "projectPath": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\AutoProjectSystem.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Downloads\\repo\\欣興電\\AutoProjectSystem\\AutoProjectSystem\\obj\\",
+        "outputPath": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
