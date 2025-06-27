@@ -40,9 +40,14 @@
             label2 = new Label();
             label1 = new Label();
             tabPage2 = new TabPage();
+            textBox_Location = new TextBox();
+            textBox_AGVName = new TextBox();
+            richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
             tabPage3 = new TabPage();
-            richTextBox_AGVStatus = new RichTextBox();
+            label3 = new Label();
+            label4 = new Label();
+            label5 = new Label();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -171,6 +176,11 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(label5);
+            tabPage2.Controls.Add(label4);
+            tabPage2.Controls.Add(label3);
+            tabPage2.Controls.Add(textBox_Location);
+            tabPage2.Controls.Add(textBox_AGVName);
             tabPage2.Controls.Add(richTextBox_AGVStatus);
             tabPage2.Controls.Add(button3);
             tabPage2.Location = new Point(4, 24);
@@ -181,15 +191,37 @@
             tabPage2.Text = "車載設定";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // textBox_Location
+            // 
+            textBox_Location.Location = new Point(233, 34);
+            textBox_Location.Name = "textBox_Location";
+            textBox_Location.Size = new Size(119, 23);
+            textBox_Location.TabIndex = 2;
+            // 
+            // textBox_AGVName
+            // 
+            textBox_AGVName.Location = new Point(56, 35);
+            textBox_AGVName.Name = "textBox_AGVName";
+            textBox_AGVName.Size = new Size(119, 23);
+            textBox_AGVName.TabIndex = 2;
+            // 
+            // richTextBox_AGVStatus
+            // 
+            richTextBox_AGVStatus.Location = new Point(679, 35);
+            richTextBox_AGVStatus.Name = "richTextBox_AGVStatus";
+            richTextBox_AGVStatus.Size = new Size(362, 159);
+            richTextBox_AGVStatus.TabIndex = 1;
+            richTextBox_AGVStatus.Text = "";
+            // 
             // button3
             // 
-            button3.Location = new Point(27, 16);
+            button3.Location = new Point(389, 34);
             button3.Name = "button3";
             button3.Size = new Size(167, 23);
             button3.TabIndex = 0;
-            button3.Text = "取得AGV_Status";
+            button3.Text = "AGV_Locate";
             button3.UseVisualStyleBackColor = true;
-            button3.Click += btn_AGVStatus_Click;
+            button3.Click += btn_AGVSLocate_Click;
             // 
             // tabPage3
             // 
@@ -200,13 +232,32 @@
             tabPage3.Text = "任務清單";
             tabPage3.UseVisualStyleBackColor = true;
             // 
-            // richTextBox_AGVStatus
+            // label3
             // 
-            richTextBox_AGVStatus.Location = new Point(27, 54);
-            richTextBox_AGVStatus.Name = "richTextBox_AGVStatus";
-            richTextBox_AGVStatus.Size = new Size(362, 159);
-            richTextBox_AGVStatus.TabIndex = 1;
-            richTextBox_AGVStatus.Text = "";
+            label3.AutoSize = true;
+            label3.Location = new Point(81, 17);
+            label3.Name = "label3";
+            label3.Size = new Size(56, 15);
+            label3.TabIndex = 3;
+            label3.Text = "AGV名稱";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(264, 17);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 3;
+            label4.Text = "定位座標";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(838, 17);
+            label5.Name = "label5";
+            label5.Size = new Size(31, 15);
+            label5.TabIndex = 4;
+            label5.Text = "結果";
             // 
             // Form1
             // 
@@ -220,6 +271,7 @@
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -239,5 +291,10 @@
         private TabPage tabPage3;
         private Button button3;
         private RichTextBox richTextBox_AGVStatus;
+        private TextBox textBox_Location;
+        private TextBox textBox_AGVName;
+        private Label label4;
+        private Label label3;
+        private Label label5;
     }
 }

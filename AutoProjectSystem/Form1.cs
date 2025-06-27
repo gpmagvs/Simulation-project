@@ -135,9 +135,11 @@ namespace AutoProjectSystem
             richTextBox_content.Text = result;
 
         }
-        private async void btn_AGVStatus_Click(object sender, EventArgs e)
+        private async void btn_AGVSLocate_Click(object sender, EventArgs e)
         {
-            string result  = await APIController.APIAGVStatus();
+            string agvname = textBox_AGVName.Text.Trim();
+            string location = textBox_Location.Text.Trim();
+            string result = await APIController.APIAGVLocate(agvname , location);
             //APIController.APIAGVStatus();
             richTextBox_AGVStatus.AppendText(result + Environment.NewLine);
 
