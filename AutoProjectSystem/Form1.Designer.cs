@@ -40,17 +40,20 @@
             label2 = new Label();
             label1 = new Label();
             tabPage2 = new TabPage();
+            label5 = new Label();
+            label4 = new Label();
+            label3 = new Label();
             textBox_Location = new TextBox();
             textBox_AGVName = new TextBox();
             richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
             tabPage3 = new TabPage();
-            label3 = new Label();
-            label4 = new Label();
-            label5 = new Label();
+            DGV_HotRunlist = new DataGridView();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
+            tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).BeginInit();
             SuspendLayout();
             // 
             // btn_chooseproject
@@ -133,6 +136,7 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1256, 806);
             tabControl1.TabIndex = 10;
+            tabControl1.SelectedIndexChanged += Load_HotRunlist;
             // 
             // tabPage1
             // 
@@ -191,6 +195,33 @@
             tabPage2.Text = "車載設定";
             tabPage2.UseVisualStyleBackColor = true;
             // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(838, 17);
+            label5.Name = "label5";
+            label5.Size = new Size(31, 15);
+            label5.TabIndex = 4;
+            label5.Text = "結果";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(264, 17);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 3;
+            label4.Text = "定位座標";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(81, 17);
+            label3.Name = "label3";
+            label3.Size = new Size(56, 15);
+            label3.TabIndex = 3;
+            label3.Text = "AGV名稱";
+            // 
             // textBox_Location
             // 
             textBox_Location.Location = new Point(233, 34);
@@ -225,6 +256,7 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(DGV_HotRunlist);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
             tabPage3.Size = new Size(1248, 778);
@@ -232,32 +264,13 @@
             tabPage3.Text = "任務清單";
             tabPage3.UseVisualStyleBackColor = true;
             // 
-            // label3
+            // DGV_HotRunlist
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(81, 17);
-            label3.Name = "label3";
-            label3.Size = new Size(56, 15);
-            label3.TabIndex = 3;
-            label3.Text = "AGV名稱";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(264, 17);
-            label4.Name = "label4";
-            label4.Size = new Size(55, 15);
-            label4.TabIndex = 3;
-            label4.Text = "定位座標";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(838, 17);
-            label5.Name = "label5";
-            label5.Size = new Size(31, 15);
-            label5.TabIndex = 4;
-            label5.Text = "結果";
+            DGV_HotRunlist.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DGV_HotRunlist.Location = new Point(29, 90);
+            DGV_HotRunlist.Name = "DGV_HotRunlist";
+            DGV_HotRunlist.Size = new Size(1000, 453);
+            DGV_HotRunlist.TabIndex = 0;
             // 
             // Form1
             // 
@@ -272,6 +285,8 @@
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
+            tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).EndInit();
             ResumeLayout(false);
         }
 
@@ -296,5 +311,6 @@
         private Label label4;
         private Label label3;
         private Label label5;
+        private DataGridView DGV_HotRunlist;
     }
 }

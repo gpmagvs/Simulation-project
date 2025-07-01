@@ -19,6 +19,7 @@ namespace AutoProjectSystem
         }
         private string currentFolderPath = "";
         private AGVSController APIController = new AGVSController();
+        private HotRunController HotRunController = new HotRunController();
 
 
 
@@ -36,6 +37,13 @@ namespace AutoProjectSystem
             //        comboBox_project.Items.Add(Path.GetFileName(file));
             //    }
             //}
+        }
+        private async void Load_HotRunlist(object sender, EventArgs e)
+        {
+           // HotRunController.Load_hotrunlist();
+            var controller = new HotRunController();
+            var scripts = await controller.GetHotRunScriptsAsync();
+            DGV_HotRunlist.DataSource = scripts;
         }
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
