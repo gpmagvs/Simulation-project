@@ -1,0 +1,9 @@
+{
+  "url": "http://localhost:5216",
+  "Path": "/api/SecsGemConfiguration/saveSECSGemSetting",
+  "Token": null,
+  "Parameters": {
+    "param1": "value1",
+    "param2": "value2"
+  }
+}
