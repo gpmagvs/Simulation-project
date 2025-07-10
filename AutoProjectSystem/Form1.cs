@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoProjectSystem.Controllers;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
+using static AutoProjectSystem.Controllers.HotRunController;
 
 namespace AutoProjectSystem
 {
@@ -21,37 +22,40 @@ namespace AutoProjectSystem
         private AGVSController APIController = new AGVSController();
         private HotRunController HotRunController = new HotRunController();
 
-
-
-
-
-        private void Form1_Load(object sender, EventArgs e)
+        // 取得 HotRunScripts 並顯示在 DataGridView
+        private async void btn_LoadHotRunScripts_Click(object sender, EventArgs e)
         {
-            //string folderPath = @"C:\Users\user\Desktop\測試環境";
-            //if (Directory.Exists(folderPath))
-            //{
-            //    string[] files = Directory.GetFiles(folderPath);
-            //    comboBox_project.Items.Clear();
-            //    foreach (var file in files)
-            //    {
-            //        comboBox_project.Items.Add(Path.GetFileName(file));
-            //    }
-            //}
+            //var scripts = await HotRunController.GetHotRunScriptsAsync();
+            //// 將資料繫結到 DataGridView（假設名稱為 DGV_HotRunlist）
+            //textBox1.Text = scripts.ToString();
+            // textBox1.Text = string.Join(Environment.NewLine , scripts.Select(s => $"Id: {s.Id}, Name: {s.Name}"));
+
+            LoadHotRunScriptsToGrid();
         }
-        private async void Load_HotRunlist(object sender, EventArgs e)
+        private async void LoadHotRunScriptsToGrid()
         {
-           // HotRunController.Load_hotrunlist();
-            var controller = new HotRunController();
-            var scripts = await controller.GetHotRunScriptsAsync();
-            DGV_HotRunlist.DataSource = scripts;
+            var scripts = await HotRunController.GetHotRunScriptsAsync(); // 你原本的 API 呼叫
+
+            var displayList = scripts.Select(s => new
+            {
+                No = s.no,
+                ScriptID = s.scriptID,
+                AGV = s.agv_name,
+                LoopNum = s.loop_num,
+                FinishNum = s.finish_num,
+                State = s.state,
+                Comment = s.comment,
+                RealTimeMessage = s.RealTimeMessage,
+                ActionCount = s.actions?.Count ?? 0,
+                IsRandom = s.IsRandomCarryRun,
+                IsRegularUnload = s.IsRegularUnloadRequst
+            }).ToList();
+
+            DGV_HotRunlist.DataSource = displayList;
         }
+
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
-            //if (listBoxFiles.SelectedItem is string filePath && File.Exists(filePath))
-            //{
-            //    string content = File.ReadAllText(filePath);
-            //    textBoxContent.Text = content;
-            //}
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Title = "選擇JSON檔案";
@@ -62,13 +66,11 @@ namespace AutoProjectSystem
                     string filePath = openFileDialog.FileName;
                     // 修正：顯示完整路徑
                     textBox_appsetting.Text = filePath;
-
                     // 讀取並解析JSON
                     try
                     {
                         string content = File.ReadAllText(filePath);
                         textBox_content.Text = content;
-
                         // 使用 JsonNode 解析並遞迴顯示
                         //var node = JsonNode.Parse(jsonText);
                         //DisplayJsonNode(node, "");
@@ -147,7 +149,7 @@ namespace AutoProjectSystem
         {
             string agvname = textBox_AGVName.Text.Trim();
             string location = textBox_Location.Text.Trim();
-            string result = await APIController.APIAGVLocate(agvname , location);
+            string result = await APIController.APIAGVLocate(agvname, location);
             //APIController.APIAGVStatus();
             richTextBox_AGVStatus.AppendText(result + Environment.NewLine);
 
