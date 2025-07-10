@@ -9,6 +9,7 @@ using AutoProjectSystem.Controllers;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
 using static AutoProjectSystem.Controllers.HotRunController;
+using AGVSystem.Models.TaskAllocation.HotRun;
 
 namespace AutoProjectSystem
 {
@@ -36,7 +37,7 @@ namespace AutoProjectSystem
         {
             var scripts = await HotRunController.GetHotRunScriptsAsync(); // 你原本的 API 呼叫
 
-            var displayList = scripts.Select(s => new
+            var hoturn_list = scripts.Select(s => new
             {
                 No = s.no,
                 ScriptID = s.scriptID,
@@ -51,9 +52,45 @@ namespace AutoProjectSystem
                 IsRegularUnload = s.IsRegularUnloadRequst
             }).ToList();
 
-            DGV_HotRunlist.DataSource = displayList;
+            DGV_HotRunlist.DataSource = hoturn_list;
         }
+        private async void btn_StartHotRun_Click(object sender, EventArgs e)
+        {
+            if (DGV_HotRunlist.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
 
+            var selectedRow = DGV_HotRunlist.SelectedRows[0];
+            string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
+
+            await HotRunController.CallHotRunApiAsync(scriptID);
+            //if (selectedRow.DataBoundItem is HotRunScript hotRunScript)
+            //{
+            //    string scriptID = hotRunScript.scriptID;
+
+            //    // 呼叫 API 執行 HotRun
+            //    await HotRunController.CallHotRunApiAsync(scriptID);
+            //}
+
+        }
+        private void DGV_HotRunlist_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // 確保索引範圍合法
+            if (DGV_HotRunlist.Columns[e.ColumnIndex].Name == "State" && e.Value != null)
+            {
+                string stateValue = e.Value.ToString()?.ToUpper();
+                if (stateValue == "RUNNING")
+                {
+                    e.CellStyle.BackColor = Color.LightGreen;
+                }
+                else if (stateValue == "IDLE")
+                {
+                    e.CellStyle.BackColor = Color.Orange;
+                }
+            }
+        }
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -152,8 +189,6 @@ namespace AutoProjectSystem
             string result = await APIController.APIAGVLocate(agvname, location);
             //APIController.APIAGVStatus();
             richTextBox_AGVStatus.AppendText(result + Environment.NewLine);
-
-
             //string result = await APIController.APITestAsync();
             //richTextBox_content.Text = result;
         }
@@ -200,8 +235,6 @@ namespace AutoProjectSystem
                 // 取消，不做任何事
                 MessageBox.Show("已取消，下次別亂按");
             }
-
-
         }
     }
 }

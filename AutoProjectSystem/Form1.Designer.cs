@@ -48,8 +48,9 @@
             richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
             tabPage3 = new TabPage();
+            button5 = new Button();
+            btn_startHotRun = new Button();
             DGV_HotRunlist = new DataGridView();
-            button4 = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -257,7 +258,8 @@
             // 
             // tabPage3
             // 
-            tabPage3.Controls.Add(button4);
+            tabPage3.Controls.Add(button5);
+            tabPage3.Controls.Add(btn_startHotRun);
             tabPage3.Controls.Add(DGV_HotRunlist);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
@@ -266,25 +268,38 @@
             tabPage3.Text = "任務清單";
             tabPage3.UseVisualStyleBackColor = true;
             // 
+            // button5
+            // 
+            button5.Location = new Point(1076, 555);
+            button5.Name = "button5";
+            button5.Size = new Size(75, 23);
+            button5.TabIndex = 2;
+            button5.Text = "button5";
+            button5.UseVisualStyleBackColor = true;
+            // 
+            // btn_startHotRun
+            // 
+            btn_startHotRun.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            btn_startHotRun.Location = new Point(22, 18);
+            btn_startHotRun.Name = "btn_startHotRun";
+            btn_startHotRun.Size = new Size(92, 23);
+            btn_startHotRun.TabIndex = 1;
+            btn_startHotRun.Text = "執行HotRun";
+            btn_startHotRun.UseVisualStyleBackColor = true;
+            btn_startHotRun.Click += btn_StartHotRun_Click;
+            // 
             // DGV_HotRunlist
             // 
             DGV_HotRunlist.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             DGV_HotRunlist.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             DGV_HotRunlist.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_HotRunlist.Location = new Point(22, 61);
+            DGV_HotRunlist.MultiSelect = false;
             DGV_HotRunlist.Name = "DGV_HotRunlist";
+            DGV_HotRunlist.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             DGV_HotRunlist.Size = new Size(1136, 453);
             DGV_HotRunlist.TabIndex = 0;
-            // 
-            // button4
-            // 
-            button4.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button4.Location = new Point(22, 18);
-            button4.Name = "button4";
-            button4.Size = new Size(92, 23);
-            button4.TabIndex = 1;
-            button4.Text = "執行HotRun";
-            button4.UseVisualStyleBackColor = true;
+            DGV_HotRunlist.CellFormatting += DGV_HotRunlist_CellFormatting;
             // 
             // Form1
             // 
@@ -326,6 +341,7 @@
         private Label label3;
         private Label label5;
         private DataGridView DGV_HotRunlist;
-        private Button button4;
+        private Button btn_startHotRun;
+        private Button button5;
     }
 }
