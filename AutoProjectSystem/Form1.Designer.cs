@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -48,14 +49,28 @@
             richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
             tabPage3 = new TabPage();
+            button6 = new Button();
+            button4 = new Button();
             button5 = new Button();
             btn_startHotRun = new Button();
             DGV_HotRunlist = new DataGridView();
+            tabPage4 = new TabPage();
+            btn_removeTask = new Button();
+            btn_addTask = new Button();
+            DGV_Script = new DataGridView();
+            Script_no = new DataGridViewTextBoxColumn();
+            script_agvname = new DataGridViewTextBoxColumn();
+            script_startpoint = new DataGridViewTextBoxColumn();
+            script_action = new DataGridViewTextBoxColumn();
+            script_endpoint = new DataGridViewTextBoxColumn();
+            Timer = new System.Windows.Forms.Timer(components);
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).BeginInit();
+            tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
             SuspendLayout();
             // 
             // btn_chooseproject
@@ -130,15 +145,16 @@
             // 
             // tabControl1
             // 
+            tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
+            tabControl1.Controls.Add(tabPage4);
             tabControl1.Location = new Point(12, 12);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1256, 806);
             tabControl1.TabIndex = 10;
-            tabControl1.SelectedIndexChanged += btn_LoadHotRunScripts_Click;
             // 
             // tabPage1
             // 
@@ -258,6 +274,8 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(button6);
+            tabPage3.Controls.Add(button4);
             tabPage3.Controls.Add(button5);
             tabPage3.Controls.Add(btn_startHotRun);
             tabPage3.Controls.Add(DGV_HotRunlist);
@@ -267,6 +285,27 @@
             tabPage3.TabIndex = 2;
             tabPage3.Text = "任務清單";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // button6
+            // 
+            button6.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            button6.Location = new Point(244, 18);
+            button6.Name = "button6";
+            button6.Size = new Size(92, 23);
+            button6.TabIndex = 4;
+            button6.Text = "新增腳本";
+            button6.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            button4.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            button4.Location = new Point(131, 18);
+            button4.Name = "button4";
+            button4.Size = new Size(92, 23);
+            button4.TabIndex = 3;
+            button4.Text = "取消HotRun";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += btn_StopHotRun_Click;
             // 
             // button5
             // 
@@ -290,7 +329,7 @@
             // 
             // DGV_HotRunlist
             // 
-            DGV_HotRunlist.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            DGV_HotRunlist.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DGV_HotRunlist.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             DGV_HotRunlist.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_HotRunlist.Location = new Point(22, 61);
@@ -301,6 +340,74 @@
             DGV_HotRunlist.TabIndex = 0;
             DGV_HotRunlist.CellFormatting += DGV_HotRunlist_CellFormatting;
             // 
+            // tabPage4
+            // 
+            tabPage4.Controls.Add(btn_removeTask);
+            tabPage4.Controls.Add(btn_addTask);
+            tabPage4.Controls.Add(DGV_Script);
+            tabPage4.Location = new Point(4, 24);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(1248, 778);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "腳本設定";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // btn_removeTask
+            // 
+            btn_removeTask.Location = new Point(138, 21);
+            btn_removeTask.Name = "btn_removeTask";
+            btn_removeTask.Size = new Size(92, 23);
+            btn_removeTask.TabIndex = 1;
+            btn_removeTask.Text = "刪除任務";
+            btn_removeTask.UseVisualStyleBackColor = true;
+            // 
+            // btn_addTask
+            // 
+            btn_addTask.Location = new Point(21, 21);
+            btn_addTask.Name = "btn_addTask";
+            btn_addTask.Size = new Size(92, 23);
+            btn_addTask.TabIndex = 1;
+            btn_addTask.Text = "新增任務";
+            btn_addTask.UseVisualStyleBackColor = true;
+            btn_addTask.Click += btn_AddTask_Click;
+            // 
+            // DGV_Script
+            // 
+            DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DGV_Script.Columns.AddRange(new DataGridViewColumn[] { Script_no, script_agvname, script_startpoint, script_action, script_endpoint });
+            DGV_Script.Location = new Point(21, 61);
+            DGV_Script.Name = "DGV_Script";
+            DGV_Script.RowHeadersVisible = false;
+            DGV_Script.Size = new Size(716, 351);
+            DGV_Script.TabIndex = 0;
+            // 
+            // Script_no
+            // 
+            Script_no.HeaderText = "No";
+            Script_no.Name = "Script_no";
+            Script_no.ReadOnly = true;
+            // 
+            // script_agvname
+            // 
+            script_agvname.HeaderText = "AGVName";
+            script_agvname.Name = "script_agvname";
+            // 
+            // script_startpoint
+            // 
+            script_startpoint.HeaderText = "Start";
+            script_startpoint.Name = "script_startpoint";
+            // 
+            // script_action
+            // 
+            script_action.HeaderText = "Action";
+            script_action.Name = "script_action";
+            // 
+            // script_endpoint
+            // 
+            script_endpoint.HeaderText = "End";
+            script_endpoint.Name = "script_endpoint";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -309,6 +416,7 @@
             Controls.Add(tabControl1);
             Name = "Form1";
             Text = "Simulation Control Center";
+            Load += Form1_Load;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -316,6 +424,8 @@
             tabPage2.PerformLayout();
             tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).EndInit();
+            tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DGV_Script).EndInit();
             ResumeLayout(false);
         }
 
@@ -343,5 +453,17 @@
         private DataGridView DGV_HotRunlist;
         private Button btn_startHotRun;
         private Button button5;
+        private Button button4;
+        private System.Windows.Forms.Timer refreshTimer;
+        private Button button6;
+        private TabPage tabPage4;
+        private DataGridView DGV_Script;
+        private DataGridViewTextBoxColumn Script_no;
+        private DataGridViewTextBoxColumn script_agvname;
+        private DataGridViewTextBoxColumn script_startpoint;
+        private DataGridViewTextBoxColumn script_action;
+        private DataGridViewTextBoxColumn script_endpoint;
+        private Button btn_removeTask;
+        private Button btn_addTask;
     }
 }

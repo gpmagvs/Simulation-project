@@ -10,6 +10,7 @@ using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
 using static AutoProjectSystem.Controllers.HotRunController;
 using AGVSystem.Models.TaskAllocation.HotRun;
+using System.Net.Http.Json;
 
 namespace AutoProjectSystem
 {
@@ -19,6 +20,15 @@ namespace AutoProjectSystem
         {
             InitializeComponent();
         }
+        private System.Windows.Forms.Timer Timer;
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            UpdateRowNumbers();
+        }
+
+
+
         private string currentFolderPath = "";
         private AGVSController APIController = new AGVSController();
         private HotRunController HotRunController = new HotRunController();
@@ -33,23 +43,45 @@ namespace AutoProjectSystem
 
             LoadHotRunScriptsToGrid();
         }
+        private void UpdateRowNumbers()
+        {
+            int number = 1;
+            for (int i = 0; i < DGV_Script.Rows.Count; i++)
+            {
+                if (!DGV_Script.Rows[i].IsNewRow)
+                {
+                    DGV_Script.Rows[i].Cells["Script_no"].Value = number++;
+                }
+            }
+        }
+        private void DGV_Script_RowsRemoved(object sender, EventArgs e)
+        {
+            for (int i = 0; i < DGV_Script.Rows.Count; i++)
+            {
+                DGV_Script.Rows[i].Cells["Script_no"].Value = i + 1;
+            }
+        }
+        private void btn_AddTask_Click(object sender, EventArgs e)
+        {
+            DGV_Script.Rows.Add();
+            UpdateRowNumbers();
+        }
         private async void LoadHotRunScriptsToGrid()
         {
-            var scripts = await HotRunController.GetHotRunScriptsAsync(); // 你原本的 API 呼叫
+            var scripts = await HotRunController.GetHotRunScriptsAsync();
 
             var hoturn_list = scripts.Select(s => new
             {
                 No = s.no,
                 ScriptID = s.scriptID,
-                AGV = s.agv_name,
-                LoopNum = s.loop_num,
-                FinishNum = s.finish_num,
-                State = s.state,
-                Comment = s.comment,
-                RealTimeMessage = s.RealTimeMessage,
-                ActionCount = s.actions?.Count ?? 0,
                 IsRandom = s.IsRandomCarryRun,
-                IsRegularUnload = s.IsRegularUnloadRequst
+                IsRegularUnload = s.IsRegularUnloadRequst,
+                AGV = s.agv_name,
+                State = s.state,
+                FinishNum = s.finish_num,
+                LoopNum = s.loop_num,
+                ActionCount = s.actions?.Count ?? 0,
+                Comment = s.comment,
             }).ToList();
 
             DGV_HotRunlist.DataSource = hoturn_list;
@@ -61,19 +93,28 @@ namespace AutoProjectSystem
                 MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
             var selectedRow = DGV_HotRunlist.SelectedRows[0];
             string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-
-            await HotRunController.CallHotRunApiAsync(scriptID);
-            //if (selectedRow.DataBoundItem is HotRunScript hotRunScript)
-            //{
-            //    string scriptID = hotRunScript.scriptID;
-
-            //    // 呼叫 API 執行 HotRun
-            //    await HotRunController.CallHotRunApiAsync(scriptID);
-            //}
-
+            var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                await HotRunController.StartHotRunApiAsync(scriptID);
+            }
+        }
+        private async void btn_StopHotRun_Click(object sender, EventArgs e)
+        {
+            if (DGV_HotRunlist.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            var selectedRow = DGV_HotRunlist.SelectedRows[0];
+            string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
+            var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.Yes)
+            {
+                await HotRunController.StopHotRunApiAsync(scriptID);
+            }
         }
         private void DGV_HotRunlist_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
