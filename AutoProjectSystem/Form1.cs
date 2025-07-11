@@ -25,24 +25,12 @@ namespace AutoProjectSystem
         private void Form1_Load(object sender, EventArgs e)
         {
             UpdateRowNumbers();
+            Script_AGVName_Setting();
         }
-
-
 
         private string currentFolderPath = "";
         private AGVSController APIController = new AGVSController();
         private HotRunController HotRunController = new HotRunController();
-
-        // 取得 HotRunScripts 並顯示在 DataGridView
-        private async void btn_LoadHotRunScripts_Click(object sender, EventArgs e)
-        {
-            //var scripts = await HotRunController.GetHotRunScriptsAsync();
-            //// 將資料繫結到 DataGridView（假設名稱為 DGV_HotRunlist）
-            //textBox1.Text = scripts.ToString();
-            // textBox1.Text = string.Join(Environment.NewLine , scripts.Select(s => $"Id: {s.Id}, Name: {s.Name}"));
-
-            LoadHotRunScriptsToGrid();
-        }
         private void UpdateRowNumbers()
         {
             int number = 1;
@@ -51,18 +39,30 @@ namespace AutoProjectSystem
                 if (!DGV_Script.Rows[i].IsNewRow)
                 {
                     DGV_Script.Rows[i].Cells["Script_no"].Value = number++;
+                    DGV_Script.Rows[i].Cells["Script_Action"].Value = "move";
                 }
             }
         }
-        private void DGV_Script_RowsRemoved(object sender, EventArgs e)
+        private void btn_RemoveTask_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < DGV_Script.Rows.Count; i++)
+            foreach (DataGridViewRow row in DGV_Script.SelectedRows)
             {
-                DGV_Script.Rows[i].Cells["Script_no"].Value = i + 1;
+                if (!row.IsNewRow)
+                {
+                    DGV_Script.Rows.Remove(row);
+                }
             }
+            UpdateRowNumbers(); // ← 刪除後重新編號
         }
         private void btn_AddTask_Click(object sender, EventArgs e)
         {
+            //int rowIndex = DGV_Script.Rows.Add();
+
+            //// 設定 Action 欄預設為 "move"
+            //if (!DGV_Script.Rows[rowIndex].IsNewRow)
+            //{
+            //    DGV_Script.Rows[rowIndex].Cells["Script_Action"].Value = "move";
+            //}
             DGV_Script.Rows.Add();
             UpdateRowNumbers();
         }
@@ -85,6 +85,17 @@ namespace AutoProjectSystem
             }).ToList();
 
             DGV_HotRunlist.DataSource = hoturn_list;
+        }
+        private void Script_AGVName_Setting()
+        {
+            DataGridViewComboBoxColumn comboColumn = new DataGridViewComboBoxColumn();
+            comboColumn.Name = "AGVName";
+            comboColumn.HeaderText = "AGVName";
+            comboColumn.Items.AddRange("AGV_001", "AGV_002", "AGV_003", "AGV_004");
+
+            int index = DGV_Script.Columns["Script_AGVName"].Index;
+            DGV_Script.Columns.Remove("Script_AGVName");
+            DGV_Script.Columns.Insert(index, comboColumn);
         }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
         {

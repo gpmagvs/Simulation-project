@@ -361,6 +361,7 @@
             btn_removeTask.TabIndex = 1;
             btn_removeTask.Text = "刪除任務";
             btn_removeTask.UseVisualStyleBackColor = true;
+            btn_removeTask.Click += btn_RemoveTask_Click;
             // 
             // btn_addTask
             // 
@@ -374,11 +375,11 @@
             // 
             // DGV_Script
             // 
+            DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { Script_no, script_agvname, script_startpoint, script_action, script_endpoint });
             DGV_Script.Location = new Point(21, 61);
             DGV_Script.Name = "DGV_Script";
-            DGV_Script.RowHeadersVisible = false;
             DGV_Script.Size = new Size(716, 351);
             DGV_Script.TabIndex = 0;
             // 
@@ -395,7 +396,7 @@
             // 
             // script_startpoint
             // 
-            script_startpoint.HeaderText = "Start";
+            script_startpoint.HeaderText = "Start(Tag)";
             script_startpoint.Name = "script_startpoint";
             // 
             // script_action
@@ -405,7 +406,7 @@
             // 
             // script_endpoint
             // 
-            script_endpoint.HeaderText = "End";
+            script_endpoint.HeaderText = "End(Tag)";
             script_endpoint.Name = "script_endpoint";
             // 
             // Form1
@@ -458,12 +459,12 @@
         private Button button6;
         private TabPage tabPage4;
         private DataGridView DGV_Script;
+        private Button btn_removeTask;
+        private Button btn_addTask;
         private DataGridViewTextBoxColumn Script_no;
         private DataGridViewTextBoxColumn script_agvname;
         private DataGridViewTextBoxColumn script_startpoint;
         private DataGridViewTextBoxColumn script_action;
         private DataGridViewTextBoxColumn script_endpoint;
-        private Button btn_removeTask;
-        private Button btn_addTask;
     }
 }
