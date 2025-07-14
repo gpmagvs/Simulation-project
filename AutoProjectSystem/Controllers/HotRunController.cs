@@ -79,18 +79,6 @@ namespace AutoProjectSystem.Controllers
                         MessageBox.Show($"API 呼叫失敗：{response.StatusCode}\n{error}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
-
-                    //// 解析回傳資料（{ confirm: bool, message: string }）
-                    //var result = await response.Content.ReadFromJsonAsync<HotRunApiResponse>();
-
-                    //if (result != null && result.confirm)
-                    //{
-                    //    MessageBox.Show("HotRun 啟動成功！\n" + result.message, "成功", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //}
-                    //else
-                    //{
-                    //    MessageBox.Show("HotRun 啟動失敗。\n" + result?.message, "失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    //}
                 }
             }
             catch (Exception ex)
