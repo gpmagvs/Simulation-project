@@ -48,6 +48,7 @@
             richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
             tabPage3 = new TabPage();
+            button4 = new Button();
             DGV_HotRunlist = new DataGridView();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -136,7 +137,6 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1256, 806);
             tabControl1.TabIndex = 10;
-            tabControl1.SelectedIndexChanged += Load_HotRunlist;
             // 
             // tabPage1
             // 
@@ -256,6 +256,7 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(button4);
             tabPage3.Controls.Add(DGV_HotRunlist);
             tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
@@ -264,12 +265,25 @@
             tabPage3.Text = "任務清單";
             tabPage3.UseVisualStyleBackColor = true;
             // 
+            // button4
+            // 
+            button4.Location = new Point(29, 13);
+            button4.Name = "button4";
+            button4.Size = new Size(122, 23);
+            button4.TabIndex = 1;
+            button4.Text = "HOTRUN_LIST";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += btn_LoadHotRunScripts_Click;
+            // 
             // DGV_HotRunlist
             // 
+            DGV_HotRunlist.AllowUserToAddRows = false;
+            DGV_HotRunlist.AllowUserToDeleteRows = false;
             DGV_HotRunlist.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DGV_HotRunlist.Location = new Point(29, 90);
+            DGV_HotRunlist.Location = new Point(29, 79);
             DGV_HotRunlist.Name = "DGV_HotRunlist";
-            DGV_HotRunlist.Size = new Size(1000, 453);
+            DGV_HotRunlist.RowHeadersVisible = false;
+            DGV_HotRunlist.Size = new Size(1164, 453);
             DGV_HotRunlist.TabIndex = 0;
             // 
             // Form1
@@ -312,5 +326,6 @@
         private Label label3;
         private Label label5;
         private DataGridView DGV_HotRunlist;
+        private Button button4;
     }
 }

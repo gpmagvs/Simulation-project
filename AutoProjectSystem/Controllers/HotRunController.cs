@@ -10,47 +10,34 @@ using System.Runtime.InteropServices;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AGVSystem.Models.TaskAllocation.HotRun;
+
 
 namespace AutoProjectSystem.Controllers
 {
-   
+
     class HotRunController
     {
         private new APIConfigs APIConfigs = new APIConfigs();
+        public new HotRunScript hotRunScript = new HotRunScript();
         public async Task<List<HotRunScript>> GetHotRunScriptsAsync()
         {
-            //string url = "localhost:5216";
-            //string url = APIConfigs.url + APIConfigs.Path; // 使用 APIConfigs 中的 URL 和路徑
-            //string url = "http://localhost:5216/api/HotRun/GetHotRunScripts";
-            //using (HttpClient client = new HttpClient())
-            //{
-            //    var response = await client.GetAsync(url);
-            //    response.EnsureSuccessStatusCode();
-            //    var scripts = await response.Content.ReadFromJsonAsync<List<HotRunScript>>();
-            //    return scripts ?? new List<HotRunScript>();
-            //}
-        }
-        public class HotRunScript
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-            // 依照你的資料結構補齊屬性
-        }
+            string url = $"http://localhost:5216/api/HotRun";
 
-        private async Task<string> CallApi(string url, HttpMethod method = null)
-        {
             using (HttpClient client = new HttpClient())
             {
-                method ??= HttpMethod.Post;
-                HttpRequestMessage request = new HttpRequestMessage(method, url);
+                var response = await client.GetAsync(url);
+                if (!response.IsSuccessStatusCode)
+                {
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    MessageBox.Show($"API 請求失敗: {response.StatusCode}\n{errorContent}", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return new List<HotRunScript>();
+                }
 
-                if (method == HttpMethod.Post)
-                    request.Content = new StringContent("{}", Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                var hotRunScripts = await response.Content.ReadFromJsonAsync<List<HotRunScript>>();
+                return hotRunScripts ?? new List<HotRunScript>();
             }
         }
+        public 
     }
 }
