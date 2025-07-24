@@ -26,6 +26,7 @@ namespace AutoProjectSystem
         {
             UpdateRowNumbers();
             Script_AGVName_Setting();
+            DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
         }
 
         private string currentFolderPath = "";
@@ -38,8 +39,8 @@ namespace AutoProjectSystem
             {
                 if (!DGV_Script.Rows[i].IsNewRow)
                 {
-                    DGV_Script.Rows[i].Cells["Script_no"].Value = number++;
-                    DGV_Script.Rows[i].Cells["Script_Action"].Value = "move";
+                    DGV_Script.Rows[i].Cells["No"].Value = number++;
+                    DGV_Script.Rows[i].Cells["Action"].Value = "move";
                 }
             }
         }
@@ -93,8 +94,8 @@ namespace AutoProjectSystem
             comboColumn.HeaderText = "AGVName";
             comboColumn.Items.AddRange("AGV_001", "AGV_002", "AGV_003", "AGV_004");
 
-            int index = DGV_Script.Columns["Script_AGVName"].Index;
-            DGV_Script.Columns.Remove("Script_AGVName");
+            int index = DGV_Script.Columns["AGVName"].Index;
+            DGV_Script.Columns.Remove("AGVName");
             DGV_Script.Columns.Insert(index, comboColumn);
         }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
@@ -288,5 +289,37 @@ namespace AutoProjectSystem
                 MessageBox.Show("已取消，下次別亂按");
             }
         }
+        private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            int startTagColIndex = DGV_Script.Columns["Start"].Index;
+            int endTagColIndex = DGV_Script.Columns["End"].Index;
+
+            if (DGV_Script.CurrentCell.ColumnIndex == startTagColIndex ||
+                DGV_Script.CurrentCell.ColumnIndex == endTagColIndex)
+            {
+                if (e.Control is TextBox tb)
+                {
+                    tb.KeyPress -= OnlyAllowDigit_KeyPress; // 避免重複註冊
+                    tb.KeyPress += OnlyAllowDigit_KeyPress;
+                }
+            }
+            else
+            {
+                if (e.Control is TextBox tb)
+                {
+                    tb.KeyPress -= OnlyAllowDigit_KeyPress; // 清除先前綁定
+                }
+            }
+        }
+
+        private void OnlyAllowDigit_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // 只允許數字與控制鍵（如 Backspace）
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
     }
 }
