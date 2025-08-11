@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Runtime.CompilerServices;
 
 namespace AutoProjectSystem
 {
@@ -47,13 +48,41 @@ namespace AutoProjectSystem
         public string End { get; set; } 
 
     }
-    public class  Script
-    {
-        public string ScriptID { get; set; } = Guid.NewGuid().ToString("N");
-        public string ScriptName { get; set; } = "New Script";
-        public BindingList<TaskItem> Tasks { get; set; } = new();
-        public override string ToString() => ScriptName;
+    //public class  Script
+    //{
+    //    public string ScriptID { get; set; } = Guid.NewGuid().ToString("N");
+    //    public string ScriptName { get; set; } = "New Script";
+    //    public BindingList<TaskItem> Tasks { get; set; } = new();
+    //    public override string ToString() => ScriptName;
 
+    //}
+    public class Script : INotifyPropertyChanged
+    {
+        private string _scriptName = "New Script";
+
+        public string ScriptID { get; set; } = Guid.NewGuid().ToString("N");
+
+        public string ScriptName
+        {
+            get => _scriptName;
+            set
+            {
+                if (_scriptName != value)
+                {
+                    _scriptName = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public BindingList<TaskItem> Tasks { get; set; } = new();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        public override string ToString() => ScriptName;
     }
+
 
 }
