@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,18 +24,36 @@ namespace AutoProjectSystem
         public string ChangeAGVMiddleStationTag { get; set; } = "0";
         public string TransferToDestineAGVName { get; set; }
 
-    //        this.TaskName = `Move_${moment(Date.now()).format('yyMMDD_HHmmssSSS')}`
-    //this.Action = 0
-    //this.DesignatedAGVName = agv_name
-    //this.From_Station = '-1'
-    //this.From_Slot = '-1'
-    //this.To_Station = to_tag + ''
-    //this.To_Slot = '-1'
-    //this.Carrier_ID = '-1'
-    //this.Priority = Priority
-    //this.bypass_eq_status_check = bypass_eq_status_check
-    //this.need_change_agv = false
-    //this.ChangeAGVMiddleStationTag = 0
-    //this.TransferToDestineAGVName = ""
+        //        this.TaskName = `Move_${moment(Date.now()).format('yyMMDD_HHmmssSSS')}`
+        //this.Action = 0
+        //this.DesignatedAGVName = agv_name
+        //this.From_Station = '-1'
+        //this.From_Slot = '-1'
+        //this.To_Station = to_tag + ''
+        //this.To_Slot = '-1'
+        //this.Carrier_ID = '-1'
+        //this.Priority = Priority
+        //this.bypass_eq_status_check = bypass_eq_status_check
+        //this.need_change_agv = false
+        //this.ChangeAGVMiddleStationTag = 0
+        //this.TransferToDestineAGVName = ""
     }
+    public class TaskItem
+    {
+        public int No { get; set; }
+        public string AGVName { get; set; } = "AGV_001";
+        public string Start { get; set; }
+        public string Action { get; set; } = "move";
+        public string End { get; set; } 
+
+    }
+    public class  Script
+    {
+        public string ScriptID { get; set; } = Guid.NewGuid().ToString("N");
+        public string ScriptName { get; set; } = "New Script";
+        public BindingList<TaskItem> Tasks { get; set; } = new();
+        public override string ToString() => ScriptName;
+
+    }
+
 }

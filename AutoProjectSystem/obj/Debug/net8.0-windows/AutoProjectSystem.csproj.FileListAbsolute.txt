@@ -41,7 +41,6 @@ C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\AutoProjectSystem.pdb
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\Json.Net.dll
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.csproj.AssemblyReference.cache
-C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.Form1.resources
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.csproj.GenerateResource.cache
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.AssemblyInfoInputs.cache
@@ -54,3 +53,4 @@ C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.pdb
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.genruntimeconfig.cache
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\ref\AutoProjectSystem.dll
+C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\obj\Debug\net8.0-windows\AutoProjectSystem.FrmMain.resources
