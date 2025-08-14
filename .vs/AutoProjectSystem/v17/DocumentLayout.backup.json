@@ -61,7 +61,7 @@
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs*",
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs*",
-              "ViewState": "AgIAABYAAAAAAAAAAAAiwCsAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAEoAAAAAAAAAAAAgwFUAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-23T08:46:37.093Z",
               "IsPinned": true,
@@ -75,9 +75,10 @@
               "RelativeDocumentMoniker": "AutoProjectSystem\\TaskScript.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\TaskScript.cs",
               "RelativeToolTip": "AutoProjectSystem\\TaskScript.cs",
-              "ViewState": "AgIAAD0AAAAAAAAAAAAUwEkAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAADYAAAAAAAAAAAAYwDoAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-11T08:22:42.023Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
@@ -90,8 +91,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAIwBUAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T08:28:19.487Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-11T08:28:19.487Z"
             },
             {
               "$type": "Document",
@@ -103,8 +103,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\HotRunController.cs",
               "ViewState": "AgIAADAAAAAAAAAAAAAowCwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-27T09:09:31.609Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-27T09:09:31.609Z"
             },
             {
               "$type": "Document",
@@ -129,8 +128,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\APIConfigs.cs",
               "ViewState": "AgIAAAQAAAAAAAAAAAAiwAwAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-24T07:40:01.516Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-24T07:40:01.516Z"
             }
           ]
         }
