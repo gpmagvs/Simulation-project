@@ -17,7 +17,7 @@
 *.db-shm
 *.db-wal
 
-# Build results
+# Build results (output folders)
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -31,31 +31,32 @@ bld/
 [Oo]bj/
 [Ll]og/
 
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+
 # Visual Studio Code
 .vscode/
 
-# Rider
+# Rider / JetBrains
 .idea/
+*.sln.iml
 
 # NuGet packages
 *.nupkg
-# The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
 !**/[Pp]ackages/build/
-# Uncomment if necessary
-#!**/[Pp]ackages/repositories.config
 
 # Microsoft Azure Web App publish settings
 *.PublishSettings
 
 # Others
-*_i.c
-*_p.c
 *.ilk
 *.meta
 *.obj
 *.pch
-*.pdb
 *.pgc
 *.pgd
 *.rsp
@@ -67,8 +68,6 @@ bld/
 *.tmp_proj
 *.log
 *.vspscc
-*_i.obj
-*.cache
 *.bak
 *.swp
 *.zip
@@ -94,7 +93,7 @@ $tf/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 
-# NUNIT
+# NUnit
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
@@ -104,26 +103,15 @@ _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
 
-# DotCover
-*.dotCover
-
 # SQL Server files
 *.mdf
 *.ldf
 
-# Others (cache/backup)
-*_i.c
-*_p.c
-*.bak
-*.backup
-*.log
+# Crash / backup / cache
 *.dmp
 *.v2
 *.tlog
+*.backup
 
 # Office temp files
 ~$*
-
-# JetBrains Rider
-.idea/
-*.sln.iml
