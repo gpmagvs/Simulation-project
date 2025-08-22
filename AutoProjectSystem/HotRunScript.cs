@@ -52,8 +52,7 @@ namespace AGVSystem.Models.TaskAllocation.HotRun
         public List<HotRunAction> actions { get; set; } = new List<HotRunAction>();
         [NonSerialized]
         internal HotRunAction RunningAction = new HotRunAction();
-        public RegularUnloadConfiguration RegularLoadSettings { get; set; } = new RegularUnloadConfiguration();
-        public RandomHotRunConfiguration RandomHotRunSettings { get; set; } = new RandomHotRunConfiguration();
+
         public string comment { get; set; } = "Description";
         internal CancellationTokenSource cancellationTokenSource;
         internal event EventHandler OnScriptStopRequest;

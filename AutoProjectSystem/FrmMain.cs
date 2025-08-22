@@ -13,6 +13,7 @@ using AGVSystem.Models.TaskAllocation.HotRun;
 using System.Net.Http.Json;
 using System.ComponentModel;
 using Microsoft.VisualBasic.Logging;
+using AGVSystem.Config;
 
 namespace AutoProjectSystem
 {
@@ -28,6 +29,7 @@ namespace AutoProjectSystem
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            show_mapscripts();
             InitTaskGridColumns();   // 設定 DGV_Script 欄位與資料繫結
             InitScriptList();        // 建立腳本清單與事件
             UpdateRowNumbers();
@@ -75,6 +77,9 @@ namespace AutoProjectSystem
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
 
+
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
         }
 
         private AGVSController APIController = new AGVSController();
@@ -151,61 +156,6 @@ namespace AutoProjectSystem
                 txtScriptName.Text = lstScripts.SelectedItem.ToString();
             }
         }
-
-        private void btn_RemoveTask_Click(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow row in DGV_Script.SelectedRows)
-            {
-                if (!row.IsNewRow)
-                {
-                    DGV_Script.Rows.Remove(row);
-                }
-            }
-            UpdateRowNumbers(); // ← 刪除後重新編號
-        }
-        private void btn_AddTask_Click(object sender, EventArgs e)
-        {
-            //int rowIndex = DGV_Script.Rows.Add();
-
-            //// 設定 Action 欄預設為 "move"
-            //if (!DGV_Script.Rows[rowIndex].IsNewRow)
-            //{
-            //    DGV_Script.Rows[rowIndex].Cells["Script_Action"].Value = "move";
-            //}
-            DGV_Script.Rows.Add();
-            UpdateRowNumbers();
-        }
-        private async void LoadHotRunScriptsToGrid()
-        {
-            var scripts = await HotRunController.GetHotRunScriptsAsync();
-
-            var hoturn_list = scripts.Select(s => new
-            {
-                No = s.no,
-                ScriptID = s.scriptID,
-                IsRandom = s.IsRandomCarryRun,
-                IsRegularUnload = s.IsRegularUnloadRequst,
-                AGV = s.agv_name,
-                State = s.state,
-                FinishNum = s.finish_num,
-                LoopNum = s.loop_num,
-                ActionCount = s.actions?.Count ?? 0,
-                Comment = s.comment,
-            }).ToList();
-
-            DGV_HotRunlist.DataSource = hoturn_list;
-        }
-        private void Script_AGVName_Setting()
-        {
-            DataGridViewComboBoxColumn comboColumn = new DataGridViewComboBoxColumn();
-            comboColumn.Name = "AGVName";
-            comboColumn.HeaderText = "AGVName";
-            comboColumn.Items.AddRange("AGV_001", "AGV_002", "AGV_003", "AGV_004");
-
-            int index = DGV_Script.Columns["AGVName"].Index;
-            DGV_Script.Columns.Remove("AGVName");
-            DGV_Script.Columns.Insert(index, comboColumn);
-        }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
         {
             if (DGV_HotRunlist.SelectedRows.Count == 0)
@@ -272,35 +222,6 @@ namespace AutoProjectSystem
                         // 使用 JsonNode 解析並遞迴顯示
                         //var node = JsonNode.Parse(jsonText);
                         //DisplayJsonNode(node, "");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("讀取或解析JSON失敗: " + ex.Message);
-                    }
-                }
-            }
-        }
-        private void btn_chooseproject_Click2(object sender, EventArgs e)
-        {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
-            {
-                openFileDialog.Title = "選擇JSON檔案";
-                openFileDialog.Filter = "JSON檔案 (*.json)|*.json|所有檔案 (*.*)|*.*";
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    string filePath = openFileDialog.FileName;
-                    textBox_appsetting.Text = Path.GetFileName(filePath);
-
-                    // 讀取並解析JSON
-                    try
-                    {
-                        string jsonText = File.ReadAllText(filePath);
-                        textBox_content.Clear();
-
-                        // 使用 JsonNode 解析並遞迴顯示
-                        var node = JsonNode.Parse(jsonText);
-                        DisplayJsonNode(node, "");
                     }
                     catch (Exception ex)
                     {
@@ -435,8 +356,6 @@ namespace AutoProjectSystem
         {
             // string net = "locaohost:5216";  // 預設 URL，可以從其他控制項獲取用戶輸入的 URL;
             APIController.APITestAsync();
-
-
             string result = await APIController.APITestAsync();
             richTextBox_content.Text = result;
 
@@ -446,10 +365,7 @@ namespace AutoProjectSystem
             string agvname = textBox_AGVName.Text.Trim();
             string location = textBox_Location.Text.Trim();
             string result = await APIController.APIAGVLocate(agvname, location);
-            //APIController.APIAGVStatus();
             richTextBox_AGVStatus.AppendText(result + Environment.NewLine);
-            //string result = await APIController.APITestAsync();
-            //richTextBox_content.Text = result;
         }
         private async void btn_ConfigSave_Click(object sender, EventArgs e)
         {
@@ -484,9 +400,7 @@ namespace AutoProjectSystem
                 // 在這裡執行重啟派車系統的程式碼
                 // 例如：await APIController.RestartAGVSAsync();
                 string response = await APIController.RestartAGVS();
-                //richTextBox_content.Text = response;
                 richTextBox_content.AppendText(response + Environment.NewLine);
-                //APIController.RestartAGVS();
                 MessageBox.Show("已執行重啟派車系統。");
             }
             else
@@ -524,6 +438,7 @@ namespace AutoProjectSystem
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
+                
             }
         }
         //0811
@@ -613,40 +528,11 @@ namespace AutoProjectSystem
 
             if (_scripts.Count > 0) lstScripts.SelectedIndex = 0;
         }
-
-
-
         private static void ReindexTasks(Script script)
         {
             for (int i = 0; i < script.Tasks.Count; i++)
                 script.Tasks[i].No = i + 1;
         }
-        //private async Task LocateAllAGV()
-        //{
-        //    foreach (DataGridViewRow row in DGV_Script.Rows)
-        //    {
-        //        if (row.IsNewRow) continue;
-        //        {
-        //            var agv = Convert.ToString(row.Cells["AGVName"]?.Value)?.Trim();
-        //            var start = Convert.ToString(row.Cells["Start"]?.Value)?.Trim();
-        //            // 欄位不完整就跳過
-        //            if (string.IsNullOrWhiteSpace(agv) || string.IsNullOrWhiteSpace(start))
-        //                continue;
-        //            // 定位到 Start（locate）
-        //            try
-        //            {
-        //                var locateResp = await AGVSController.APIAGVLocate(agv, start);
-        //                // 需要記錄就寫到 log：txtLog.AppendText($"[{agv}] Locate {start} -> {locateResp}\r\n");
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                // 定位失敗要不要繼續下一列？此例「繼續」，只記錄
-        //                // txtLog.AppendText($"[{agv}] Locate 失敗：{ex.Message}\r\n");
-        //                continue;
-        //            }
-        //        }
-        //    }
-        //}
         private async void btn_StartScripts_Click(object sender, EventArgs e)
         {
             RunScripts();
@@ -704,6 +590,96 @@ namespace AutoProjectSystem
                 }
             }
         }
+        //地圖加上腳本
+        private MultiMapRoot _scriptConfig;
+        private MapDto _selectedMap;
+        private ScriptDto _selectedScript;
+        private string _configPath = "multi-maps.json";
+        private void show_mapscripts()
+        {
+            string path = "multi-maps.json";
+            if (!File.Exists(path))
+            {
+                MessageBox.Show("找不到參數檔");
+                return;
+            }
 
+            _scriptConfig = ScriptConfigService.Load(path);
+
+            listBox1.Items.Clear();
+            foreach (var map in _scriptConfig.Maps)
+                listBox1.Items.Add(map);
+
+            listBox1.DisplayMember = "MapName";
+            listBox1.ValueMember = "MapID";
+        }
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox1.SelectedItem is not MapDto selectedMap) return;
+
+            _selectedMap = selectedMap;
+            _selectedScript = null;
+
+            listBox2.Items.Clear();
+            foreach (var script in _selectedMap.Scripts)
+                listBox2.Items.Add(script);
+
+            listBox2.DisplayMember = "ScriptName";
+            listBox2.ValueMember = "ScriptID";
+
+            DGV_test.DataSource = null;
+        }
+        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedItem is not ScriptDto selectedScript) return;
+
+            _selectedScript = selectedScript;
+
+            var taskList = selectedScript.Tasks
+                .OrderBy(t => t.No)
+                .Select(t => new
+                {
+                    t.No,
+                    t.AGVName,
+                    t.Start,
+                    t.Action,
+                    t.End
+                })
+                .ToList();
+
+            DGV_test.DataSource = null;
+            DGV_test.AutoGenerateColumns = true;
+            DGV_test.DataSource = taskList;
+            DGV_test.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+        private void add_task(object sender, EventArgs e)
+        {
+            if (_selectedScript == null)
+            {
+                MessageBox.Show("請先選擇一個腳本");
+                return;
+            }
+            int nextNo = _selectedScript.Tasks.Count + 1;
+            _selectedScript.Tasks.Add(new TaskItemDto
+            {
+                No = nextNo,
+                AGVName = "AGV_001",
+                Start = "0",
+                Action = "move",
+                End = "0"
+            });
+            DGV_test.DataSource = null;
+            DGV_test.DataSource = _selectedScript.Tasks
+                .OrderBy(t => t.No)
+                .Select(t => new
+                {
+                    t.No,
+                    t.AGVName,
+                    t.Start,
+                    t.Action,
+                    t.End
+                })
+                .ToList();
+        }
     }
 }
