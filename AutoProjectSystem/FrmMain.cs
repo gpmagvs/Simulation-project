@@ -24,6 +24,7 @@ namespace AutoProjectSystem
         }
         private System.Windows.Forms.Timer Timer;
         private bool _isChecking;
+        private CancellationTokenSource? _pollCts;
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -63,25 +64,60 @@ namespace AutoProjectSystem
                 try
                 {
                     var res = await AgvsClient.LoginAsync("dev", "12345678");
-                    //await AgvsClient.LoginAsync("dev", "12345678");
-                    if (res.OK)
-                    {
-                        login_status.BackColor = Color.Lime;
-                    }
-                    login_status.BackColor = Color.Red;
+                    SetLoginStatus(res?.OK == true);
                 }
-                catch (Exception)
+                catch
                 {
-                    login_status.BackColor = Color.Red;
-                    throw;
+                    SetLoginStatus(false);
                 }
+
+                _pollCts = new CancellationTokenSource();
+                _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
 
         }
 
         private AGVSController APIController = new AGVSController();
         private HotRunController HotRunController = new HotRunController();
+        private void SetLoginStatus(bool ok)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => login_status.BackColor = ok ? Color.Lime : Color.Red));
+            }
+            else
+            {
+                login_status.BackColor = ok ? Color.Lime : Color.Red;
+            }
+        }
+        private async Task PollConnectionAsync(TimeSpan interval, CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                bool ok = false;
+                try
+                {
+                    var res = await AgvsClient.LoginAsync("dev", "12345678").ConfigureAwait(false);
+                    ok = res?.OK == true;
+                }
+                catch
+                {
+                    ok = false; // 失敗就視為斷線
+                }
 
+                SetLoginStatus(ok);
+
+                try
+                {
+                    await Task.Delay(interval, ct).ConfigureAwait(false);
+                }
+                catch (TaskCanceledException)
+                {
+                    // 被取消就跳出
+                    break;
+                }
+            }
+        }
         private async void AutoLogin(object sender, EventArgs e)
         {
             try
@@ -623,8 +659,8 @@ namespace AutoProjectSystem
             {
                 if (row.IsNewRow) continue;
                 var agv = Convert.ToString(row.Cells["AGVName"]?.Value)?.Trim();
-                var start = Convert.ToString(row.Cells["StartTag"]?.Value)?.Trim();
-                var end = Convert.ToString(row.Cells["EndTag"]?.Value)?.Trim();
+                var start = Convert.ToString(row.Cells["Start"]?.Value)?.Trim();
+                var end = Convert.ToString(row.Cells["End"]?.Value)?.Trim();
                 if (!string.IsNullOrWhiteSpace(agv) &&
                     !string.IsNullOrWhiteSpace(start) &&
                     !string.IsNullOrWhiteSpace(end))
@@ -632,7 +668,6 @@ namespace AutoProjectSystem
                     rows.Add((agv, start, end));
                 }
             }
-
             // 第一階段：全部定位
             var locateOk = new bool[rows.Count];
             for (int i = 0; i < rows.Count; i++)
@@ -640,7 +675,6 @@ namespace AutoProjectSystem
                 var (agv, start, _) = rows[i];
                 try
                 {
-
                     var resp = await APIController.APIAGVLocate(agv, start); // 你現有的定位 API
                                                                              // 你的 API 失敗時會回傳 "發生錯誤: ..." 字串；簡單判斷一下
                     locateOk[i] = !(resp?.StartsWith("發生錯誤") ?? true);
