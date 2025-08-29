@@ -31,33 +31,36 @@ namespace AutoProjectSystem
         {
             show_mapscripts();
             InitTaskGridColumns();   // 設定 DGV_Script 欄位與資料繫結
-            InitScriptList();        // 建立腳本清單與事件
+            //InitScriptList();        // 建立腳本清單與事件
             UpdateRowNumbers();
             //Script_AGVName_Setting();
-            SeedDemo();
-            LoadScripts();
-            DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
+            //SeedDemo();
+            // LoadScripts();
+            // DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
 
-            // 1) 綁定 ListBox -> 腳本清單
-            lstScripts.DataSource = _scripts;
-            lstScripts.DisplayMember = nameof(Script.ScriptName);
-            // 2) 綁定 TextBox -> 目前選到的腳本名稱（這行就是你問的那段）
-            txtScriptName.DataBindings.Clear();
-            txtScriptName.DataBindings.Add(
-                "Text",
-                lstScripts,
-                "SelectedItem.ScriptName",
-                true,
-                DataSourceUpdateMode.OnPropertyChanged
-            );
-            // （可選）塞一筆測試資料，並選到第一筆
-            if (_scripts.Count == 0)
-            {
-                _scripts.Add(new Script { ScriptName = "Script demo A" });
-                _scripts.Add(new Script { ScriptName = "Script 3" });
-                _scripts.Add(new Script { ScriptName = "Script 4" });
-            }
-            lstScripts.SelectedIndex = 0;
+            //// 1) 綁定 ListBox -> 腳本清單
+            //lstScripts.DataSource = _scripts;
+            //lstScripts.DisplayMember = nameof(Script.ScriptName);
+            //// 2) 綁定 TextBox -> 目前選到的腳本名稱（這行就是你問的那段）
+            //txtScriptName.DataBindings.Clear();
+            //txtScriptName.DataBindings.Add(
+            //    "Text",
+            //    lstScripts,
+            //    "SelectedItem.ScriptName",
+            //    true,
+            //    DataSourceUpdateMode.OnPropertyChanged
+            //);
+            //// （可選）塞一筆測試資料，並選到第一筆
+            //if (_scripts.Count == 0)
+            //{
+            //    _scripts.Add(new Script { ScriptName = "Script demo A" });
+            //    _scripts.Add(new Script { ScriptName = "Script 3" });
+            //    _scripts.Add(new Script { ScriptName = "Script 4" });
+            //}
+            //lstScripts.SelectedIndex = 0;
+
+
+
             // lstScripts.SelectedIndexChanged += lstScripts_SelectedIndexChanged;
             //背景自動登入
 
@@ -78,7 +81,7 @@ namespace AutoProjectSystem
             };
 
 
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            listMapBox.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
         }
 
@@ -151,10 +154,32 @@ namespace AutoProjectSystem
 
         private void lstScripts_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstScripts.SelectedItem != null)
-            {
-                txtScriptName.Text = lstScripts.SelectedItem.ToString();
-            }
+            //if (lstScripts.SelectedItem != null)
+            //{
+            //    txtScriptName.Text = lstScripts.SelectedItem.ToString();
+            //}
+
+
+            if (lstScripts.SelectedItem is not ScriptDto selectedScript) return;
+
+            _selectedScript = selectedScript;
+
+            var taskList = selectedScript.Tasks
+                .OrderBy(t => t.No)
+                .Select(t => new
+                {
+                    t.No,
+                    t.AGVName,
+                    t.Start,
+                    t.Action,
+                    t.End
+                })
+                .ToList();
+
+            DGV_Script.DataSource = null;
+            DGV_Script.AutoGenerateColumns = true;
+            DGV_Script.DataSource = taskList;
+            DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
         {
@@ -409,28 +434,28 @@ namespace AutoProjectSystem
                 MessageBox.Show("已取消，下次別亂按");
             }
         }
-        private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        {
-            int startTagColIndex = DGV_Script.Columns["Start"].Index;
-            int endTagColIndex = DGV_Script.Columns["End"].Index;
+        //private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        //{
+        //    int startTagColIndex = DGV_Script.Columns["Start"].Index;
+        //    int endTagColIndex = DGV_Script.Columns["End"].Index;
 
-            if (DGV_Script.CurrentCell.ColumnIndex == startTagColIndex ||
-                DGV_Script.CurrentCell.ColumnIndex == endTagColIndex)
-            {
-                if (e.Control is TextBox tb)
-                {
-                    tb.KeyPress -= OnlyAllowDigit_KeyPress; // 避免重複註冊
-                    tb.KeyPress += OnlyAllowDigit_KeyPress;
-                }
-            }
-            else
-            {
-                if (e.Control is TextBox tb)
-                {
-                    tb.KeyPress -= OnlyAllowDigit_KeyPress; // 清除先前綁定
-                }
-            }
-        }
+        //    if (DGV_Script.CurrentCell.ColumnIndex == startTagColIndex ||
+        //        DGV_Script.CurrentCell.ColumnIndex == endTagColIndex)
+        //    {
+        //        if (e.Control is TextBox tb)
+        //        {
+        //            tb.KeyPress -= OnlyAllowDigit_KeyPress; // 避免重複註冊
+        //            tb.KeyPress += OnlyAllowDigit_KeyPress;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (e.Control is TextBox tb)
+        //        {
+        //            tb.KeyPress -= OnlyAllowDigit_KeyPress; // 清除先前綁定
+        //        }
+        //    }
+        //}
 
         private void OnlyAllowDigit_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -606,28 +631,28 @@ namespace AutoProjectSystem
 
             _scriptConfig = ScriptConfigService.Load(path);
 
-            listBox1.Items.Clear();
+            listMapBox.Items.Clear();
             foreach (var map in _scriptConfig.Maps)
-                listBox1.Items.Add(map);
+                listMapBox.Items.Add(map);
 
-            listBox1.DisplayMember = "MapName";
-            listBox1.ValueMember = "MapID";
+            listMapBox.DisplayMember = "MapName";
+            listMapBox.ValueMember = "MapID";
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listBox1.SelectedItem is not MapDto selectedMap) return;
+            if (listMapBox.SelectedItem is not MapDto selectedMap) return;
 
             _selectedMap = selectedMap;
             _selectedScript = null;
 
-            listBox2.Items.Clear();
+            lstScripts.Items.Clear();
             foreach (var script in _selectedMap.Scripts)
-                listBox2.Items.Add(script);
+                lstScripts.Items.Add(script);
 
-            listBox2.DisplayMember = "ScriptName";
-            listBox2.ValueMember = "ScriptID";
+            lstScripts.DisplayMember = "ScriptName";
+            lstScripts.ValueMember = "ScriptID";
 
-            DGV_test.DataSource = null;
+            DGV_Script.DataSource = null;
         }
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -680,6 +705,145 @@ namespace AutoProjectSystem
                     t.End
                 })
                 .ToList();
+        }
+
+        private void Delete_task(object sender, EventArgs e)
+        {
+            if (listBox2.SelectedItem is not Script s || _bsTasks is null) return;
+            DataGridViewRow row = DGV_test.CurrentRow;
+            if (row is null && DGV_test.SelectedRows.Count > 0)
+                row = DGV_test.SelectedRows[0];
+
+            // 仍然沒有選到，或選到的是 DataGridView 的「新增空白列」，就不處理
+            if (row is null || row.IsNewRow) return;
+
+            // 從目前繫結的資料項拿出 TaskItem
+            if (row.DataBoundItem is not TaskItem item) return;
+
+            // 從實際的繫結清單移除（優先從 BindingSource.List 移除）
+            if (_bsTasks.List is IList<TaskItem> list)
+            {
+                list.Remove(item);
+            }
+            else
+            {
+                // 後備方案：直接從 Script 的 Tasks 集合移除
+                s.Tasks.Remove(item);
+            }
+
+            // 重新編號（假設 TaskItem 有 No 屬性）
+            ReindexTasks(s);
+            _bsTasks.ResetBindings(false);
+
+            // 刪除後選擇一個合理的下一列，維持易用性
+            int nextIndex = Math.Min(row.Index, DGV_test.Rows.Count - 1);
+            if (nextIndex >= 0 && nextIndex < DGV_test.Rows.Count)
+            {
+                DGV_test.ClearSelection();
+                DGV_test.CurrentCell = DGV_test.Rows[nextIndex].Cells[0];
+                DGV_test.Rows[nextIndex].Selected = true;
+            }
+        }
+        private void InitScriptGrid()
+        {
+            DGV_Script.AutoGenerateColumns = false;
+            DGV_Script.ReadOnly = false;
+            DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
+            DGV_Script.AllowUserToAddRows = false;
+            DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            DGV_Script.MultiSelect = false;
+
+            DGV_Script.Columns.Clear();
+
+            // No：顯示但不可編輯
+            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "No",
+                HeaderText = "No",
+                DataPropertyName = nameof(TaskItem.No),
+                ReadOnly = true,
+                Width = 60
+            });
+
+            // Start：可編輯
+            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Start",
+                HeaderText = "Start",
+                DataPropertyName = nameof(TaskItem.Start),  // << 必須對應屬性名稱
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 50
+            });
+
+            // End：可編輯
+            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "End",
+                HeaderText = "End",
+                DataPropertyName = nameof(TaskItem.End),
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 50
+            });
+
+            // 綁定一次事件即可（先移除避免重覆掛載）
+            DGV_Script.EditingControlShowing -= DGV_Script_EditingControlShowing;
+            DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
+
+            DGV_Script.CellValidating -= DGV_Script_CellValidating;
+            DGV_Script.CellValidating += DGV_Script_CellValidating;
+
+            DGV_Script.DataError -= DGV_Script_DataError;
+            DGV_Script.DataError += DGV_Script_DataError;
+        }
+        private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (DGV_Script.CurrentCell == null) return;
+            var colName = DGV_Script.Columns[DGV_Script.CurrentCell.ColumnIndex].Name;
+
+            if (e.Control is TextBox tb)
+            {
+                // 先拔掉舊的 handler，避免重覆綁定
+                tb.KeyPress -= NumericKeyPress;
+
+                if (colName == "Start" || colName == "End")
+                    tb.KeyPress += NumericKeyPress;
+            }
+        }
+
+        private void NumericKeyPress(object? sender, KeyPressEventArgs e)
+        {
+            // 允許：控制鍵（Backspace、Delete 等）與數字
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+                e.Handled = true;
+        }
+
+        private void DGV_Script_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            var name = DGV_Script.Columns[e.ColumnIndex].Name;
+            if (name != "Start" && name != "End") return;
+
+            var text = e.FormattedValue?.ToString() ?? "";
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "不可空白";
+                e.Cancel = true;
+                return;
+            }
+            if (!int.TryParse(text, out _))
+            {
+                DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "必須是整數";
+                e.Cancel = true;
+                return;
+            }
+
+            // 清除錯誤訊息
+            DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "";
+        }
+
+        // 避免因型別轉換拋例外，讓驗證流程自己處理
+        private void DGV_Script_DataError(object? sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }

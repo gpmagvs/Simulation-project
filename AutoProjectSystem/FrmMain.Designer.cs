@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -44,7 +44,7 @@
             button_addtask = new Button();
             listBox2 = new ListBox();
             DGV_test = new DataGridView();
-            listBox1 = new ListBox();
+            listMapBox = new ListBox();
             button11 = new Button();
             button10 = new Button();
             label6 = new Label();
@@ -192,7 +192,7 @@
             tabPage4.Controls.Add(button_addtask);
             tabPage4.Controls.Add(listBox2);
             tabPage4.Controls.Add(DGV_test);
-            tabPage4.Controls.Add(listBox1);
+            tabPage4.Controls.Add(listMapBox);
             tabPage4.Controls.Add(button11);
             tabPage4.Controls.Add(button10);
             tabPage4.Controls.Add(label6);
@@ -222,6 +222,7 @@
             button_deletetask.TabIndex = 14;
             button_deletetask.Text = "deletetask";
             button_deletetask.UseVisualStyleBackColor = true;
+            button_deletetask.Click += Delete_task;
             // 
             // button_addtask
             // 
@@ -246,20 +247,20 @@
             // DGV_test
             // 
             DGV_test.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DGV_test.Location = new Point(638, 418);
+            DGV_test.Location = new Point(638, 308);
             DGV_test.Name = "DGV_test";
-            DGV_test.Size = new Size(594, 103);
+            DGV_test.Size = new Size(594, 213);
             DGV_test.TabIndex = 11;
             // 
-            // listBox1
+            // listMapBox
             // 
-            listBox1.FormattingEnabled = true;
-            listBox1.ItemHeight = 15;
-            listBox1.Location = new Point(68, 103);
-            listBox1.Name = "listBox1";
-            listBox1.Size = new Size(120, 94);
-            listBox1.TabIndex = 10;
-            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            listMapBox.FormattingEnabled = true;
+            listMapBox.ItemHeight = 15;
+            listMapBox.Location = new Point(68, 103);
+            listMapBox.Name = "listMapBox";
+            listMapBox.Size = new Size(120, 94);
+            listMapBox.TabIndex = 10;
+            listMapBox.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // button11
             // 
@@ -400,9 +401,9 @@
             DGV_Script.Location = new Point(638, 19);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
-            DGV_Script.Size = new Size(594, 351);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            DGV_Script.Size = new Size(594, 238);
             DGV_Script.TabIndex = 0;
             // 
             // No
@@ -704,7 +705,7 @@
         private DataGridViewTextBoxColumn Start;
         private DataGridViewTextBoxColumn Action;
         private DataGridViewTextBoxColumn End;
-        private ListBox listBox1;
+        private ListBox listMapBox;
         private DataGridView DGV_test;
         private ListBox listBox2;
         private Button button_deletetask;
