@@ -40,12 +40,14 @@
             tabControl1 = new TabControl();
             tabPage5 = new TabPage();
             tabPage4 = new TabPage();
+            label8 = new Label();
+            label6 = new Label();
+            label7 = new Label();
+            btn_DeleteMap = new Button();
+            btn_AddMap = new Button();
             listMapBox = new ListBox();
             button11 = new Button();
             button10 = new Button();
-            label6 = new Label();
-            txtScriptName = new TextBox();
-            btn_loadScript = new Button();
             btn_saveScript = new Button();
             btn_removeScript = new Button();
             lstScripts = new ListBox();
@@ -78,8 +80,6 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
-            btn_AddMap = new Button();
-            btn_DeleteMap = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -185,14 +185,14 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(label8);
+            tabPage4.Controls.Add(label6);
+            tabPage4.Controls.Add(label7);
             tabPage4.Controls.Add(btn_DeleteMap);
             tabPage4.Controls.Add(btn_AddMap);
             tabPage4.Controls.Add(listMapBox);
             tabPage4.Controls.Add(button11);
             tabPage4.Controls.Add(button10);
-            tabPage4.Controls.Add(label6);
-            tabPage4.Controls.Add(txtScriptName);
-            tabPage4.Controls.Add(btn_loadScript);
             tabPage4.Controls.Add(btn_saveScript);
             tabPage4.Controls.Add(btn_removeScript);
             tabPage4.Controls.Add(lstScripts);
@@ -209,6 +209,56 @@
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
             // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Font = new Font("Microsoft JhengHei UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            label8.Location = new Point(921, 69);
+            label8.Name = "label8";
+            label8.Size = new Size(86, 24);
+            label8.TabIndex = 13;
+            label8.Text = "任務列表";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Microsoft JhengHei UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            label6.Location = new Point(388, 69);
+            label6.Name = "label6";
+            label6.Size = new Size(86, 24);
+            label6.TabIndex = 13;
+            label6.Text = "腳本名稱";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Font = new Font("Microsoft JhengHei UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            label7.Location = new Point(71, 69);
+            label7.Name = "label7";
+            label7.Size = new Size(86, 24);
+            label7.TabIndex = 13;
+            label7.Text = "場域名稱";
+            // 
+            // btn_DeleteMap
+            // 
+            btn_DeleteMap.Location = new Point(112, 403);
+            btn_DeleteMap.Name = "btn_DeleteMap";
+            btn_DeleteMap.Size = new Size(75, 23);
+            btn_DeleteMap.TabIndex = 12;
+            btn_DeleteMap.Text = "刪除場域";
+            btn_DeleteMap.UseVisualStyleBackColor = true;
+            btn_DeleteMap.Click += btnDeleteMap_Click;
+            // 
+            // btn_AddMap
+            // 
+            btn_AddMap.Location = new Point(13, 403);
+            btn_AddMap.Name = "btn_AddMap";
+            btn_AddMap.Size = new Size(75, 23);
+            btn_AddMap.TabIndex = 11;
+            btn_AddMap.Text = "新增場域";
+            btn_AddMap.UseVisualStyleBackColor = true;
+            btn_AddMap.Click += btnAddMap_Click;
+            // 
             // listMapBox
             // 
             listMapBox.FormattingEnabled = true;
@@ -222,7 +272,7 @@
             // 
             button11.BackColor = Color.Lime;
             button11.ForeColor = SystemColors.ControlText;
-            button11.Location = new Point(30, 19);
+            button11.Location = new Point(13, 19);
             button11.Name = "button11";
             button11.Size = new Size(96, 23);
             button11.TabIndex = 9;
@@ -233,7 +283,7 @@
             // button10
             // 
             button10.BackColor = Color.Red;
-            button10.Location = new Point(151, 19);
+            button10.Location = new Point(118, 19);
             button10.Name = "button10";
             button10.Size = new Size(96, 23);
             button10.TabIndex = 8;
@@ -241,47 +291,17 @@
             button10.UseVisualStyleBackColor = false;
             button10.Click += btn_MoveTask_Click;
             // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            label6.Location = new Point(220, 70);
-            label6.Name = "label6";
-            label6.Size = new Size(92, 17);
-            label6.TabIndex = 7;
-            label6.Text = "更改腳本名稱 :";
-            // 
-            // txtScriptName
-            // 
-            txtScriptName.BackColor = Color.FromArgb(224, 224, 224);
-            txtScriptName.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            txtScriptName.Location = new Point(333, 68);
-            txtScriptName.Name = "txtScriptName";
-            txtScriptName.Size = new Size(100, 23);
-            txtScriptName.TabIndex = 6;
-            // 
-            // btn_loadScript
-            // 
-            btn_loadScript.BackColor = Color.Yellow;
-            btn_loadScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_loadScript.ForeColor = SystemColors.ControlText;
-            btn_loadScript.Location = new Point(220, 174);
-            btn_loadScript.Name = "btn_loadScript";
-            btn_loadScript.Size = new Size(92, 23);
-            btn_loadScript.TabIndex = 5;
-            btn_loadScript.Text = "讀取腳本";
-            btn_loadScript.UseVisualStyleBackColor = false;
-            // 
             // btn_saveScript
             // 
             btn_saveScript.BackColor = Color.Lime;
             btn_saveScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_saveScript.Location = new Point(220, 103);
+            btn_saveScript.Location = new Point(270, 19);
             btn_saveScript.Name = "btn_saveScript";
             btn_saveScript.Size = new Size(92, 23);
             btn_saveScript.TabIndex = 5;
             btn_saveScript.Text = "儲存腳本";
             btn_saveScript.UseVisualStyleBackColor = false;
+            btn_saveScript.Click += btnSaveJson_Click;
             // 
             // btn_removeScript
             // 
@@ -307,7 +327,7 @@
             button7.BackColor = Color.Aqua;
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
-            button7.Location = new Point(219, 146);
+            button7.Location = new Point(382, 19);
             button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(92, 23);
@@ -347,6 +367,7 @@
             // 
             // DGV_Script
             // 
+            DGV_Script.AllowUserToAddRows = false;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
@@ -583,26 +604,6 @@
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
             // 
-            // btn_AddMap
-            // 
-            btn_AddMap.Location = new Point(13, 403);
-            btn_AddMap.Name = "btn_AddMap";
-            btn_AddMap.Size = new Size(75, 23);
-            btn_AddMap.TabIndex = 11;
-            btn_AddMap.Text = "新增場域";
-            btn_AddMap.UseVisualStyleBackColor = true;
-            btn_AddMap.Click += btnAddMap_Click;
-            // 
-            // btn_DeleteMap
-            // 
-            btn_DeleteMap.Location = new Point(112, 403);
-            btn_DeleteMap.Name = "btn_DeleteMap";
-            btn_DeleteMap.Size = new Size(75, 23);
-            btn_DeleteMap.TabIndex = 12;
-            btn_DeleteMap.Text = "刪除場域";
-            btn_DeleteMap.UseVisualStyleBackColor = true;
-            btn_DeleteMap.Click += btnDeleteMap_Click;
-            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -661,9 +662,6 @@
         private ListBox listMapBox;
         private Button button11;
         private Button button10;
-        private Label label6;
-        private TextBox txtScriptName;
-        private Button btn_loadScript;
         private Button btn_saveScript;
         private Button btn_removeScript;
         private ListBox lstScripts;
@@ -679,5 +677,8 @@
         private DataGridViewTextBoxColumn End;
         private Button btn_DeleteMap;
         private Button btn_AddMap;
+        private Label label7;
+        private Label label8;
+        private Label label6;
     }
 }

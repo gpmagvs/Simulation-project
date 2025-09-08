@@ -53,6 +53,7 @@ namespace AutoProjectSystem
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
 
+
             this.Shown += async (_, __) =>
             {
                 try
@@ -133,11 +134,11 @@ namespace AutoProjectSystem
 
         private void InitGrid()
         {
-            DGV_Script.AutoGenerateColumns = false;
+            //DGV_Script.AutoGenerateColumns = false;
             DGV_Script.Columns.Clear();
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            DGV_Script.AllowUserToAddRows = true;
-            DGV_Script.AllowUserToDeleteRows = true;
+            //DGV_Script.AllowUserToAddRows = true;
+            //DGV_Script.AllowUserToDeleteRows = true;
             DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
             DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
@@ -411,12 +412,6 @@ namespace AutoProjectSystem
                 MessageBox.Show("已取消，下次別亂按");
             }
         }
-
-        private static void ReindexTasks(Script script)
-        {
-            for (int i = 0; i < script.Tasks.Count; i++)
-                script.Tasks[i].No = i + 1;
-        }
         //地圖加上腳本
         //private MultiMapRoot _scriptConfig;
         private MapDto _selectedMap;
@@ -424,11 +419,23 @@ namespace AutoProjectSystem
 
         private void btnSaveJson_Click(object sender, EventArgs e)
         {
-            using var sfd = new SaveFileDialog { Filter = "JSON|*.json", FileName = "multi-maps_test.json" };
-            if (sfd.ShowDialog() != DialogResult.OK) return;
+            // 取得程式執行目錄 (bin\Debug\netX.0)
+            string debugFolder = Application.StartupPath;
+            string filePath = Path.Combine(debugFolder, "multi-maps_test.json");
+
+            var result = MessageBox.Show(
+                $"是否要將腳本儲存到：\n{filePath}？",
+                "確認儲存",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result != DialogResult.Yes)
+                return;
+
             var opt = new JsonSerializerOptions { WriteIndented = true };
-            File.WriteAllText(sfd.FileName, JsonSerializer.Serialize(_data, opt));
-            MessageBox.Show("已儲存。");
+            File.WriteAllText(filePath, JsonSerializer.Serialize(_data, opt), System.Text.Encoding.UTF8);
+
+            MessageBox.Show("已成功儲存。", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnLoadJson_Click(object sender, EventArgs e)
@@ -476,7 +483,7 @@ namespace AutoProjectSystem
             if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("請先選擇一個腳本"); return; }
             if (_tasksBS.List is BindingList<TaskItemDto> list)
             {
-                list.Add(new TaskItemDto { AGVName = _agvOptions[0], Start = "-1", Action = _actionOptions[0], End = "-1" });
+                list.Add(new TaskItemDto {  Start = "0", Action = _actionOptions[0], End = "0" });
             }
         }
 
