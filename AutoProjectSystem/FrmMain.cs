@@ -1,4 +1,4 @@
-using System.Windows.Forms;
+ï»¿using System.Windows.Forms;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -14,6 +14,12 @@ using System.Net.Http.Json;
 using System.ComponentModel;
 using Microsoft.VisualBasic.Logging;
 using AGVSystem.Config;
+using MapDto = AGVSystem.Config.MapDto;
+using ScriptDto = AGVSystem.Config.ScriptDto;
+using TaskItemDto = AGVSystem.Config.TaskItemDto;
+using MultiMapRoot = AGVSystem.Config.MultiMapRoot;
+using System.Text.Json.Serialization;
+//using static AutoProjectSystem.MapScripts;
 
 namespace AutoProjectSystem
 {
@@ -27,42 +33,25 @@ namespace AutoProjectSystem
         private bool _isChecking;
         private CancellationTokenSource? _pollCts;
 
+        private readonly BindingSource _mapBS = new();
+        private readonly BindingSource _scriptBS = new();
+        private readonly BindingSource _tasksBS = new();
+
+        private MultiMapRoot _data = new();
+        private string _configPath = "multi-maps_test.json";
+
+        private readonly string[] _agvOptions = { "AGV_001", "AGV_002", "AGV_003", "AGV_004" };
+        private readonly string[] _actionOptions = { "move", "load", "unload" };
+
+        private AGVSController APIController = new AGVSController();
+        private HotRunController HotRunController = new HotRunController();
         private void Form1_Load(object sender, EventArgs e)
         {
-            show_mapscripts();
-            InitTaskGridColumns();   // ³]©w DGV_Script Äæ¦ì»P¸ê®ÆÃ´µ²
-            //InitScriptList();        // «Ø¥ß¸}¥»²M³æ»P¨Æ¥ó
-            UpdateRowNumbers();
-            //Script_AGVName_Setting();
-            //SeedDemo();
-            // LoadScripts();
-            // DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
-
-            //// 1) ¸j©w ListBox -> ¸}¥»²M³æ
-            //lstScripts.DataSource = _scripts;
-            //lstScripts.DisplayMember = nameof(Script.ScriptName);
-            //// 2) ¸j©w TextBox -> ¥Ø«e¿ï¨ìªº¸}¥»¦WºÙ¡]³o¦æ´N¬O§A°İªº¨º¬q¡^
-            //txtScriptName.DataBindings.Clear();
-            //txtScriptName.DataBindings.Add(
-            //    "Text",
-            //    lstScripts,
-            //    "SelectedItem.ScriptName",
-            //    true,
-            //    DataSourceUpdateMode.OnPropertyChanged
-            //);
-            //// ¡]¥i¿ï¡^¶ë¤@µ§´ú¸Õ¸ê®Æ¡A¨Ã¿ï¨ì²Ä¤@µ§
-            //if (_scripts.Count == 0)
-            //{
-            //    _scripts.Add(new Script { ScriptName = "Script demo A" });
-            //    _scripts.Add(new Script { ScriptName = "Script 3" });
-            //    _scripts.Add(new Script { ScriptName = "Script 4" });
-            //}
-            //lstScripts.SelectedIndex = 0;
-
-
-
-            // lstScripts.SelectedIndexChanged += lstScripts_SelectedIndexChanged;
-            //­I´º¦Û°Êµn¤J
+            InitGrid();          // è¨­å®š DGV æ¬„ä½
+            WireEvents();        // ç¶å®šé¸å–äº‹ä»¶
+            LoadData();          // è¼‰å…¥ JSON ä¸¦å®Œæˆè³‡æ–™ç¹«çµ
+            //InitScriptList();        // å»ºç«‹è…³æœ¬æ¸…å–®èˆ‡äº‹ä»¶
+            //èƒŒæ™¯è‡ªå‹•ç™»å…¥
 
             this.Shown += async (_, __) =>
             {
@@ -79,14 +68,128 @@ namespace AutoProjectSystem
                 _pollCts = new CancellationTokenSource();
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
-
-
-            listMapBox.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-            listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
         }
 
-        private AGVSController APIController = new AGVSController();
-        private HotRunController HotRunController = new HotRunController();
+        public class MultiMapRoot
+        {
+            [JsonPropertyName("version")]
+            public int Version { get; set; } = 1;
+
+            [JsonPropertyName("maps")]
+            public List<MapDto> Maps { get; set; } = new();
+        }
+
+
+
+
+        private void LoadData()
+        {
+            var json = File.ReadAllText(_configPath);
+            _data = JsonSerializer.Deserialize<MultiMapRoot>(json, new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+                AllowTrailingCommas = true
+            }) ?? new MultiMapRoot();
+
+            _mapBS.DataSource = _data.Maps;
+            listMapBox.DataSource = _mapBS;
+            listMapBox.DisplayMember = nameof(MapDto.MapName);
+
+            if (listMapBox.Items.Count > 0)
+                listMapBox.SelectedIndex = 0;
+        }
+
+        private void WireEvents()
+        {
+            // Map â†’ Scripts
+            listMapBox.SelectedIndexChanged += (_, __) =>
+            {
+                var map = listMapBox.SelectedItem as MapDto;
+
+                var scripts = map?.Scripts != null
+                    ? new BindingList<ScriptDto>(map.Scripts)
+                    : new BindingList<ScriptDto>();
+
+                _scriptBS.DataSource = scripts;
+                lstScripts.DataSource = _scriptBS;
+                lstScripts.DisplayMember = nameof(ScriptDto.ScriptName);
+
+                lstScripts.SelectedIndex = lstScripts.Items.Count > 0 ? 0 : -1;
+            };
+
+            // Script â†’ Tasks (DGV)
+            lstScripts.SelectedIndexChanged += (_, __) =>
+            {
+                var script = lstScripts.SelectedItem as ScriptDto;
+
+                var tasks = script?.Tasks != null
+                    ? new BindingList<TaskItemDto>(script.Tasks)   // â¬…ï¸ é€™è¡Œå°±ä¸æœƒå†å ±ä½ é‚£å€‹éŒ¯
+                    : new BindingList<TaskItemDto>();
+
+                _tasksBS.DataSource = tasks;
+                DGV_Script.DataSource = _tasksBS;
+            };
+        }
+
+        private void InitGrid()
+        {
+            DGV_Script.AutoGenerateColumns = false;
+            DGV_Script.Columns.Clear();
+            DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            DGV_Script.AllowUserToAddRows = true;
+            DGV_Script.AllowUserToDeleteRows = true;
+            DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
+            DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            DGV_Script.Columns.Add(new DataGridViewComboBoxColumn
+            {
+                Name = "colAGVName",
+                HeaderText = "AGVName",
+                DataPropertyName = nameof(TaskItemDto.AGVName),
+                DataSource = _agvOptions
+            });
+
+            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colStart",
+                HeaderText = "Start",
+                DataPropertyName = nameof(TaskItemDto.Start)
+            });
+
+            DGV_Script.Columns.Add(new DataGridViewComboBoxColumn
+            {
+                Name = "colAction",
+                HeaderText = "Action",
+                DataPropertyName = nameof(TaskItemDto.Action),
+                DataSource = _actionOptions
+            });
+
+            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "colEnd",
+                HeaderText = "End",
+                DataPropertyName = nameof(TaskItemDto.End)
+            });
+
+            DGV_Script.DataError += (_, __) => { }; // åƒæ‰ ComboBox ç¶å®šéŒ¯èª¤
+
+            DGV_Script.EditingControlShowing += (s, e) =>
+            {
+                if (DGV_Script.CurrentCell == null) return;
+                var name = DGV_Script.Columns[DGV_Script.CurrentCell.ColumnIndex].Name;
+                if ((name == "colStart" || name == "colEnd") && e.Control is TextBox tb)
+                {
+                    tb.KeyPress -= IntOnly_KeyPress;
+                    tb.KeyPress += IntOnly_KeyPress;
+                }
+            };
+        }
+        private void IntOnly_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '-')
+                e.Handled = true;
+        }
+
         private void SetLoginStatus(bool ok)
         {
             if (InvokeRequired)
@@ -110,7 +213,7 @@ namespace AutoProjectSystem
                 }
                 catch
                 {
-                    ok = false; // ¥¢±Ñ´Nµø¬°Â_½u
+                    ok = false; // å¤±æ•—å°±è¦–ç‚ºæ–·ç·š
                 }
 
                 SetLoginStatus(ok);
@@ -121,7 +224,7 @@ namespace AutoProjectSystem
                 }
                 catch (TaskCanceledException)
                 {
-                    // ³Q¨ú®ø´N¸õ¥X
+                    // è¢«å–æ¶ˆå°±è·³å‡º
                     break;
                 }
             }
@@ -139,58 +242,16 @@ namespace AutoProjectSystem
                 throw;
             }
         }
-        private void UpdateRowNumbers()
-        {
-            int number = 1;
-            for (int i = 0; i < DGV_Script.Rows.Count; i++)
-            {
-                if (!DGV_Script.Rows[i].IsNewRow)
-                {
-                    DGV_Script.Rows[i].Cells["No"].Value = number++;
-                    DGV_Script.Rows[i].Cells["Action"].Value = "move";
-                }
-            }
-        }
-
-        private void lstScripts_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //if (lstScripts.SelectedItem != null)
-            //{
-            //    txtScriptName.Text = lstScripts.SelectedItem.ToString();
-            //}
-
-
-            if (lstScripts.SelectedItem is not ScriptDto selectedScript) return;
-
-            _selectedScript = selectedScript;
-
-            var taskList = selectedScript.Tasks
-                .OrderBy(t => t.No)
-                .Select(t => new
-                {
-                    t.No,
-                    t.AGVName,
-                    t.Start,
-                    t.Action,
-                    t.End
-                })
-                .ToList();
-
-            DGV_Script.DataSource = null;
-            DGV_Script.AutoGenerateColumns = true;
-            DGV_Script.DataSource = taskList;
-            DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
         {
             if (DGV_HotRunlist.SelectedRows.Count == 0)
             {
-                MessageBox.Show("½Ğ¥ı¿ï¾Ü¤@µ§ HotRun ¸ê®Æ", "´£¥Ü", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("è«‹å…ˆé¸æ“‡ä¸€ç­† HotRun è³‡æ–™", "æç¤º", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             var selectedRow = DGV_HotRunlist.SelectedRows[0];
             string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-            var result = MessageBox.Show($"½T©w­n°õ¦æ HotRun ¸}¥»¡G{scriptID}¡H", "°õ¦æ½T»{", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show($"ç¢ºå®šè¦åŸ·è¡Œ HotRun è…³æœ¬ï¼š{scriptID}ï¼Ÿ", "åŸ·è¡Œç¢ºèª", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 await HotRunController.StartHotRunApiAsync(scriptID);
@@ -200,12 +261,12 @@ namespace AutoProjectSystem
         {
             if (DGV_HotRunlist.SelectedRows.Count == 0)
             {
-                MessageBox.Show("½Ğ¥ı¿ï¾Ü¤@µ§ HotRun ¸ê®Æ", "´£¥Ü", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("è«‹å…ˆé¸æ“‡ä¸€ç­† HotRun è³‡æ–™", "æç¤º", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             var selectedRow = DGV_HotRunlist.SelectedRows[0];
             string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-            var result = MessageBox.Show($"½T©w­n°õ¦æ HotRun ¸}¥»¡G{scriptID}¡H", "°õ¦æ½T»{", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show($"ç¢ºå®šè¦åŸ·è¡Œ HotRun è…³æœ¬ï¼š{scriptID}ï¼Ÿ", "åŸ·è¡Œç¢ºèª", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 await HotRunController.StopHotRunApiAsync(scriptID);
@@ -213,7 +274,7 @@ namespace AutoProjectSystem
         }
         private void DGV_HotRunlist_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            // ½T«O¯Á¤Ş½d³ò¦Xªk
+            // ç¢ºä¿ç´¢å¼•ç¯„åœåˆæ³•
             if (DGV_HotRunlist.Columns[e.ColumnIndex].Name == "State" && e.Value != null)
             {
                 string stateValue = e.Value.ToString()?.ToUpper();
@@ -231,127 +292,43 @@ namespace AutoProjectSystem
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Title = "¿ï¾ÜJSONÀÉ®×";
-                openFileDialog.Filter = "JSONÀÉ®× (*.json)|*.json|©Ò¦³ÀÉ®× (*.*)|*.*";
+                openFileDialog.Title = "é¸æ“‡JSONæª”æ¡ˆ";
+                openFileDialog.Filter = "JSONæª”æ¡ˆ (*.json)|*.json|æ‰€æœ‰æª”æ¡ˆ (*.*)|*.*";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = openFileDialog.FileName;
-                    // ­×¥¿¡GÅã¥Ü§¹¾ã¸ô®|
+                    // ä¿®æ­£ï¼šé¡¯ç¤ºå®Œæ•´è·¯å¾‘
                     textBox_appsetting.Text = filePath;
-                    // Åª¨ú¨Ã¸ÑªRJSON
+                    // è®€å–ä¸¦è§£æJSON
                     try
                     {
                         string content = File.ReadAllText(filePath);
                         textBox_content.Text = content;
-                        // ¨Ï¥Î JsonNode ¸ÑªR¨Ã»¼°jÅã¥Ü
+                        // ä½¿ç”¨ JsonNode è§£æä¸¦éè¿´é¡¯ç¤º
                         //var node = JsonNode.Parse(jsonText);
                         //DisplayJsonNode(node, "");
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Åª¨ú©Î¸ÑªRJSON¥¢±Ñ: " + ex.Message);
+                        MessageBox.Show("è®€å–æˆ–è§£æJSONå¤±æ•—: " + ex.Message);
                     }
                 }
             }
         }
-        private void btn_AddScript_Click(object sender, EventArgs e)
-        {
-            var s = new Script { ScriptName = $"Script {_scripts.Count + 1}" };
-            _scripts.Add(s);
-            lstScripts.SelectedIndex = _scripts.Count - 1;
-        }
 
-        private void btn_RemoveScript_Click(object sender, EventArgs e)
-        {
-            if (lstScripts.SelectedItem is Script s)
-                _scripts.Remove(s);
-        }
-
-        private void btn_AddTasks_Click(object sender, EventArgs e)
-        {
-            if (lstScripts.SelectedItem is not Script s) return;
-            var nextNo = s.Tasks.Count + 1;
-            s.Tasks.Add(new TaskItem { No = nextNo }); // ¹w³] Action = "move"
-        }
-
-        private void btn_RemoveTasks_Click(object sender, EventArgs e)
-        {
-            if (lstScripts.SelectedItem is not Script s) return;
-            if (DGV_Script.CurrentRow?.DataBoundItem is TaskItem item)
-            {
-                s.Tasks.Remove(item);
-                ReindexTasks(s);
-                _bsTasks.ResetBindings(false);
-            }
-        }
-        private void btn_SaveScripts_Click(object sender, EventArgs e)
-        {
-            var json = System.Text.Json.JsonSerializer.Serialize(_scripts, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText("scripts.json", json, System.Text.Encoding.UTF8);
-            MessageBox.Show("¤wÀx¦s scripts.json");
-        }
-        private void LoadScripts()
-        {
-            if (!File.Exists("scripts.json")) return;
-            var json = File.ReadAllText("scripts.json", System.Text.Encoding.UTF8);
-            var data = System.Text.Json.JsonSerializer.Deserialize<BindingList<Script>>(json) ?? new();
-            _scripts = data;
-
-            // ­«·sÃ´µ²
-            lstScripts.DataSource = _scripts;
-            lstScripts.DisplayMember = nameof(Script.ScriptName);
-            if (_scripts.Count > 0) lstScripts.SelectedIndex = 0;
-        }
-
-        private void btn_LoadScripts_Click(object sender, EventArgs e)
-        {
-            if (!File.Exists("scripts.json")) return;
-            var json = File.ReadAllText("scripts.json", System.Text.Encoding.UTF8);
-            var data = System.Text.Json.JsonSerializer.Deserialize<BindingList<Script>>(json) ?? new();
-            _scripts = data;
-
-            // ­«·sÃ´µ²
-            lstScripts.DataSource = _scripts;
-            lstScripts.DisplayMember = nameof(Script.ScriptName);
-            if (_scripts.Count > 0) lstScripts.SelectedIndex = 0;
-        }
-        private void DisplayJsonNode(JsonNode node, string prefix)
-        {
-            if (node is JsonObject obj)
-            {
-                foreach (var kvp in obj)
-                {
-                    DisplayJsonNode(kvp.Value, $"{prefix}{kvp.Key}: ");
-                }
-            }
-            else if (node is JsonArray arr)
-            {
-                int idx = 0;
-                foreach (var item in arr)
-                {
-                    DisplayJsonNode(item, $"{prefix}[{idx}]: ");
-                    idx++;
-                }
-            }
-            else if (node is JsonValue val)
-            {
-                // ±N¤º®e¥[¨ì textBoxContent
-                textBox_content.AppendText($"{prefix}{val.ToJsonString()}{Environment.NewLine}");
-            }
-        }
         private async void btnLogin_Click(object sender, EventArgs e)
         {
             // btnLogin.Enabled = false;
             try
             {
                 await AgvsClient.LoginAsync("dev", "12345678");
-                MessageBox.Show("µn¤J¦¨¥\¡I", "¦¨¥\",
+                MessageBox.Show("ç™»å…¥æˆåŠŸï¼", "æˆåŠŸ",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("µn¤J¥¢±Ñ¡G\r\n" + ex.Message, "¿ù»~",
+                MessageBox.Show("ç™»å…¥å¤±æ•—ï¼š\r\n" + ex.Message, "éŒ¯èª¤",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
@@ -365,11 +342,11 @@ namespace AutoProjectSystem
             try
             {
                 var result = await AgvsClient.PostMoveAsync("AGV_001", "97", false);
-                //  txtOutput.Text = "Move ¦^À³¡G\r\n" + result;
+                //  txtOutput.Text = "Move å›æ‡‰ï¼š\r\n" + result;
             }
             catch (Exception ex)
             {
-                //    txtOutput.Text = "Move ¥¢±Ñ¡G\r\n" + ex.Message;
+                //    txtOutput.Text = "Move å¤±æ•—ï¼š\r\n" + ex.Message;
             }
             finally
             {
@@ -379,7 +356,7 @@ namespace AutoProjectSystem
 
         private async void btn_APItest_Click(object sender, EventArgs e)
         {
-            // string net = "locaohost:5216";  // ¹w³] URL¡A¥i¥H±q¨ä¥L±±¨î¶µÀò¨ú¥Î¤á¿é¤Jªº URL;
+            // string net = "locaohost:5216";  // é è¨­ URLï¼Œå¯ä»¥å¾å…¶ä»–æ§åˆ¶é …ç²å–ç”¨æˆ¶è¼¸å…¥çš„ URL;
             APIController.APITestAsync();
             string result = await APIController.APITestAsync();
             richTextBox_content.Text = result;
@@ -394,249 +371,88 @@ namespace AutoProjectSystem
         }
         private async void btn_ConfigSave_Click(object sender, EventArgs e)
         {
-            // ¨ú±o­è­èÅª¨úªºÀÉ®×¸ô®|
+            // å–å¾—å‰›å‰›è®€å–çš„æª”æ¡ˆè·¯å¾‘
             string filePath = textBox_appsetting.Text;
             if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath))
             {
-                var result = MessageBox.Show($"½T©w­nÂĞ»\¨ÃÀx¦s¦¹ÀÉ®×¶Ü¡H\n{filePath}", "½T»{Àx¦s", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                var result = MessageBox.Show($"ç¢ºå®šè¦è¦†è“‹ä¸¦å„²å­˜æ­¤æª”æ¡ˆå—ï¼Ÿ\n{filePath}", "ç¢ºèªå„²å­˜", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
                     try
                     {
                         File.WriteAllText(filePath, textBox_content.Text);
-                        MessageBox.Show("Àx¦s¦¨¥\: " + filePath);
+                        MessageBox.Show("å„²å­˜æˆåŠŸ: " + filePath);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("«O¦s°t¸m¤å¥ó®É¥X¿ù: " + ex.Message);
+                        MessageBox.Show("ä¿å­˜é…ç½®æ–‡ä»¶æ™‚å‡ºéŒ¯: " + ex.Message);
                     }
                 }
             }
             else
             {
-                MessageBox.Show("½Ğ¿ï¾Ü¤@­Ó¦³®Äªº°t¸m¤å¥ó¡C");
+                MessageBox.Show("è«‹é¸æ“‡ä¸€å€‹æœ‰æ•ˆçš„é…ç½®æ–‡ä»¶ã€‚");
             }
         }
         private async void btn_RestartAGVS_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show("½T©w¬O§_­«±Ò¬£¨®¨t²Î?", "½T»{", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var result = MessageBox.Show("ç¢ºå®šæ˜¯å¦é‡å•Ÿæ´¾è»Šç³»çµ±?", "ç¢ºèª", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                // ¦b³o¸Ì°õ¦æ­«±Ò¬£¨®¨t²Îªºµ{¦¡½X
-                // ¨Ò¦p¡Gawait APIController.RestartAGVSAsync();
+                // åœ¨é€™è£¡åŸ·è¡Œé‡å•Ÿæ´¾è»Šç³»çµ±çš„ç¨‹å¼ç¢¼
+                // ä¾‹å¦‚ï¼šawait APIController.RestartAGVSAsync();
                 string response = await APIController.RestartAGVS();
                 richTextBox_content.AppendText(response + Environment.NewLine);
-                MessageBox.Show("¤w°õ¦æ­«±Ò¬£¨®¨t²Î¡C");
+                MessageBox.Show("å·²åŸ·è¡Œé‡å•Ÿæ´¾è»Šç³»çµ±ã€‚");
             }
             else
             {
-                // ¨ú®ø¡A¤£°µ¥ô¦ó¨Æ
-                MessageBox.Show("¤w¨ú®ø¡A¤U¦¸§O¶Ã«ö");
+                // å–æ¶ˆï¼Œä¸åšä»»ä½•äº‹
+                MessageBox.Show("å·²å–æ¶ˆï¼Œä¸‹æ¬¡åˆ¥äº‚æŒ‰");
             }
         }
-        //private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
-        //{
-        //    int startTagColIndex = DGV_Script.Columns["Start"].Index;
-        //    int endTagColIndex = DGV_Script.Columns["End"].Index;
 
-        //    if (DGV_Script.CurrentCell.ColumnIndex == startTagColIndex ||
-        //        DGV_Script.CurrentCell.ColumnIndex == endTagColIndex)
-        //    {
-        //        if (e.Control is TextBox tb)
-        //        {
-        //            tb.KeyPress -= OnlyAllowDigit_KeyPress; // Á×§K­«½Æµù¥U
-        //            tb.KeyPress += OnlyAllowDigit_KeyPress;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.Control is TextBox tb)
-        //        {
-        //            tb.KeyPress -= OnlyAllowDigit_KeyPress; // ²M°£¥ı«e¸j©w
-        //        }
-        //    }
-        //}
-
-        private void OnlyAllowDigit_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // ¥u¤¹³\¼Æ¦r»P±±¨îÁä¡]¦p Backspace¡^
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-            {
-                e.Handled = true;
-                
-            }
-        }
-        //0811
-        // ¦b FrmMain Ãş§O¤º¥[¡G
-        private BindingList<Script> _scripts = new();
-        private BindingSource _bsTasks = new();
-
-        private static readonly string[] AgvOptions = { "AGV_001", "AGV_002", "AGV_003", "AGV_004" };
-        private static readonly string[] ActionOptions = { "move", "load", "unload", "charge" };
-        private void InitTaskGridColumns()
-        {
-            DGV_Script.AutoGenerateColumns = false;
-            DGV_Script.AllowUserToAddRows = false;
-
-            DGV_Script.Columns.Clear();
-
-            // No¡]°ßÅª¡^
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "No",
-                DataPropertyName = "No",
-                HeaderText = "No",
-                ReadOnly = true,
-                Width = 60
-            });
-
-            // AGVName¡]¤U©Ô¡^
-            var colAgv = new DataGridViewComboBoxColumn
-            {
-                Name = "AGVName",
-                DataPropertyName = "AGVName",
-                HeaderText = "AGVName",
-                DataSource = AgvOptions
-            };
-            DGV_Script.Columns.Add(colAgv);
-
-            // Start(Tag)
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Start",
-                DataPropertyName = "Start",
-                HeaderText = "Start(Tag)",
-                Width = 90
-            });
-
-            // Action¡]¤U©Ô¡^
-            var colAction = new DataGridViewComboBoxColumn
-            {
-                Name = "Action",
-                DataPropertyName = "Action",
-                HeaderText = "Action",
-                DataSource = ActionOptions,
-                Width = 90
-            };
-            DGV_Script.Columns.Add(colAction);
-
-            // End(Tag)
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "End",
-                DataPropertyName = "End",
-                HeaderText = "End(Tag)",
-                Width = 90
-            });
-
-            // §Aªº¼Æ¦r­­¨î¤´¥iªu¥Î
-            DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
-        }
-        private void InitScriptList()
-        {
-            // °²³]§A¦b UI ©ñ¤F¤@­Ó ListBox ¥s lstScripts ¥Î¨ÓÅã¥Ü©Ò¦³¸}¥»
-            lstScripts.DataSource = _scripts;
-            lstScripts.DisplayMember = nameof(Script.ScriptName);
-
-            lstScripts.SelectedIndexChanged += (s, e) =>
-            {
-                var script = lstScripts.SelectedItem as Script;
-                _bsTasks.DataSource = script?.Tasks;
-                DGV_Script.DataSource = _bsTasks;
-            };
-        }
-        private void SeedDemo()
-        {
-            var s1 = new Script { ScriptName = "Script demo A" };
-            s1.Tasks.Add(new TaskItem { No = 1, AGVName = "AGV_001", Start = "1", Action = "move", End = "5" });
-            _scripts.Add(s1);
-
-            if (_scripts.Count > 0) lstScripts.SelectedIndex = 0;
-        }
         private static void ReindexTasks(Script script)
         {
             for (int i = 0; i < script.Tasks.Count; i++)
                 script.Tasks[i].No = i + 1;
         }
-        private async void btn_StartScripts_Click(object sender, EventArgs e)
-        {
-            RunScripts();
-        }
-
-        private async Task RunScripts()
-        {
-            var rows = new List<(string Agv, string Start, string End)>();
-            foreach (DataGridViewRow row in DGV_Script.Rows)
-            {
-                if (row.IsNewRow) continue;
-                var agv = Convert.ToString(row.Cells["AGVName"]?.Value)?.Trim();
-                var start = Convert.ToString(row.Cells["Start"]?.Value)?.Trim();
-                var end = Convert.ToString(row.Cells["End"]?.Value)?.Trim();
-                if (!string.IsNullOrWhiteSpace(agv) &&
-                    !string.IsNullOrWhiteSpace(start) &&
-                    !string.IsNullOrWhiteSpace(end))
-                {
-                    rows.Add((agv, start, end));
-                }
-            }
-            // ²Ä¤@¶¥¬q¡G¥ş³¡©w¦ì
-            var locateOk = new bool[rows.Count];
-            for (int i = 0; i < rows.Count; i++)
-            {
-                var (agv, start, _) = rows[i];
-                try
-                {
-                    var resp = await APIController.APIAGVLocate(agv, start); // §A²{¦³ªº©w¦ì API
-                                                                             // §Aªº API ¥¢±Ñ®É·|¦^¶Ç "µo¥Í¿ù»~: ..." ¦r¦ê¡FÂ²³æ§PÂ_¤@¤U
-                    locateOk[i] = !(resp?.StartsWith("µo¥Í¿ù»~") ?? true);
-                    //Log($"[Locate] {agv} -> {start} : {(locateOk[i] ? "OK" : "FAIL")}");
-                }
-                catch (Exception ex)
-                {
-                    locateOk[i] = false;
-                    //AppendLog($"[Locate] {agv} -> {start} ¨Ò¥~¡G{ex.Message}");
-                }
-            }
-
-            // ²Ä¤G¶¥¬q¡G¥u¹ï¡u©w¦ì¦¨¥\¡vªº¦C¤U²¾°Ê¥ô°È
-            for (int i = 0; i < rows.Count; i++)
-            {
-                if (!locateOk[i]) continue; // ©w¦ì¥¢±Ñªº²¤¹L
-                var (agv, _, end) = rows[i];
-                try
-                {
-                    var resp = await AgvsClient.PostMoveAsync(agv, end, bypass: false); // §A²{¦³ªº²¾°Ê API
-                                                                                        //   AppendLog($"[Move] {agv} -> {end} : OK");
-                }
-                catch (Exception ex)
-                {
-                    // AppendLog($"[Move] {agv} -> {end} ¨Ò¥~¡G{ex.Message}");
-                    // Ä~Äò¶]¤U¤@¦C¡A¤£Åı¾ãÅé¤¤Â_
-                }
-            }
-        }
-        //¦a¹Ï¥[¤W¸}¥»
-        private MultiMapRoot _scriptConfig;
+        //åœ°åœ–åŠ ä¸Šè…³æœ¬
+        //private MultiMapRoot _scriptConfig;
         private MapDto _selectedMap;
         private ScriptDto _selectedScript;
-        private string _configPath = "multi-maps.json";
-        private void show_mapscripts()
+
+        private void btnSaveJson_Click(object sender, EventArgs e)
         {
-            string path = "multi-maps.json";
-            if (!File.Exists(path))
-            {
-                MessageBox.Show("§ä¤£¨ì°Ñ¼ÆÀÉ");
-                return;
-            }
+            using var sfd = new SaveFileDialog { Filter = "JSON|*.json", FileName = "multi-maps_test.json" };
+            if (sfd.ShowDialog() != DialogResult.OK) return;
+            var opt = new JsonSerializerOptions { WriteIndented = true };
+            File.WriteAllText(sfd.FileName, JsonSerializer.Serialize(_data, opt));
+            MessageBox.Show("å·²å„²å­˜ã€‚");
+        }
 
-            _scriptConfig = ScriptConfigService.Load(path);
-
-            listMapBox.Items.Clear();
-            foreach (var map in _scriptConfig.Maps)
-                listMapBox.Items.Add(map);
-
-            listMapBox.DisplayMember = "MapName";
-            listMapBox.ValueMember = "MapID";
+        private void btnLoadJson_Click(object sender, EventArgs e)
+        {
+            using var ofd = new OpenFileDialog { Filter = "JSON|*.json" };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            _configPath = ofd.FileName;
+            LoadData();
+        }
+        private static string Prompt(string text, string title, string defaultValue = "")
+        {
+            var form = new Form { Width = 380, Height = 160, Text = title, StartPosition = FormStartPosition.CenterParent };
+            var lbl = new Label { Left = 15, Top = 15, Width = 330, Text = text };
+            var tb = new TextBox { Left = 15, Top = 45, Width = 340, Text = defaultValue };
+            var ok = new Button { Text = "OK", Left = 200, Width = 70, Top = 80, DialogResult = DialogResult.OK };
+            var cancel = new Button { Text = "Cancel", Left = 285, Width = 70, Top = 80, DialogResult = DialogResult.Cancel };
+            form.Controls.AddRange(new Control[] { lbl, tb, ok, cancel });
+            form.AcceptButton = ok; form.CancelButton = cancel;
+            return form.ShowDialog() == DialogResult.OK ? tb.Text : null;
+        }
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            _pollCts?.Cancel();
+            base.OnFormClosing(e);
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -654,196 +470,80 @@ namespace AutoProjectSystem
 
             DGV_Script.DataSource = null;
         }
-        private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listBox2.SelectedItem is not ScriptDto selectedScript) return;
 
-            _selectedScript = selectedScript;
-
-            var taskList = selectedScript.Tasks
-                .OrderBy(t => t.No)
-                .Select(t => new
-                {
-                    t.No,
-                    t.AGVName,
-                    t.Start,
-                    t.Action,
-                    t.End
-                })
-                .ToList();
-
-            DGV_test.DataSource = null;
-            DGV_test.AutoGenerateColumns = true;
-            DGV_test.DataSource = taskList;
-            DGV_test.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-        }
         private void add_task(object sender, EventArgs e)
         {
-            if (_selectedScript == null)
+            if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("è«‹å…ˆé¸æ“‡ä¸€å€‹è…³æœ¬"); return; }
+            if (_tasksBS.List is BindingList<TaskItemDto> list)
             {
-                MessageBox.Show("½Ğ¥ı¿ï¾Ü¤@­Ó¸}¥»");
-                return;
+                list.Add(new TaskItemDto { AGVName = _agvOptions[0], Start = "-1", Action = _actionOptions[0], End = "-1" });
             }
-            int nextNo = _selectedScript.Tasks.Count + 1;
-            _selectedScript.Tasks.Add(new TaskItemDto
-            {
-                No = nextNo,
-                AGVName = "AGV_001",
-                Start = "0",
-                Action = "move",
-                End = "0"
-            });
-            DGV_test.DataSource = null;
-            DGV_test.DataSource = _selectedScript.Tasks
-                .OrderBy(t => t.No)
-                .Select(t => new
-                {
-                    t.No,
-                    t.AGVName,
-                    t.Start,
-                    t.Action,
-                    t.End
-                })
-                .ToList();
         }
 
         private void Delete_task(object sender, EventArgs e)
         {
-            if (listBox2.SelectedItem is not Script s || _bsTasks is null) return;
-            DataGridViewRow row = DGV_test.CurrentRow;
-            if (row is null && DGV_test.SelectedRows.Count > 0)
-                row = DGV_test.SelectedRows[0];
-
-            // ¤´µM¨S¦³¿ï¨ì¡A©Î¿ï¨ìªº¬O DataGridView ªº¡u·s¼WªÅ¥Õ¦C¡v¡A´N¤£³B²z
-            if (row is null || row.IsNewRow) return;
-
-            // ±q¥Ø«eÃ´µ²ªº¸ê®Æ¶µ®³¥X TaskItem
-            if (row.DataBoundItem is not TaskItem item) return;
-
-            // ±q¹ê»ÚªºÃ´µ²²M³æ²¾°£¡]Àu¥ı±q BindingSource.List ²¾°£¡^
-            if (_bsTasks.List is IList<TaskItem> list)
+            if (DGV_Script.CurrentRow?.DataBoundItem is TaskItemDto item &&
+                _tasksBS.List is BindingList<TaskItemDto> list)
             {
                 list.Remove(item);
             }
-            else
-            {
-                // «á³Æ¤è®×¡Gª½±µ±q Script ªº Tasks ¶°¦X²¾°£
-                s.Tasks.Remove(item);
-            }
-
-            // ­«·s½s¸¹¡]°²³] TaskItem ¦³ No Äİ©Ê¡^
-            ReindexTasks(s);
-            _bsTasks.ResetBindings(false);
-
-            // §R°£«á¿ï¾Ü¤@­Ó¦X²zªº¤U¤@¦C¡Aºû«ù©ö¥Î©Ê
-            int nextIndex = Math.Min(row.Index, DGV_test.Rows.Count - 1);
-            if (nextIndex >= 0 && nextIndex < DGV_test.Rows.Count)
-            {
-                DGV_test.ClearSelection();
-                DGV_test.CurrentCell = DGV_test.Rows[nextIndex].Cells[0];
-                DGV_test.Rows[nextIndex].Selected = true;
-            }
         }
-        private void InitScriptGrid()
+        private void btnAddMap_Click(object sender, EventArgs e)
         {
-            DGV_Script.AutoGenerateColumns = false;
-            DGV_Script.ReadOnly = false;
-            DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
-            DGV_Script.AllowUserToAddRows = false;
-            DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DGV_Script.MultiSelect = false;
-
-            DGV_Script.Columns.Clear();
-
-            // No¡GÅã¥Ü¦ı¤£¥i½s¿è
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "No",
-                HeaderText = "No",
-                DataPropertyName = nameof(TaskItem.No),
-                ReadOnly = true,
-                Width = 60
-            });
-
-            // Start¡G¥i½s¿è
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Start",
-                HeaderText = "Start",
-                DataPropertyName = nameof(TaskItem.Start),  // << ¥²¶·¹ïÀ³Äİ©Ê¦WºÙ
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 50
-            });
-
-            // End¡G¥i½s¿è
-            DGV_Script.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "End",
-                HeaderText = "End",
-                DataPropertyName = nameof(TaskItem.End),
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 50
-            });
-
-            // ¸j©w¤@¦¸¨Æ¥ó§Y¥i¡]¥ı²¾°£Á×§K­«ÂĞ±¾¸ü¡^
-            DGV_Script.EditingControlShowing -= DGV_Script_EditingControlShowing;
-            DGV_Script.EditingControlShowing += DGV_Script_EditingControlShowing;
-
-            DGV_Script.CellValidating -= DGV_Script_CellValidating;
-            DGV_Script.CellValidating += DGV_Script_CellValidating;
-
-            DGV_Script.DataError -= DGV_Script_DataError;
-            DGV_Script.DataError += DGV_Script_DataError;
+            var name = Prompt("åœ°åœ–åç¨±ï¼š", "æ–°å¢åœ°åœ–", "NewMap");
+            if (string.IsNullOrWhiteSpace(name)) return;
+            var map = new MapDto { MapName = name, Scripts = new List<ScriptDto>() };
+            _data.Maps.Add(map);
+            _mapBS.ResetBindings(false);
+            listMapBox.SelectedItem = map;
         }
-        private void DGV_Script_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        private void btnDeleteMap_Click(object sender, EventArgs e)
         {
-            if (DGV_Script.CurrentCell == null) return;
-            var colName = DGV_Script.Columns[DGV_Script.CurrentCell.ColumnIndex].Name;
-
-            if (e.Control is TextBox tb)
+            if (listMapBox.SelectedItem is MapDto m)
             {
-                // ¥ı©Ş±¼ÂÂªº handler¡AÁ×§K­«ÂĞ¸j©w
-                tb.KeyPress -= NumericKeyPress;
-
-                if (colName == "Start" || colName == "End")
-                    tb.KeyPress += NumericKeyPress;
+                _data.Maps.Remove(m);
+                _mapBS.ResetBindings(false);
             }
         }
 
-        private void NumericKeyPress(object? sender, KeyPressEventArgs e)
+        private void btnRenameMap_Click(object sender, EventArgs e)
         {
-            // ¤¹³\¡G±±¨îÁä¡]Backspace¡BDelete µ¥¡^»P¼Æ¦r
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
+            if (listMapBox.SelectedItem is not MapDto m) return;
+            var name = Prompt("æ–°åœ°åœ–åç¨±ï¼š", "é‡æ–°å‘½ååœ°åœ–", m.MapName);
+            if (string.IsNullOrWhiteSpace(name)) return;
+            m.MapName = name;
+            _mapBS.ResetBindings(false);
         }
 
-        private void DGV_Script_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        // Script
+        private void btnAddScript_Click(object sender, EventArgs e)
         {
-            var name = DGV_Script.Columns[e.ColumnIndex].Name;
-            if (name != "Start" && name != "End") return;
+            if (listMapBox.SelectedItem is not MapDto m) return;
+            var name = Prompt("è…³æœ¬åç¨±ï¼š", "æ–°å¢è…³æœ¬", "NewScript");
+            if (string.IsNullOrWhiteSpace(name)) return;
 
-            var text = e.FormattedValue?.ToString() ?? "";
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "¤£¥iªÅ¥Õ";
-                e.Cancel = true;
-                return;
-            }
-            if (!int.TryParse(text, out _))
-            {
-                DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "¥²¶·¬O¾ã¼Æ";
-                e.Cancel = true;
-                return;
-            }
-
-            // ²M°£¿ù»~°T®§
-            DGV_Script.Rows[e.RowIndex].Cells[e.ColumnIndex].ErrorText = "";
+            var s = new ScriptDto { ScriptName = name, Tasks = new List<TaskItemDto>() };
+            m.Scripts.Add(s);
+            _scriptBS.ResetBindings(false);
+            lstScripts.SelectedItem = s;
         }
 
-        // Á×§K¦]«¬§OÂà´«©ß¨Ò¥~¡AÅıÅçÃÒ¬yµ{¦Û¤v³B²z
-        private void DGV_Script_DataError(object? sender, DataGridViewDataErrorEventArgs e)
+        private void btnDeleteScript_Click(object sender, EventArgs e)
         {
-            e.Cancel = true;
+            if (listMapBox.SelectedItem is MapDto m && lstScripts.SelectedItem is ScriptDto s)
+            {
+                m.Scripts.Remove(s);
+                _scriptBS.ResetBindings(false);
+            }
+        }
+
+        private void btnRenameScript_Click(object sender, EventArgs e)
+        {
+            if (lstScripts.SelectedItem is not ScriptDto s) return;
+            var name = Prompt("æ–°è…³æœ¬åç¨±ï¼š", "é‡æ–°å‘½åè…³æœ¬", s.ScriptName);
+            if (string.IsNullOrWhiteSpace(name)) return;
+            s.ScriptName = name;
+            _scriptBS.ResetBindings(false);
         }
     }
 }

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -40,10 +40,6 @@
             tabControl1 = new TabControl();
             tabPage5 = new TabPage();
             tabPage4 = new TabPage();
-            button_deletetask = new Button();
-            button_addtask = new Button();
-            listBox2 = new ListBox();
-            DGV_test = new DataGridView();
             listMapBox = new ListBox();
             button11 = new Button();
             button10 = new Button();
@@ -82,9 +78,10 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
+            btn_AddMap = new Button();
+            btn_DeleteMap = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)DGV_test).BeginInit();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -188,10 +185,8 @@
             // 
             // tabPage4
             // 
-            tabPage4.Controls.Add(button_deletetask);
-            tabPage4.Controls.Add(button_addtask);
-            tabPage4.Controls.Add(listBox2);
-            tabPage4.Controls.Add(DGV_test);
+            tabPage4.Controls.Add(btn_DeleteMap);
+            tabPage4.Controls.Add(btn_AddMap);
             tabPage4.Controls.Add(listMapBox);
             tabPage4.Controls.Add(button11);
             tabPage4.Controls.Add(button10);
@@ -214,53 +209,14 @@
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
             // 
-            // button_deletetask
-            // 
-            button_deletetask.Location = new Point(540, 321);
-            button_deletetask.Name = "button_deletetask";
-            button_deletetask.Size = new Size(75, 23);
-            button_deletetask.TabIndex = 14;
-            button_deletetask.Text = "deletetask";
-            button_deletetask.UseVisualStyleBackColor = true;
-            button_deletetask.Click += Delete_task;
-            // 
-            // button_addtask
-            // 
-            button_addtask.Location = new Point(540, 265);
-            button_addtask.Name = "button_addtask";
-            button_addtask.Size = new Size(75, 23);
-            button_addtask.TabIndex = 13;
-            button_addtask.Text = "addtask";
-            button_addtask.UseVisualStyleBackColor = true;
-            button_addtask.Click += add_task;
-            // 
-            // listBox2
-            // 
-            listBox2.FormattingEnabled = true;
-            listBox2.ItemHeight = 15;
-            listBox2.Location = new Point(333, 265);
-            listBox2.Name = "listBox2";
-            listBox2.Size = new Size(189, 214);
-            listBox2.TabIndex = 12;
-            listBox2.SelectedIndexChanged += listBox2_SelectedIndexChanged;
-            // 
-            // DGV_test
-            // 
-            DGV_test.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DGV_test.Location = new Point(638, 308);
-            DGV_test.Name = "DGV_test";
-            DGV_test.Size = new Size(594, 213);
-            DGV_test.TabIndex = 11;
-            // 
             // listMapBox
             // 
             listMapBox.FormattingEnabled = true;
             listMapBox.ItemHeight = 15;
-            listMapBox.Location = new Point(68, 103);
+            listMapBox.Location = new Point(13, 105);
             listMapBox.Name = "listMapBox";
-            listMapBox.Size = new Size(120, 94);
+            listMapBox.Size = new Size(201, 274);
             listMapBox.TabIndex = 10;
-            listMapBox.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // 
             // button11
             // 
@@ -309,13 +265,12 @@
             btn_loadScript.BackColor = Color.Yellow;
             btn_loadScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             btn_loadScript.ForeColor = SystemColors.ControlText;
-            btn_loadScript.Location = new Point(220, 132);
+            btn_loadScript.Location = new Point(220, 174);
             btn_loadScript.Name = "btn_loadScript";
             btn_loadScript.Size = new Size(92, 23);
             btn_loadScript.TabIndex = 5;
             btn_loadScript.Text = "讀取腳本";
             btn_loadScript.UseVisualStyleBackColor = false;
-            btn_loadScript.Click += btn_LoadScripts_Click;
             // 
             // btn_saveScript
             // 
@@ -327,17 +282,16 @@
             btn_saveScript.TabIndex = 5;
             btn_saveScript.Text = "儲存腳本";
             btn_saveScript.UseVisualStyleBackColor = false;
-            btn_saveScript.Click += btn_SaveScripts_Click;
             // 
             // btn_removeScript
             // 
-            btn_removeScript.Location = new Point(220, 217);
+            btn_removeScript.Location = new Point(442, 403);
             btn_removeScript.Name = "btn_removeScript";
             btn_removeScript.Size = new Size(92, 23);
             btn_removeScript.TabIndex = 5;
             btn_removeScript.Text = "刪除腳本";
             btn_removeScript.UseVisualStyleBackColor = true;
-            btn_removeScript.Click += btn_RemoveScript_Click;
+            btn_removeScript.Click += btnDeleteScript_Click;
             // 
             // lstScripts
             // 
@@ -345,65 +299,63 @@
             lstScripts.ItemHeight = 15;
             lstScripts.Location = new Point(333, 105);
             lstScripts.Name = "lstScripts";
-            lstScripts.Size = new Size(189, 109);
+            lstScripts.Size = new Size(201, 274);
             lstScripts.TabIndex = 3;
-            lstScripts.SelectedIndexChanged += lstScripts_SelectedIndexChanged;
             // 
             // button7
             // 
             button7.BackColor = Color.Aqua;
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
-            button7.Location = new Point(220, 160);
+            button7.Location = new Point(219, 146);
             button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(92, 23);
             button7.TabIndex = 2;
             button7.Text = "執行腳本";
             button7.UseVisualStyleBackColor = false;
-            button7.Click += btn_StartScripts_Click;
             // 
             // btn_removeTask
             // 
-            btn_removeTask.Location = new Point(540, 134);
+            btn_removeTask.Location = new Point(763, 403);
             btn_removeTask.Name = "btn_removeTask";
             btn_removeTask.Size = new Size(92, 23);
             btn_removeTask.TabIndex = 1;
             btn_removeTask.Text = "刪除任務";
             btn_removeTask.UseVisualStyleBackColor = true;
-            btn_removeTask.Click += btn_RemoveTasks_Click;
+            btn_removeTask.Click += Delete_task;
             // 
             // btn_addScript
             // 
-            btn_addScript.Location = new Point(220, 188);
+            btn_addScript.Location = new Point(333, 403);
             btn_addScript.Name = "btn_addScript";
             btn_addScript.Size = new Size(92, 23);
             btn_addScript.TabIndex = 1;
             btn_addScript.Text = "新增腳本";
             btn_addScript.UseVisualStyleBackColor = true;
-            btn_addScript.Click += btn_AddScript_Click;
+            btn_addScript.Click += btnAddScript_Click;
             // 
             // btn_addTask
             // 
-            btn_addTask.Location = new Point(540, 105);
+            btn_addTask.Location = new Point(649, 403);
             btn_addTask.Name = "btn_addTask";
             btn_addTask.Size = new Size(92, 23);
             btn_addTask.TabIndex = 1;
             btn_addTask.Text = "新增任務";
             btn_addTask.UseVisualStyleBackColor = true;
-            btn_addTask.Click += btn_AddTasks_Click;
+            btn_addTask.Click += add_task;
             // 
             // DGV_Script
             // 
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
-            DGV_Script.Location = new Point(638, 19);
+            DGV_Script.Location = new Point(649, 105);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            DGV_Script.Size = new Size(594, 238);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
             // No
@@ -631,6 +583,26 @@
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
             // 
+            // btn_AddMap
+            // 
+            btn_AddMap.Location = new Point(13, 403);
+            btn_AddMap.Name = "btn_AddMap";
+            btn_AddMap.Size = new Size(75, 23);
+            btn_AddMap.TabIndex = 11;
+            btn_AddMap.Text = "新增場域";
+            btn_AddMap.UseVisualStyleBackColor = true;
+            btn_AddMap.Click += btnAddMap_Click;
+            // 
+            // btn_DeleteMap
+            // 
+            btn_DeleteMap.Location = new Point(112, 403);
+            btn_DeleteMap.Name = "btn_DeleteMap";
+            btn_DeleteMap.Size = new Size(75, 23);
+            btn_DeleteMap.TabIndex = 12;
+            btn_DeleteMap.Text = "刪除場域";
+            btn_DeleteMap.UseVisualStyleBackColor = true;
+            btn_DeleteMap.Click += btnDeleteMap_Click;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -644,7 +616,6 @@
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);
             tabPage4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)DGV_test).EndInit();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).EndInit();
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -682,33 +653,31 @@
         private Button button4;
         private System.Windows.Forms.Timer refreshTimer;
         private Button button6;
-        private TabPage tabPage4;
-        private DataGridView DGV_Script;
-        private Button btn_removeTask;
-        private Button btn_addTask;
-        private Button button7;
-        private ListBox lstScripts;
-        private Button btn_removeScript;
-        private Button btn_addScript;
         private Button button9;
         private Button button8;
+        private TabPage tabPage5;
+        private Button login_status;
+        private TabPage tabPage4;
+        private ListBox listMapBox;
+        private Button button11;
+        private Button button10;
+        private Label label6;
+        private TextBox txtScriptName;
         private Button btn_loadScript;
         private Button btn_saveScript;
-        private TextBox txtScriptName;
-        private Label label6;
-        private TabPage tabPage5;
-        private Button button10;
-        private Button button11;
-        private Button login_status;
+        private Button btn_removeScript;
+        private ListBox lstScripts;
+        private Button button7;
+        private Button btn_removeTask;
+        private Button btn_addScript;
+        private Button btn_addTask;
+        private DataGridView DGV_Script;
         private DataGridViewTextBoxColumn No;
         private DataGridViewTextBoxColumn AGVName;
         private DataGridViewTextBoxColumn Start;
         private DataGridViewTextBoxColumn Action;
         private DataGridViewTextBoxColumn End;
-        private ListBox listMapBox;
-        private DataGridView DGV_test;
-        private ListBox listBox2;
-        private Button button_deletetask;
-        private Button button_addtask;
+        private Button btn_DeleteMap;
+        private Button btn_AddMap;
     }
 }
