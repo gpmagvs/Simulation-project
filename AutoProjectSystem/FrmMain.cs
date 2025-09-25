@@ -262,7 +262,7 @@ namespace AutoProjectSystem
         {
             if (DGV_HotRunlist.SelectedRows.Count == 0)
             {
-                MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("請先選擇一筆欲執行腳本", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             var selectedRow = DGV_HotRunlist.SelectedRows[0];
