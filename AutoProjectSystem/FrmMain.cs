@@ -141,7 +141,23 @@ namespace AutoProjectSystem
             //DGV_Script.AllowUserToDeleteRows = true;
             DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
             DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
+            var colNo = new DataGridViewTextBoxColumn
+            {
+                Name = "colNo",
+                HeaderText = "No",
+                DataPropertyName = nameof(TaskItemDto.No),          // 若你沒有這個屬性，改成自動編號見下方備註
+                ReadOnly = true,
+                FillWeight = 25
+            };
+            DGV_Script.Columns.Add(colNo);
+            colNo.DisplayIndex = 0;
+            DGV_Script.CellFormatting += (s, e) =>
+            {
+                if (DGV_Script.Columns[e.ColumnIndex].Name == "colNo" && e.RowIndex >= 0)
+                    e.Value = (e.RowIndex + 1).ToString();
+            };
+            //colNo.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            //colNo.Frozen = true;
             DGV_Script.Columns.Add(new DataGridViewComboBoxColumn
             {
                 Name = "colAGVName",
