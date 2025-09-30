@@ -19,6 +19,7 @@ using ScriptDto = AGVSystem.Config.ScriptDto;
 using TaskItemDto = AGVSystem.Config.TaskItemDto;
 using MultiMapRoot = AGVSystem.Config.MultiMapRoot;
 using System.Text.Json.Serialization;
+using System.Text;
 //using static AutoProjectSystem.MapScripts;
 
 namespace AutoProjectSystem
@@ -366,57 +367,79 @@ namespace AutoProjectSystem
                 //   btnMove.Enabled = true;
             }
         }
-        private async void btn_MoveTask_test(object sender, EventArgs e)
+
+        private void DumpGridColumns(DataGridView dgv)
         {
-            // var baseUrl = txtServerUrl.Text.Trim();   
-            var baseUrl = APIController.AGVSUrl;
-            if (string.IsNullOrWhiteSpace(baseUrl))
+            var sb = new StringBuilder();
+            sb.AppendLine("DataGridView Columns:");
+            foreach (DataGridViewColumn c in dgv.Columns)
             {
-                MessageBox.Show("請先輸入伺服器位址（例如 http://127.0.0.1:5216）");
-                return;
+                sb.AppendLine($"Index={c.Index}, Name='{c.Name}', HeaderText='{c.HeaderText}', DataPropertyName='{c.DataPropertyName}'");
             }
-
-            var tasks = GetTasksFromGrid().OrderBy(t => t.No).ToList();
-            if (tasks.Count == 0)
-            {
-                MessageBox.Show("沒有任務可定位");
-                return;
-            }
-            try
-            {
-                var controller = new AGVSController(baseUrl);   // 使用新版建構子
-
-                
-                foreach (var t in tasks)
-                {
-                    if (string.IsNullOrWhiteSpace(t.AGVName) || SkipTag(t.Start))
-                    {
-                        
-                        continue;
-                    }
-                    // 新版（建議）：AGVSController.AGVLocateAsync(agvName, tagId)
-                    var resp = await controller.AGVLocateAsync(t.AGVName, t.Start);
-
-                    // 若你還在用舊版簽名（AGVLocate(string url, string agvname, string location)）：
-                    // var resp = await controller.AGVLocate(baseUrl, t.AGVName, t.Start);
-
-                    // 依需要可在此等待定位完成（查詢 AGV 狀態），範例先小停一下避免打太快
-                    await Task.Delay(300);
-                }
-              
-                MessageBox.Show("定位流程完成。");
-            }
-            catch (Exception ex)
-            {
-               
-                MessageBox.Show("定位失敗：" + ex.Message);
-            }
-            finally
-            {
-               // btn測試定位功能.Enabled = true;
-            }
-         
+            MessageBox.Show(sb.ToString());
         }
+        private string GetCellStringSafe(DataGridViewRow row, string wantedNameOrHeader)
+        {
+            var dgv = row.DataGridView;
+
+            // 1) 先嘗試用欄位 Name
+            if (dgv.Columns.Contains(wantedNameOrHeader))
+            {
+                var val = row.Cells[wantedNameOrHeader].Value;
+                return val?.ToString();
+            }
+
+            // 2) 再嘗試以 HeaderText 比對（不分大小寫）
+            var colByHeader = dgv.Columns
+                .Cast<DataGridViewColumn>()
+                .FirstOrDefault(c => string.Equals(c.HeaderText, wantedNameOrHeader, StringComparison.OrdinalIgnoreCase));
+            if (colByHeader != null)
+            {
+                var val = row.Cells[colByHeader.Index].Value;
+                return val?.ToString();
+            }
+
+            // 3) 再嘗試以 DataPropertyName 比對（若是綁定資料來源）
+            var colByDp = dgv.Columns
+                .Cast<DataGridViewColumn>()
+                .FirstOrDefault(c => string.Equals(c.DataPropertyName, wantedNameOrHeader, StringComparison.OrdinalIgnoreCase));
+            if (colByDp != null)
+            {
+                var val = row.Cells[colByDp.Index].Value;
+                return val?.ToString();
+            }
+
+            // 4) 都沒找到，回 null
+            return null;
+        }
+        private async void btn_Scripts_AGV_Locate(object sender, EventArgs e)
+        {
+            var dgv = this.DGV_Script; // 改成你實際的 control 名
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string agvName = GetCellStringSafe(row, "AGVName"); // 可以用欄位名稱或 header text
+                string start = GetCellStringSafe(row, "Start");
+
+                if (string.IsNullOrEmpty(agvName) || string.IsNullOrEmpty(start))
+                {
+                    continue;
+                }
+                try
+                {
+                    var res = await APIController.APIAGVLocate(agvName, start); // 你已有的 API helper
+                }
+                catch (Exception ex)
+                {
+                   // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
+                }
+            }
+        }
+
+           
+
+        
 
 
 

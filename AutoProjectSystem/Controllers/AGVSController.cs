@@ -37,7 +37,7 @@ namespace AutoProjectSystem.Controllers
         {
 
             //string  url = $"{_baseUrl}/api/VmsManager/AGVLocating?agv_name={WebUtility.UrlEncode(agvName)}";
-            string url = "http://localhost:5036/api/VmsManager/AGVLocating?agv_name={Uri.EscapeDataString{$agvName}}";
+            string url = $"http://localhost:5036/api/VmsManager/AGVLocating?agv_name={Uri.EscapeDataString(agvName)}";
             var payload = new
             {
                 Name = agvName,

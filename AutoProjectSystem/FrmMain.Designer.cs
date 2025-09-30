@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -81,6 +81,7 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
+            button8 = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -177,6 +178,7 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(button8);
             tabPage4.Controls.Add(button12);
             tabPage4.Controls.Add(label8);
             tabPage4.Controls.Add(label6);
@@ -204,13 +206,13 @@
             // 
             // button12
             // 
-            button12.Location = new Point(568, 31);
+            button12.Location = new Point(649, 72);
             button12.Name = "button12";
-            button12.Size = new Size(92, 29);
+            button12.Size = new Size(92, 23);
             button12.TabIndex = 14;
             button12.Text = "測試定位功能";
             button12.UseVisualStyleBackColor = true;
-            button12.Click += btn_MoveTask_test;
+            button12.Click += btn_Scripts_AGV_Locate;
             // 
             // label8
             // 
@@ -226,7 +228,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Microsoft JhengHei UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            label6.Location = new Point(388, 69);
+            label6.Location = new Point(387, 44);
             label6.Name = "label6";
             label6.Size = new Size(86, 24);
             label6.TabIndex = 13;
@@ -236,7 +238,7 @@
             // 
             label7.AutoSize = true;
             label7.Font = new Font("Microsoft JhengHei UI", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            label7.Location = new Point(71, 69);
+            label7.Location = new Point(72, 45);
             label7.Name = "label7";
             label7.Size = new Size(86, 24);
             label7.TabIndex = 13;
@@ -275,7 +277,7 @@
             // 
             button11.BackColor = Color.Lime;
             button11.ForeColor = SystemColors.ControlText;
-            button11.Location = new Point(13, 19);
+            button11.Location = new Point(16, 69);
             button11.Name = "button11";
             button11.Size = new Size(96, 23);
             button11.TabIndex = 9;
@@ -286,7 +288,7 @@
             // button10
             // 
             button10.BackColor = Color.Red;
-            button10.Location = new Point(118, 19);
+            button10.Location = new Point(118, 69);
             button10.Name = "button10";
             button10.Size = new Size(96, 23);
             button10.TabIndex = 8;
@@ -298,7 +300,7 @@
             // 
             btn_saveScript.BackColor = Color.Lime;
             btn_saveScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_saveScript.Location = new Point(270, 19);
+            btn_saveScript.Location = new Point(333, 72);
             btn_saveScript.Name = "btn_saveScript";
             btn_saveScript.Size = new Size(92, 23);
             btn_saveScript.TabIndex = 5;
@@ -330,7 +332,7 @@
             button7.BackColor = Color.Aqua;
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
-            button7.Location = new Point(381, 19);
+            button7.Location = new Point(442, 72);
             button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(92, 23);
@@ -377,8 +379,8 @@
             DGV_Script.Location = new Point(649, 105);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle3;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -616,6 +618,15 @@
             login_status.TabIndex = 11;
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            button8.Location = new Point(763, 72);
+            button8.Name = "button8";
+            button8.Size = new Size(92, 23);
+            button8.TabIndex = 15;
+            button8.Text = "測試移動任務";
+            button8.UseVisualStyleBackColor = true;
             // 
             // FrmMain
             // 

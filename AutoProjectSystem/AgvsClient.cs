@@ -17,7 +17,7 @@ static class AgvsClient
         BaseAddress = new Uri("http://localhost:5216/"),
         Timeout = TimeSpan.FromSeconds(15)
     };
-
+     
     private static string _jwt; // 暫存 token
 
     // 對齊後端回傳格式：{ Success, token, Role, UserName, Permission }
