@@ -70,42 +70,6 @@ static class AgvsClient
             return new ApiResult<string>(false, null, "未知錯誤：" + ex.Message);
         }
     }
-    //public static async Task LoginAsync(string userName, string password)
-    //{
-    //    // 和前端一致：UserName / Password（注意大小寫）
-    //    var payload = new { UserName = userName, Password = password };
-    //    var json = JsonSerializer.Serialize(payload);
-    //    using var content = new StringContent(json, Encoding.UTF8, "application/json");
-    //    try
-    //    {
-    //        var resp = await Http.PostAsync("api/Auth/login", content);
-    //        var body = await resp.Content.ReadAsStringAsync();
-    //        if (!resp.IsSuccessStatusCode)
-    //            throw new HttpRequestException($"Login 失敗：{(int)resp.StatusCode} {resp.ReasonPhrase}\n{body}");
-
-    //        var login = JsonSerializer.Deserialize<LoginResponse>(
-    //            body,
-    //            new JsonSerializerOptions
-    //            {
-    //                PropertyNameCaseInsensitive = true,
-    //                NumberHandling = JsonNumberHandling.AllowReadingFromString
-    //            });
-
-    //        if (login is null || !login.Success || string.IsNullOrWhiteSpace(login.token))
-    //            throw new Exception("登入失敗或未取得 token：" + body);
-
-    //        _jwt = login.token;
-    //        Http.DefaultRequestHeaders.Authorization =
-    //            new AuthenticationHeaderValue("Bearer", _jwt);
-    //    }
-    //    catch (Exception)
-    //    {
-
-    //        throw;
-    //    }
-
-    //}
-
     public static async Task<string> PostMoveAsync(string agvName, string toTag, bool bypass = false)
     {
         if (string.IsNullOrEmpty(_jwt))

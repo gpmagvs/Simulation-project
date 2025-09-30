@@ -39,6 +39,7 @@
             button2 = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
+            button12 = new Button();
             label8 = new Label();
             label6 = new Label();
             label7 = new Label();
@@ -80,7 +81,6 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
-            button12 = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -140,7 +140,7 @@
             // 
             button1.BackColor = Color.FromArgb(255, 128, 0);
             button1.Location = new Point(539, 22);
-            button1.Margin = new Padding(2, 2, 2, 2);
+            button1.Margin = new Padding(2);
             button1.Name = "button1";
             button1.Size = new Size(73, 23);
             button1.TabIndex = 8;
@@ -196,11 +196,21 @@
             tabPage4.Controls.Add(DGV_Script);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Padding = new Padding(3, 3, 3, 3);
+            tabPage4.Padding = new Padding(3);
             tabPage4.Size = new Size(1248, 591);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button12
+            // 
+            button12.Location = new Point(568, 31);
+            button12.Name = "button12";
+            button12.Size = new Size(92, 29);
+            button12.TabIndex = 14;
+            button12.Text = "測試定位功能";
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += btn_MoveTask_test;
             // 
             // label8
             // 
@@ -321,7 +331,7 @@
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
             button7.Location = new Point(381, 19);
-            button7.Margin = new Padding(2, 2, 2, 2);
+            button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(92, 23);
             button7.TabIndex = 2;
@@ -406,7 +416,7 @@
             // tabPage5
             // 
             tabPage5.Location = new Point(4, 24);
-            tabPage5.Margin = new Padding(2, 2, 2, 2);
+            tabPage5.Margin = new Padding(2);
             tabPage5.Name = "tabPage5";
             tabPage5.Size = new Size(1248, 591);
             tabPage5.TabIndex = 4;
@@ -427,7 +437,7 @@
             tabPage1.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 136);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3, 3, 3, 3);
+            tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1248, 591);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "參數讀取";
@@ -464,7 +474,7 @@
             tabPage2.Controls.Add(button3);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 3, 3, 3);
+            tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1248, 591);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "車載設定";
@@ -606,15 +616,6 @@
             login_status.TabIndex = 11;
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
-            // 
-            // button12
-            // 
-            button12.Location = new Point(568, 31);
-            button12.Name = "button12";
-            button12.Size = new Size(92, 29);
-            button12.TabIndex = 14;
-            button12.Text = "測試定位功能";
-            button12.UseVisualStyleBackColor = true;
             // 
             // FrmMain
             // 

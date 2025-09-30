@@ -43,7 +43,7 @@ namespace AutoProjectSystem
         private readonly string[] _agvOptions = { "AGV_001", "AGV_002", "AGV_003", "AGV_004" };
         private readonly string[] _actionOptions = { "move", "load", "unload" };
 
-        private AGVSController APIController = new AGVSController();
+        private AGVSController APIController = new AGVSController("localhost:5216", new HttpClient());
         private HotRunController HotRunController = new HotRunController();
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -134,11 +134,8 @@ namespace AutoProjectSystem
 
         private void InitGrid()
         {
-            //DGV_Script.AutoGenerateColumns = false;
             DGV_Script.Columns.Clear();
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            //DGV_Script.AllowUserToAddRows = true;
-            //DGV_Script.AllowUserToDeleteRows = true;
             DGV_Script.EditMode = DataGridViewEditMode.EditOnEnter;
             DGV_Script.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             var colNo = new DataGridViewTextBoxColumn
@@ -156,8 +153,7 @@ namespace AutoProjectSystem
                 if (DGV_Script.Columns[e.ColumnIndex].Name == "colNo" && e.RowIndex >= 0)
                     e.Value = (e.RowIndex + 1).ToString();
             };
-            //colNo.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            //colNo.Frozen = true;
+
             DGV_Script.Columns.Add(new DataGridViewComboBoxColumn
             {
                 Name = "colAGVName",
@@ -370,6 +366,77 @@ namespace AutoProjectSystem
                 //   btnMove.Enabled = true;
             }
         }
+        private async void btn_MoveTask_test(object sender, EventArgs e)
+        {
+            // var baseUrl = txtServerUrl.Text.Trim();   
+            var baseUrl = APIController.AGVSUrl;
+            if (string.IsNullOrWhiteSpace(baseUrl))
+            {
+                MessageBox.Show("請先輸入伺服器位址（例如 http://127.0.0.1:5216）");
+                return;
+            }
+
+            var tasks = GetTasksFromGrid().OrderBy(t => t.No).ToList();
+            if (tasks.Count == 0)
+            {
+                MessageBox.Show("沒有任務可定位");
+                return;
+            }
+            try
+            {
+                var controller = new AGVSController(baseUrl);   // 使用新版建構子
+
+                
+                foreach (var t in tasks)
+                {
+                    if (string.IsNullOrWhiteSpace(t.AGVName) || SkipTag(t.Start))
+                    {
+                        
+                        continue;
+                    }
+                    // 新版（建議）：AGVSController.AGVLocateAsync(agvName, tagId)
+                    var resp = await controller.AGVLocateAsync(t.AGVName, t.Start);
+
+                    // 若你還在用舊版簽名（AGVLocate(string url, string agvname, string location)）：
+                    // var resp = await controller.AGVLocate(baseUrl, t.AGVName, t.Start);
+
+                    // 依需要可在此等待定位完成（查詢 AGV 狀態），範例先小停一下避免打太快
+                    await Task.Delay(300);
+                }
+              
+                MessageBox.Show("定位流程完成。");
+            }
+            catch (Exception ex)
+            {
+               
+                MessageBox.Show("定位失敗：" + ex.Message);
+            }
+            finally
+            {
+               // btn測試定位功能.Enabled = true;
+            }
+         
+        }
+
+
+
+
+        private List<TaskItemDto> GetTasksFromGrid()
+        {
+            if (DGV_Script.DataSource is BindingSource bs)
+                return bs.Cast<TaskItemDto>().ToList();
+
+            var list = new List<TaskItemDto>();
+            foreach (DataGridViewRow r in DGV_Script.Rows)
+            {
+                if (r.IsNewRow) continue;
+                if (r.DataBoundItem is TaskItemDto dto) list.Add(dto);
+            }
+            return list;
+        }
+
+        private static bool SkipTag(string? s)
+            => string.IsNullOrWhiteSpace(s) || s.Trim() == "-1";
 
         private async void btn_APItest_Click(object sender, EventArgs e)
         {
@@ -472,34 +539,13 @@ namespace AutoProjectSystem
             form.AcceptButton = ok; form.CancelButton = cancel;
             return form.ShowDialog() == DialogResult.OK ? tb.Text : null;
         }
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            _pollCts?.Cancel();
-            base.OnFormClosing(e);
-        }
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (listMapBox.SelectedItem is not MapDto selectedMap) return;
-
-            _selectedMap = selectedMap;
-            _selectedScript = null;
-
-            lstScripts.Items.Clear();
-            foreach (var script in _selectedMap.Scripts)
-                lstScripts.Items.Add(script);
-
-            lstScripts.DisplayMember = "ScriptName";
-            lstScripts.ValueMember = "ScriptID";
-
-            DGV_Script.DataSource = null;
-        }
 
         private void add_task(object sender, EventArgs e)
         {
             if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("請先選擇一個腳本"); return; }
             if (_tasksBS.List is BindingList<TaskItemDto> list)
             {
-                list.Add(new TaskItemDto {  Start = "0", Action = _actionOptions[0], End = "0" });
+                list.Add(new TaskItemDto { Start = "0", Action = _actionOptions[0], End = "0" });
             }
         }
 

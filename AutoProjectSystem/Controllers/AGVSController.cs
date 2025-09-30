@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -11,27 +12,39 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Net;
+using static System.Net.WebRequestMethods;
 
 namespace AutoProjectSystem.Controllers
 {
 
     class AGVSController
     {
-        new APIConfigs APIConfigs = new APIConfigs();
-        ///車子定位
-        public async Task<string> APIAGVLocate(string agvname , string location)
-        {
-            //string agvName = "AGV_001"; // 可依需求改為參數
-            string url = $"http://localhost:5036/api/VmsManager/AGVLocating?agv_name={agvname}";
 
-            // 建立 payload 物件
+        //new APIConfigs APIConfigs = new APIConfigs();
+        public readonly HttpClient _http;
+        public readonly string  AGVSUrl = "localhost:5216";
+        public readonly string   VMSUrl = "localhost:5036";
+
+
+        public AGVSController(string baseUrl, HttpClient? http = null)
+        {
+            AGVSUrl = baseUrl.TrimEnd('/');
+            _http = http ?? new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+        }
+        ///車子定位
+        public async Task<string> AGVLocateAsync(string agvName, string tagId)
+        {
+
+            //string  url = $"{_baseUrl}/api/VmsManager/AGVLocating?agv_name={WebUtility.UrlEncode(agvName)}";
+            string url = "http://localhost:5036/api/VmsManager/AGVLocating?agv_name={Uri.EscapeDataString{$agvName}}";
             var payload = new
             {
-                Name = agvname,
-                currentID = location,
+                Name = agvName,
+                currentID = tagId,
                 x = -0.65,
                 y = -4.52,
-                theata = 180,
+                theta = 180,         // ← 原程式拼成 theata
                 isAMCAGV = false,
                 locateWith = "tag"
             };
@@ -53,21 +66,20 @@ namespace AutoProjectSystem.Controllers
             }
         }
 
-        public async Task<string> AGVLocate(string url, string agvname, string location)
+        public async Task<string> APIAGVLocate(  string agvname, string location)
         {
             //string agvName = "AGV_001"; // 可依需求改為參數
-            string urlpath = $"http://{url}/api/VmsManager/AGVLocating?agv_name={agvname}";
-
+            string url = $"http://localhost:5036/api/VmsManager/AGVLocating?agv_name={Uri.EscapeDataString(agvname)}";
             // 建立 payload 物件
             var payload = new
             {
                 Name = agvname,
                 currentID = location,
-                x = -0.65,
-                y = -4.52,
-                theata = 180,
                 isAMCAGV = false,
-                locateWith = "tag"
+                locateWith = "tag",
+                theata = 0,
+                x = -0.65,
+                y = -4.52
             };
             string json = System.Text.Json.JsonSerializer.Serialize(payload);
 
@@ -75,6 +87,7 @@ namespace AutoProjectSystem.Controllers
             {
                 using (HttpClient client = new HttpClient())
                 {
+                    // <-- 指定 media type 為 application/json
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
                     HttpResponseMessage response = await client.PostAsync(url, content);
                     response.EnsureSuccessStatusCode();
@@ -85,6 +98,7 @@ namespace AutoProjectSystem.Controllers
             {
                 return $"發生錯誤: {ex.Message}";
             }
+
         }
         //API功能測試
         public async Task<string> APITestAsync()
