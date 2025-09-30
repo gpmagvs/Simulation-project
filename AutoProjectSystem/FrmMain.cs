@@ -621,11 +621,34 @@ namespace AutoProjectSystem
         }
         private void btnDeleteMap_Click(object sender, EventArgs e)
         {
-            if (listMapBox.SelectedItem is MapDto m)
+            if (!(listMapBox.SelectedItem is MapDto m))
+            {
+                MessageBox.Show("請先選取要刪除的地圖。", "無選取項目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 嘗試取得 Map 名稱屬性（容錯：若沒有 MapName 屬性就用 ToString()）
+            var prop = m.GetType().GetProperty("MapName") ?? m.GetType().GetProperty("mapName");
+            var mapName = prop != null ? (prop.GetValue(m)?.ToString() ?? "") : m.ToString();
+
+            var dr = MessageBox.Show(
+                $"確定要刪除地圖 \"{mapName}\" 嗎？\n（此動作無法復原）",
+                "確認刪除",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (dr == DialogResult.Yes)
             {
                 _data.Maps.Remove(m);
                 _mapBS.ResetBindings(false);
             }
+            // 否則什麼都不做（使用者選 No）
+            //if (listMapBox.SelectedItem is MapDto m)
+            //{
+            //    _data.Maps.Remove(m);
+            //    _mapBS.ResetBindings(false);
+            //}
         }
 
         private void btnRenameMap_Click(object sender, EventArgs e)
@@ -652,11 +675,42 @@ namespace AutoProjectSystem
 
         private void btnDeleteScript_Click(object sender, EventArgs e)
         {
-            if (listMapBox.SelectedItem is MapDto m && lstScripts.SelectedItem is ScriptDto s)
+            if (!(listMapBox.SelectedItem is MapDto m))
+            {
+                MessageBox.Show("請先選取要操作的地圖。", "無選取項目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 檢查是否有選 script
+            if (!(lstScripts.SelectedItem is ScriptDto s))
+            {
+                MessageBox.Show("請先選取要刪除的腳本。", "無選取項目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // 嘗試取得腳本名稱（容錯：ScriptName 或 scriptName）
+            var prop = s.GetType().GetProperty("ScriptName") ?? s.GetType().GetProperty("scriptName");
+            var scriptName = prop != null ? (prop.GetValue(s)?.ToString() ?? "") : s.ToString();
+
+            var dr = MessageBox.Show(
+                $"確定要刪除腳本 \"{scriptName}\" 嗎？\n（此動作無法復原）",
+                "確認刪除腳本",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+            if (dr == DialogResult.Yes)
             {
                 m.Scripts.Remove(s);
                 _scriptBS.ResetBindings(false);
+
+                // 刪除後調整選取（若還有腳本則選第一筆，否則清除選取）
+                if (m.Scripts.Count > 0)
+                    lstScripts.SelectedIndex = 0;
+                else
+                    lstScripts.SelectedIndex = -1;
             }
+
         }
 
         private void btnRenameScript_Click(object sender, EventArgs e)
