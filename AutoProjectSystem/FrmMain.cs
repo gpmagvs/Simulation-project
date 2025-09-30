@@ -437,9 +437,36 @@ namespace AutoProjectSystem
             }
         }
 
-           
 
-        
+        private async void move_task_click(object sender, EventArgs e)
+        {
+            var dgv = this.DGV_Script; // 改成你實際的 control 名
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                string agvName = GetCellStringSafe(row, "AGVName"); // 可以用欄位名稱或 header text
+                string End = GetCellStringSafe(row, "End");
+
+                if (string.IsNullOrEmpty(agvName) || string.IsNullOrEmpty(End))
+                {
+                    continue;
+                }
+                try
+                {
+                    //var res = await APIController.PostMoveAsync(agvName, End); // 你已有的 API helper
+                    await AgvsClient.PostMoveAsync(agvName, End, false);
+                }
+                catch (Exception ex)
+                {
+                    // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
+                }
+            }
+            //await AgvsClient.PostMoveAsync("AGV_001", "3", false);
+            //richTextBox_content.Text = result;
+
+        }
+
 
 
 
@@ -520,7 +547,7 @@ namespace AutoProjectSystem
         }
         //地圖加上腳本
         //private MultiMapRoot _scriptConfig;
-        private MapDto _selectedMap;
+        private MapDto _selectedMap; 
         private ScriptDto _selectedScript;
 
         private void btnSaveJson_Click(object sender, EventArgs e)

@@ -7,8 +7,11 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Runtime.InteropServices;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -99,6 +102,64 @@ namespace AutoProjectSystem.Controllers
                 return $"發生錯誤: {ex.Message}";
             }
 
+        }
+        public static async Task<string> PostMoveAsync(string agvName, string toTag, bool bypass = false)
+        {
+            // 確認已登入（如果 LoginAsync 是非同步，這裡要 await）
+
+                try
+                {
+                    await AgvsClient.LoginAsync("dev", "12345678"); // 確保等待登入完成
+                }
+                catch (Exception)
+                {
+                    return "發生錯誤: 尚未登入，請先呼叫 LoginAsync。";
+                }
+
+            var payload = new
+            {
+                Action = 0,
+                Carrier_ID = "-1",
+                ChangeAGVMiddleStationTag = 0,
+                DesignatedAGVName = agvName,
+                From_Slot = "-1",
+                From_Station = "-1",
+                Priority = 50,
+                TaskName = $"Move_{DateTime.Now:yyyyMMdd_HHmmssfff}",
+                To_Station = toTag,
+                To_Slot = "-1",
+                TransferToDestineAGVName = "",
+                bypass_eq_status_check = bypass,
+                need_change_agv = false
+            };
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions { PropertyNamingPolicy = null });
+
+            try
+            {
+                // 改成完整 URL（跟 APIAGVLocate 類似）
+                string url = "http://localhost:5216/api/Task/Move";
+
+                using (var client = new HttpClient())
+                using (var content = new StringContent(json, Encoding.UTF8, "application/json"))
+                {
+                    //// 如果有 jwt，就放 Authorization header
+                    //if (!string.IsNullOrEmpty(_jwt))
+                    //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _jwt);
+
+                    HttpResponseMessage resp = await client.PostAsync(url, content);
+                    var body = await resp.Content.ReadAsStringAsync();
+
+                    if (!resp.IsSuccessStatusCode)
+                        return $"發生錯誤: HTTP {(int)resp.StatusCode} {resp.ReasonPhrase}\n{body}";
+
+                    return body;
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"發生錯誤: {ex.Message}";
+            }
         }
         //API功能測試
         public async Task<string> APITestAsync()

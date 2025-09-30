@@ -73,7 +73,16 @@ static class AgvsClient
     public static async Task<string> PostMoveAsync(string agvName, string toTag, bool bypass = false)
     {
         if (string.IsNullOrEmpty(_jwt))
-            throw new InvalidOperationException("尚未登入，請先呼叫 LoginAsync。");
+            try
+            {
+                LoginAsync("dev", "12345678");
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("尚未登入，請先呼叫 LoginAsync。");
+                //throw;
+            }
+           
 
         var payload = new
         {

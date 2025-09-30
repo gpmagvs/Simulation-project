@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -39,6 +39,7 @@
             button2 = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
+            button8 = new Button();
             button12 = new Button();
             label8 = new Label();
             label6 = new Label();
@@ -81,7 +82,6 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
-            button8 = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -203,6 +203,16 @@
             tabPage4.TabIndex = 3;
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button8
+            // 
+            button8.Location = new Point(763, 72);
+            button8.Name = "button8";
+            button8.Size = new Size(92, 23);
+            button8.TabIndex = 15;
+            button8.Text = "測試移動任務";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += move_task_click;
             // 
             // button12
             // 
@@ -379,8 +389,8 @@
             DGV_Script.Location = new Point(649, 105);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -618,15 +628,6 @@
             login_status.TabIndex = 11;
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            button8.Location = new Point(763, 72);
-            button8.Name = "button8";
-            button8.Size = new Size(92, 23);
-            button8.TabIndex = 15;
-            button8.Text = "測試移動任務";
-            button8.UseVisualStyleBackColor = true;
             // 
             // FrmMain
             // 
