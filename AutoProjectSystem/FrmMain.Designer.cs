@@ -206,23 +206,21 @@
             // 
             // button8
             // 
-            button8.Location = new Point(763, 72);
+            button8.Location = new Point(778, 72);
             button8.Name = "button8";
             button8.Size = new Size(92, 23);
             button8.TabIndex = 15;
             button8.Text = "測試移動任務";
             button8.UseVisualStyleBackColor = true;
-            button8.Click += move_task_click;
             // 
             // button12
             // 
-            button12.Location = new Point(649, 72);
+            button12.Location = new Point(665, 72);
             button12.Name = "button12";
             button12.Size = new Size(92, 23);
             button12.TabIndex = 14;
             button12.Text = "測試定位功能";
             button12.UseVisualStyleBackColor = true;
-            button12.Click += btn_Scripts_AGV_Locate;
             // 
             // label8
             // 
@@ -349,6 +347,7 @@
             button7.TabIndex = 2;
             button7.Text = "執行腳本";
             button7.UseVisualStyleBackColor = false;
+            button7.Click += btn_Scripts_Click;
             // 
             // btn_removeTask
             // 

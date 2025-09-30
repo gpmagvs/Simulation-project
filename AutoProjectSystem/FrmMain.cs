@@ -412,7 +412,14 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
-        private async void btn_Scripts_AGV_Locate(object sender, EventArgs e)
+        private  void btn_Scripts_Click(object sender, EventArgs e)
+        {
+            Locate_task_AGV();
+            Thread.Sleep(3000);
+            move_task_click();
+
+        }
+        private async void Locate_task_AGV()
         {
             var dgv = this.DGV_Script; // 改成你實際的 control 名
             foreach (DataGridViewRow row in dgv.Rows)
@@ -438,7 +445,7 @@ namespace AutoProjectSystem
         }
 
 
-        private async void move_task_click(object sender, EventArgs e)
+        private async void move_task_click()
         {
             var dgv = this.DGV_Script; // 改成你實際的 control 名
             foreach (DataGridViewRow row in dgv.Rows)
@@ -454,7 +461,6 @@ namespace AutoProjectSystem
                 }
                 try
                 {
-                    //var res = await APIController.PostMoveAsync(agvName, End); // 你已有的 API helper
                     await AgvsClient.PostMoveAsync(agvName, End, false);
                 }
                 catch (Exception ex)
@@ -462,9 +468,6 @@ namespace AutoProjectSystem
                     // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
                 }
             }
-            //await AgvsClient.PostMoveAsync("AGV_001", "3", false);
-            //richTextBox_content.Text = result;
-
         }
 
 
