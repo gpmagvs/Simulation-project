@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -70,8 +70,8 @@
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\TaskScript.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AutoProjectSystem\\TaskScript.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\taskscript.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\taskscript.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -86,15 +86,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "FrmMain.cs [\u8A2D\u8A08]",
+              "Title": "FrmMain.cs [Design]",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.cs",
-              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs [\u8A2D\u8A08]",
-              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs [\u8A2D\u8A08]",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs [Design]",
+              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-30T05:49:26.072Z",
               "IsPinned": true,
-              "EditorCaption": " [\u8A2D\u8A08]"
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
@@ -104,7 +104,7 @@
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs",
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs",
-              "ViewState": "AgIAAGICAAAAAAAAAAAowHQCAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAIMCAAAAAAAAAAAuwJsCAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-23T08:46:37.093Z",
               "IsPinned": true,
@@ -121,8 +121,7 @@
               "ViewState": "AgIAAEkAAAAAAAAAAAAowFMAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T06:08:26.483Z",
-              "IsPinned": true,
-              "EditorCaption": ""
+              "IsPinned": true
             },
             {
               "$type": "Document",
@@ -134,8 +133,7 @@
               "RelativeToolTip": "AutoProjectSystem\\AgvsClient.cs",
               "ViewState": "AgIAAEUAAAAAAAAAAAAowEgAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T03:31:10.774Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-25T03:31:10.774Z"
             },
             {
               "$type": "Document",
@@ -147,8 +145,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T08:28:19.487Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-11T08:28:19.487Z"
             },
             {
               "$type": "Document",
@@ -160,8 +157,7 @@
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.Designer.cs",
               "ViewState": "AgIAAMMAAAAAAAAAAAAcwNMAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-10T03:43:50.417Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-10T03:43:50.417Z"
             },
             {
               "$type": "Document",
@@ -173,8 +169,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T05:54:37.015Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-20T05:54:37.015Z"
             },
             {
               "$type": "Document",
@@ -186,8 +181,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\APIConfigs.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-24T07:40:01.516Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-24T07:40:01.516Z"
             },
             {
               "$type": "Document",
@@ -199,8 +193,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\HotRunController.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAhwC4AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-27T09:09:31.609Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-27T09:09:31.609Z"
             },
             {
               "$type": "Document",
@@ -212,8 +205,7 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\TaskApiClient.cs",
               "ViewState": "AgIAAEAAAAAAAAAAAAAQwEAAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T05:49:52.857Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-20T05:49:52.857Z"
             },
             {
               "$type": "Document",
@@ -225,8 +217,7 @@
               "RelativeToolTip": "AutoProjectSystem\\MoveTaskRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T03:52:57.76Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-20T03:52:57.76Z"
             },
             {
               "$type": "Document",
@@ -238,8 +229,7 @@
               "RelativeToolTip": "AutoProjectSystem\\MultiMapScriptConfig.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAuwBIAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-22T06:54:55.943Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-22T06:54:55.943Z"
             },
             {
               "$type": "Document",
@@ -251,8 +241,7 @@
               "RelativeToolTip": "AutoProjectSystem\\ScriptsExecutor.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T05:34:56.669Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-09-25T05:34:56.669Z"
             },
             {
               "$type": "Document",
@@ -300,8 +289,7 @@
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.resx",
               "ViewState": "AgIAAAAAAAAAAAAAAAAmwIkAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2025-08-21T03:56:03.574Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-21T03:56:03.574Z"
             },
             {
               "$type": "Document",

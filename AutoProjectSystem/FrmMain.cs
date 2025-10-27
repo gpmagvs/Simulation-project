@@ -20,6 +20,7 @@ using TaskItemDto = AGVSystem.Config.TaskItemDto;
 using MultiMapRoot = AGVSystem.Config.MultiMapRoot;
 using System.Text.Json.Serialization;
 using System.Text;
+using static AutoProjectSystem.MapScripts;
 //using static AutoProjectSystem.MapScripts;
 
 namespace AutoProjectSystem
@@ -412,7 +413,7 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
-        private  void btn_Scripts_Click(object sender, EventArgs e)
+        private void btn_Scripts_Click(object sender, EventArgs e)
         {
             Locate_task_AGV();
             Thread.Sleep(3000);
@@ -439,7 +440,7 @@ namespace AutoProjectSystem
                 }
                 catch (Exception ex)
                 {
-                   // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
+                    // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
                 }
             }
         }
@@ -550,7 +551,7 @@ namespace AutoProjectSystem
         }
         //地圖加上腳本
         //private MultiMapRoot _scriptConfig;
-        private MapDto _selectedMap; 
+        private MapDto _selectedMap;
         private ScriptDto _selectedScript;
 
         private void btnSaveJson_Click(object sender, EventArgs e)
@@ -607,7 +608,17 @@ namespace AutoProjectSystem
             if (DGV_Script.CurrentRow?.DataBoundItem is TaskItemDto item &&
                 _tasksBS.List is BindingList<TaskItemDto> list)
             {
-                list.Remove(item);
+                var dr = MessageBox.Show(
+                $"確定要刪除任務 \" 嗎？\n（此動作無法復原）",
+                "確認刪除",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2);
+
+                if (dr == DialogResult.Yes)
+                {
+                    list.Remove(item);
+                }
             }
         }
         private void btnAddMap_Click(object sender, EventArgs e)
