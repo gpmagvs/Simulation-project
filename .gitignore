@@ -45,3 +45,18 @@ logs/
 
 # Optional: ignore local secrets (若有)
 appsettings.Development.json
+
+# VS personal settings
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+
+# Backup and layout jsons
+.vs/**/DocumentLayout*.json
+.vs/**/backup.json
