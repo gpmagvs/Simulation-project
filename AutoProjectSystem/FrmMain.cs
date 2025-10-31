@@ -81,6 +81,7 @@ namespace AutoProjectSystem
         private void btn_SQLstatus_Click(object sender, EventArgs e)
         {
             CheckDatabaseConnection();
+            ///確認SQL連線狀態
         }
         private void CheckDatabaseConnection()
         {
