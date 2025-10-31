@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using AutoProjectSystem.Controllers;
+using System.Data;
+using Microsoft.VisualBasic.Logging;
 
 namespace AutoProjectSystem
 {
@@ -30,7 +32,16 @@ namespace AutoProjectSystem
             // 簡單測試可否連線
             EnsureCanConnect();
         }
-
+        public class TaskRow
+        {
+            public string TaskName { get; set; }
+            public int Action { get; set; }
+            public DateTime RecieveTime { get; set; }
+            public DateTime? StartTime { get; set; }
+            public DateTime? FinishTime { get; set; }
+            public int State { get; set; }
+            public string DispatcherName { get; set; }
+        }
         /// <summary>
         /// 失敗會丟例外，成功則無事。
         /// </summary>
@@ -62,7 +73,86 @@ namespace AutoProjectSystem
 
             // 範例：之後可以放資料表對應
             // public DbSet<TaskEntity> Tasks { get; set; }
+
         }
+        public static async Task<List<TaskRow>> QueryTasksAsync(int? top = null)
+        {
+                        var sql = $@"
+            SELECT {(top.HasValue ? "TOP (@top)" : "")}
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State, DispatcherName
+            FROM dbo.Tasks
+            ORDER BY RecieveTime DESC;";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
+
+            var list = new List<TaskRow>();
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+            {
+                list.Add(new TaskRow
+                {
+                    TaskName = rd["TaskName"] as string,
+                    Action = Convert.ToInt32(rd["Action"]),
+                    RecieveTime = Convert.ToDateTime(rd["RecieveTime"]),
+                    StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
+                    FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
+                    State = Convert.ToInt32(rd["State"]),
+                    DispatcherName = rd["DispatcherName"] as string
+                });
+            }
+            return list;
+        }
+        /// <summary>
+        /// 查「超過指定時間仍未完成」的任務（預設 1 分鐘）。
+        /// 完成判定：FinishTime 為 NULL 或 0001-01-01 視為未完成。
+        /// </summary>
+        public static async Task<List<TaskRow>> QueryOvertimeUnfinishedAsync(TimeSpan? threshold = null)
+        {
+            threshold ??= TimeSpan.FromMinutes(1);
+
+            // 以 FinishTime NULL 或 0001-01-01 當作未完成；必要時可再加上 State 判定。
+                            var sql = @"
+                SELECT TaskName, Action, RecieveTime, StartTime, FinishTime, State, Dispatcher
+                FROM dbo.Tasks
+                WHERE (FinishTime IS NULL OR FinishTime = '0001-01-01T00:00:00')
+                  AND DATEADD(SECOND, @sec, RecieveTime) < GETDATE()
+                ORDER BY RecieveTime DESC;";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.Add(new SqlParameter("@sec", SqlDbType.Int) { Value = (int)threshold.Value.TotalSeconds });
+
+            var list = new List<TaskRow>();
+            using var rd = await cmd.ExecuteReaderAsync();
+            while (await rd.ReadAsync())
+            {
+                list.Add(new TaskRow
+                {
+                    TaskName = rd["TaskName"] as string,
+                    Action = Convert.ToInt32(rd["Action"]),
+                    RecieveTime = Convert.ToDateTime(rd["RecieveTime"]),
+                    StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
+                    FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
+                    State = Convert.ToInt32(rd["State"]),
+                    DispatcherName = rd["DispatcherName"] as string
+                });
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 依需求對超時未完成任務做標記（示範：寫入 Log；若有欄位可更新可在這裡UPDATE）。
+        /// </summary>
+        //public static async Task MarkOvertimeUnfinishedAsync(TimeSpan? threshold = null)
+        //{
+        //    var overtime = await QueryOvertimeUnfinishedAsync(threshold);
+        //    var log = NLog.LogManager.GetCurrentClassLogger();
+        //    foreach (var t in overtime)
+        //        log.Warn($"[OVERTIME] {t.TaskName} | RecieveTime={t.RecieveTime:yyyy-MM-dd HH:mm:ss}");
+        //    // 若你有 Tasks 表的「Remark/IsOvertime」欄位，可在這裡用 UPDATE 對它們加標記。
+        //}
     }
 
 }

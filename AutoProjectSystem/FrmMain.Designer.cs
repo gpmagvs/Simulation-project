@@ -63,6 +63,7 @@
             Action = new DataGridViewTextBoxColumn();
             End = new DataGridViewTextBoxColumn();
             tabPage5 = new TabPage();
+            DGV_Tasks = new DataGridView();
             tabPage1 = new TabPage();
             label2 = new Label();
             label1 = new Label();
@@ -83,9 +84,12 @@
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
             btn_SQLstatus = new Button();
+            btn_taskquery = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
+            tabPage5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DGV_Tasks).BeginInit();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage3.SuspendLayout();
@@ -427,6 +431,8 @@
             // 
             // tabPage5
             // 
+            tabPage5.Controls.Add(btn_taskquery);
+            tabPage5.Controls.Add(DGV_Tasks);
             tabPage5.Location = new Point(4, 24);
             tabPage5.Margin = new Padding(2);
             tabPage5.Name = "tabPage5";
@@ -434,6 +440,14 @@
             tabPage5.TabIndex = 4;
             tabPage5.Text = "派車系統狀態";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // DGV_Tasks
+            // 
+            DGV_Tasks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DGV_Tasks.Location = new Point(24, 57);
+            DGV_Tasks.Name = "DGV_Tasks";
+            DGV_Tasks.Size = new Size(996, 338);
+            DGV_Tasks.TabIndex = 0;
             // 
             // tabPage1
             // 
@@ -638,6 +652,16 @@
             btn_SQLstatus.Text = "資料庫登入";
             btn_SQLstatus.UseVisualStyleBackColor = true;
             // 
+            // btn_taskquery
+            // 
+            btn_taskquery.Location = new Point(24, 14);
+            btn_taskquery.Name = "btn_taskquery";
+            btn_taskquery.Size = new Size(92, 23);
+            btn_taskquery.TabIndex = 1;
+            btn_taskquery.Text = "查詢";
+            btn_taskquery.UseVisualStyleBackColor = true;
+            btn_taskquery.Click += btnLoadTasks_Click;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -653,6 +677,8 @@
             tabPage4.ResumeLayout(false);
             tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).EndInit();
+            tabPage5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DGV_Tasks).EndInit();
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
@@ -717,5 +743,7 @@
         private Label label6;
         private Button button12;
         private Button btn_SQLstatus;
+        private DataGridView DGV_Tasks;
+        private Button btn_taskquery;
     }
 }

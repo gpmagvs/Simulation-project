@@ -113,6 +113,19 @@ namespace AutoProjectSystem
                     "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private async void btnLoadTasks_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var tasks = await SQLDatabase.QueryTasksAsync();
+                DGV_Tasks.DataSource = tasks;   // 自動綁定欄位
+                DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells; // 自動調整寬度
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("查詢失敗：" + ex.Message);
+            }
+        }
         private void establishSQL()
         {
             try
