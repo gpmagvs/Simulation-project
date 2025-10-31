@@ -21,6 +21,7 @@ using MultiMapRoot = AGVSystem.Config.MultiMapRoot;
 using System.Text.Json.Serialization;
 using System.Text;
 using static AutoProjectSystem.MapScripts;
+using System.Windows.Forms.Design;
 //using static AutoProjectSystem.MapScripts;
 
 namespace AutoProjectSystem
@@ -30,6 +31,7 @@ namespace AutoProjectSystem
         public FrmMain()
         {
             InitializeComponent();
+            
         }
         private System.Windows.Forms.Timer Timer;
         private bool _isChecking;
@@ -52,6 +54,7 @@ namespace AutoProjectSystem
             InitGrid();          // 設定 DGV 欄位
             WireEvents();        // 綁定選取事件
             LoadData();          // 載入 JSON 並完成資料繫結
+           
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
 
@@ -71,8 +74,22 @@ namespace AutoProjectSystem
                 _pollCts = new CancellationTokenSource();
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
+            
         }
+        private void establishSQL()
+        {
+            try
+            {
+                SQLDatabase.Initialize();
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+            ApplicationConfiguration.Initialize();
+            Application.Run(new FrmMain());
+        }
         public class MultiMapRoot
         {
             [JsonPropertyName("version")]

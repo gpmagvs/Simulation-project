@@ -3,12 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\sqldatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\sqldatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\frmmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\sqlconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\sqlconfig.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\controllers\\agvscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -19,16 +35,8 @@
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\agvsclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\frmmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\frmmain.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\controllers\\taskscriptscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\controllers\\taskscriptscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|solutionrelative:autoprojectsystem\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{25FB9693-D3D3-4226-8F21-AA0366F9724D}|AutoProjectSystem\\AutoProjectSystem.csproj|c:\\users\\user\\downloads\\repo\\umtc\\autoprojectsystem\\autoprojectsystem\\controllers\\taskapiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -81,30 +89,30 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "FrmMain.cs [Design]",
+              "DocumentIndex": 2,
+              "Title": "FrmMain.cs [\u8A2D\u8A08]",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.cs",
-              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs [Design]",
-              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs [Design]",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs [\u8A2D\u8A08]*",
+              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs [\u8A2D\u8A08]*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-09-30T05:49:26.072Z",
               "IsPinned": true,
-              "EditorCaption": " [Design]"
+              "EditorCaption": " [\u8A2D\u8A08]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "FrmMain.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.cs",
-              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs",
-              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs",
-              "ViewState": "AgIAAIMCAAAAAAAAAAAuwJsCAAA4AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.cs*",
+              "RelativeToolTip": "AutoProjectSystem\\FrmMain.cs*",
+              "ViewState": "AgIAADIAAAAAAAAAAAApwEwAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-23T08:46:37.093Z",
               "IsPinned": true,
@@ -112,7 +120,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "AGVSController.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\AGVSController.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\Controllers\\AGVSController.cs",
@@ -121,11 +129,38 @@
               "ViewState": "AgIAAEkAAAAAAAAAAAAowFMAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T06:08:26.483Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "SQLDatabase.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\SQLDatabase.cs",
+              "RelativeDocumentMoniker": "AutoProjectSystem\\SQLDatabase.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\SQLDatabase.cs",
+              "RelativeToolTip": "AutoProjectSystem\\SQLDatabase.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAlwB8AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-31T05:25:23.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SQLConfig.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\SQLConfig.cs",
+              "RelativeDocumentMoniker": "AutoProjectSystem\\SQLConfig.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\SQLConfig.cs",
+              "RelativeToolTip": "AutoProjectSystem\\SQLConfig.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-31T05:22:34.297Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "AgvsClient.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\AgvsClient.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\AgvsClient.cs",
@@ -133,19 +168,34 @@
               "RelativeToolTip": "AutoProjectSystem\\AgvsClient.cs",
               "ViewState": "AgIAAEUAAAAAAAAAAAAowEgAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T03:31:10.774Z"
+              "WhenOpened": "2025-09-25T03:31:10.774Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Program.cs",
+              "RelativeDocumentMoniker": "AutoProjectSystem\\Program.cs",
+              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Program.cs*",
+              "RelativeToolTip": "AutoProjectSystem\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T05:54:37.015Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "TaskScriptsController.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\TaskScriptsController.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAA6AAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAIBJwA0AAAA6AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T08:28:19.487Z"
+              "WhenOpened": "2025-07-11T08:28:19.487Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -155,25 +205,14 @@
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.Designer.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.Designer.cs",
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.Designer.cs",
-              "ViewState": "AgIAAMMAAAAAAAAAAAAcwNMAAAAiAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAnwBwAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-10T03:43:50.417Z"
+              "WhenOpened": "2025-07-10T03:43:50.417Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Program.cs",
-              "RelativeDocumentMoniker": "AutoProjectSystem\\Program.cs",
-              "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Program.cs",
-              "RelativeToolTip": "AutoProjectSystem\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T05:54:37.015Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "APIConfigs.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\APIConfigs.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\Controllers\\APIConfigs.cs",
@@ -181,11 +220,12 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\APIConfigs.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-24T07:40:01.516Z"
+              "WhenOpened": "2025-06-24T07:40:01.516Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "HotRunController.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\HotRunController.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\Controllers\\HotRunController.cs",
@@ -193,23 +233,25 @@
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\HotRunController.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAhwC4AAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-27T09:09:31.609Z"
+              "WhenOpened": "2025-06-27T09:09:31.609Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "TaskApiClient.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\TaskApiClient.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\Controllers\\TaskApiClient.cs",
               "ToolTip": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\Controllers\\TaskApiClient.cs",
               "RelativeToolTip": "AutoProjectSystem\\Controllers\\TaskApiClient.cs",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAQwEAAAAApAAAAAAAAAA==",
+              "ViewState": "AgIAAEAAAAAAAAAAAAA0wEAAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T05:49:52.857Z"
+              "WhenOpened": "2025-08-20T05:49:52.857Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "MoveTaskRequest.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\MoveTaskRequest.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\MoveTaskRequest.cs",
@@ -217,11 +259,12 @@
               "RelativeToolTip": "AutoProjectSystem\\MoveTaskRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T03:52:57.76Z"
+              "WhenOpened": "2025-08-20T03:52:57.76Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "MultiMapScriptConfig.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\MultiMapScriptConfig.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\MultiMapScriptConfig.cs",
@@ -229,11 +272,12 @@
               "RelativeToolTip": "AutoProjectSystem\\MultiMapScriptConfig.cs",
               "ViewState": "AgIAABAAAAAAAAAAAAAuwBIAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-22T06:54:55.943Z"
+              "WhenOpened": "2025-08-22T06:54:55.943Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "ScriptsExecutor.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\ScriptsExecutor.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\ScriptsExecutor.cs",
@@ -241,11 +285,12 @@
               "RelativeToolTip": "AutoProjectSystem\\ScriptsExecutor.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T05:34:56.669Z"
+              "WhenOpened": "2025-09-25T05:34:56.669Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "MapScripts.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\MapScripts.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\MapScripts.cs",
@@ -253,11 +298,12 @@
               "RelativeToolTip": "AutoProjectSystem\\MapScripts.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAuwBUAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-30T08:50:15.905Z"
+              "WhenOpened": "2025-08-30T08:50:15.905Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "HotRunScript.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\HotRunScript.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\HotRunScript.cs",
@@ -265,11 +311,12 @@
               "RelativeToolTip": "AutoProjectSystem\\HotRunScript.cs",
               "ViewState": "AgIAAFgAAAAAAAAAAAAkwIsAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-22T05:24:20.149Z"
+              "WhenOpened": "2025-08-22T05:24:20.149Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "TaskScript.cs",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\TaskScript.cs",
               "RelativeDocumentMoniker": "AutoProjectSystem\\TaskScript.cs",
@@ -277,11 +324,12 @@
               "RelativeToolTip": "AutoProjectSystem\\TaskScript.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-25T03:38:25.033Z"
+              "WhenOpened": "2025-09-25T03:38:25.033Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "FrmMain.resx",
               "DocumentMoniker": "C:\\Users\\user\\Downloads\\repo\\UMTC\\AutoProjectSystem\\AutoProjectSystem\\FrmMain.resx",
               "RelativeDocumentMoniker": "AutoProjectSystem\\FrmMain.resx",
@@ -289,11 +337,12 @@
               "RelativeToolTip": "AutoProjectSystem\\FrmMain.resx",
               "ViewState": "AgIAAAAAAAAAAAAAAAAmwIkAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2025-08-21T03:56:03.574Z"
+              "WhenOpened": "2025-08-21T03:56:03.574Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "Microsoft.Common.CurrentVersion.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
@@ -301,7 +350,8 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
               "ViewState": "AgIAANQUAAAAAAAAAAAmwPMUAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-08-21T05:46:58.029Z"
+              "WhenOpened": "2025-08-21T05:46:58.029Z",
+              "EditorCaption": ""
             }
           ]
         }
