@@ -22,6 +22,7 @@ using System.Text.Json.Serialization;
 using System.Text;
 using static AutoProjectSystem.MapScripts;
 using System.Windows.Forms.Design;
+using System.Data.SqlClient;
 //using static AutoProjectSystem.MapScripts;
 
 namespace AutoProjectSystem
@@ -54,7 +55,7 @@ namespace AutoProjectSystem
             InitGrid();          // 設定 DGV 欄位
             WireEvents();        // 綁定選取事件
             LoadData();          // 載入 JSON 並完成資料繫結
-           
+            CheckDatabaseConnection();
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
 
@@ -75,6 +76,41 @@ namespace AutoProjectSystem
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
             
+        }
+
+        private void btn_SQLstatus_Click(object sender, EventArgs e)
+        {
+            CheckDatabaseConnection();
+        }
+        private void CheckDatabaseConnection()
+        {
+            try
+            {
+                using (var conn = new SqlConnection(SQLConfig.DBConnection))
+                {
+                    conn.Open();
+                    using (var cmd = new SqlCommand("SELECT 1", conn))
+                    {
+                        _ = cmd.ExecuteScalar();
+                    }
+                }
+
+                // 成功：變綠色
+                btn_SQLstatus.BackColor = System.Drawing.Color.LimeGreen;
+                btn_SQLstatus.ForeColor = System.Drawing.Color.White;
+                btn_SQLstatus.Text = "DB Connected ";
+            }
+            catch (Exception ex)
+            {
+                // 
+                btn_SQLstatus.BackColor = System.Drawing.Color.Red;
+                btn_SQLstatus.ForeColor = System.Drawing.Color.White;
+                btn_SQLstatus.Text = "DB Failed ";
+
+                // 可選：顯示詳細錯誤
+                MessageBox.Show($"資料庫連線失敗：{ex.Message}",
+                    "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
         private void establishSQL()
         {

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -82,6 +82,7 @@
             DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
+            btn_SQLstatus = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -388,8 +389,8 @@
             DGV_Script.Location = new Point(649, 105);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -628,11 +629,21 @@
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
             // 
+            // btn_SQLstatus
+            // 
+            btn_SQLstatus.Location = new Point(154, 10);
+            btn_SQLstatus.Name = "btn_SQLstatus";
+            btn_SQLstatus.Size = new Size(112, 30);
+            btn_SQLstatus.TabIndex = 12;
+            btn_SQLstatus.Text = "資料庫登入";
+            btn_SQLstatus.UseVisualStyleBackColor = true;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1299, 675);
+            Controls.Add(btn_SQLstatus);
             Controls.Add(login_status);
             Controls.Add(tabControl1);
             Name = "FrmMain";
@@ -705,5 +716,6 @@
         private Label label8;
         private Label label6;
         private Button button12;
+        private Button btn_SQLstatus;
     }
 }
