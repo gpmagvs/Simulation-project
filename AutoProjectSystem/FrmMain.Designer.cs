@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -63,6 +63,7 @@
             Action = new DataGridViewTextBoxColumn();
             End = new DataGridViewTextBoxColumn();
             tabPage5 = new TabPage();
+            btn_taskquery = new Button();
             DGV_Tasks = new DataGridView();
             tabPage1 = new TabPage();
             label2 = new Label();
@@ -84,7 +85,6 @@
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
             btn_SQLstatus = new Button();
-            btn_taskquery = new Button();
             tabControl1.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).BeginInit();
@@ -393,8 +393,8 @@
             DGV_Script.Location = new Point(649, 105);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -440,6 +440,16 @@
             tabPage5.TabIndex = 4;
             tabPage5.Text = "派車系統狀態";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // btn_taskquery
+            // 
+            btn_taskquery.Location = new Point(24, 14);
+            btn_taskquery.Name = "btn_taskquery";
+            btn_taskquery.Size = new Size(92, 23);
+            btn_taskquery.TabIndex = 1;
+            btn_taskquery.Text = "查詢";
+            btn_taskquery.UseVisualStyleBackColor = true;
+            btn_taskquery.Click += btnLoadTasks_Click;
             // 
             // DGV_Tasks
             // 
@@ -638,7 +648,7 @@
             // 
             login_status.Location = new Point(11, 10);
             login_status.Name = "login_status";
-            login_status.Size = new Size(129, 31);
+            login_status.Size = new Size(129, 30);
             login_status.TabIndex = 11;
             login_status.Text = "派車登入連線狀態";
             login_status.UseVisualStyleBackColor = true;
@@ -647,20 +657,10 @@
             // 
             btn_SQLstatus.Location = new Point(154, 10);
             btn_SQLstatus.Name = "btn_SQLstatus";
-            btn_SQLstatus.Size = new Size(112, 30);
+            btn_SQLstatus.Size = new Size(129, 30);
             btn_SQLstatus.TabIndex = 12;
             btn_SQLstatus.Text = "資料庫登入";
             btn_SQLstatus.UseVisualStyleBackColor = true;
-            // 
-            // btn_taskquery
-            // 
-            btn_taskquery.Location = new Point(24, 14);
-            btn_taskquery.Name = "btn_taskquery";
-            btn_taskquery.Size = new Size(92, 23);
-            btn_taskquery.TabIndex = 1;
-            btn_taskquery.Text = "查詢";
-            btn_taskquery.UseVisualStyleBackColor = true;
-            btn_taskquery.Click += btnLoadTasks_Click;
             // 
             // FrmMain
             // 

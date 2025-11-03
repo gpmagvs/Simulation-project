@@ -23,7 +23,8 @@ using System.Text;
 using static AutoProjectSystem.MapScripts;
 using System.Windows.Forms.Design;
 using System.Data.SqlClient;
-//using static AutoProjectSystem.MapScripts;
+using System.Drawing;
+using System.Globalization;
 
 namespace AutoProjectSystem
 {
@@ -58,7 +59,7 @@ namespace AutoProjectSystem
             CheckDatabaseConnection();
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
-
+            DGV_Tasks.Sorted += DGV_Tasks_Sorted;
 
             this.Shown += async (_, __) =>
             {
@@ -78,11 +79,6 @@ namespace AutoProjectSystem
             
         }
 
-        private void btn_SQLstatus_Click(object sender, EventArgs e)
-        {
-            CheckDatabaseConnection();
-            ///確認SQL連線狀態
-        }
         private void CheckDatabaseConnection()
         {
             try
@@ -97,15 +93,15 @@ namespace AutoProjectSystem
                 }
 
                 // 成功：變綠色
-                btn_SQLstatus.BackColor = System.Drawing.Color.LimeGreen;
-                btn_SQLstatus.ForeColor = System.Drawing.Color.White;
+                btn_SQLstatus.BackColor = System.Drawing.Color.Lime;
+                //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
                 btn_SQLstatus.Text = "DB Connected ";
             }
             catch (Exception ex)
             {
                 // 
                 btn_SQLstatus.BackColor = System.Drawing.Color.Red;
-                btn_SQLstatus.ForeColor = System.Drawing.Color.White;
+                //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
                 btn_SQLstatus.Text = "DB Failed ";
 
                 // 可選：顯示詳細錯誤
@@ -113,13 +109,115 @@ namespace AutoProjectSystem
                     "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private async void LoadTasks_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var dt = await SQLDatabase.QueryTasksTableAsync();
+                DGV_Tasks.AutoGenerateColumns = true;
+                DGV_Tasks.DataSource = dt;
+                DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+                //  啟用自動排序
+                foreach (DataGridViewColumn column in DGV_Tasks.Columns)
+                {
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+                DGV_Tasks.Columns["TaskName"].HeaderText = "任務名稱";
+                DGV_Tasks.Columns["Action"].HeaderText = "動作";
+                DGV_Tasks.Columns["RecieveTime"].HeaderText = "接收時間";
+                DGV_Tasks.Columns["StartTime"].HeaderText = "開始時間";
+                DGV_Tasks.Columns["FinishTime"].HeaderText = "完成時間";
+                DGV_Tasks.Columns["State"].HeaderText = "任務狀態";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("查詢失敗：" + ex.Message);
+            }
+        }
+        private void DGV_Tasks_Sorted(object sender, EventArgs e)
+        {
+            ApplyTaskRowStyles();
+        }
+
+        // 3) 綁在 Form_Load（或建構子）
+        //    確保每次排序都會套色
+
+        // 4) 套色邏輯：>1分鐘未完成=紅；未完成(<=1分鐘)=黃；完成=綠
+        private void ApplyTaskRowStyles()
+        {
+            var threshold = TimeSpan.FromMinutes(1);
+            var now = DateTime.Now;
+
+            const string COL_RECIEVE = "RecieveTime";
+            const string COL_STATE = "State";
+
+            DGV_Tasks.SuspendLayout();
+
+            foreach (DataGridViewRow row in DGV_Tasks.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                DateTime? recieve = GetCellDateTime(row, COL_RECIEVE);
+                int state = GetCellInt(row, COL_STATE);
+
+                bool isOvertime = recieve.HasValue && (now - recieve.Value) > threshold;
+                bool markRed = isOvertime && state == 1;
+
+                // 預設顏色
+                row.DefaultCellStyle.BackColor = Color.White;
+                row.DefaultCellStyle.ForeColor = Color.Black;
+
+                if (markRed)
+                {
+                    row.DefaultCellStyle.BackColor = Color.MistyRose;
+                    row.DefaultCellStyle.ForeColor = Color.DarkRed;
+                }
+            }
+
+            DGV_Tasks.ResumeLayout();
+        }
+
+        // 小工具：安全取值
+        private static DateTime? GetCellDateTime(DataGridViewRow row, string col)
+        {
+            if (!row.DataGridView.Columns.Contains(col)) return null;
+            var val = row.Cells[col].Value;
+            if (val == null || val == DBNull.Value) return null;
+            if (val is DateTime dt) return dt;
+            if (DateTime.TryParse(Convert.ToString(val, CultureInfo.InvariantCulture), out var parsed)) return parsed;
+            return null;
+        }
+
+        private static int GetCellInt(DataGridViewRow row, string col)
+        {
+            if (!row.DataGridView.Columns.Contains(col)) return 0;
+            var val = row.Cells[col].Value;
+            if (val == null || val == DBNull.Value) return 0;
+            if (val is int i) return i;
+            int.TryParse(val.ToString(), out var parsed);
+            return parsed;
+        }
         private async void btnLoadTasks_Click(object sender, EventArgs e)
         {
             try
             {
-                var tasks = await SQLDatabase.QueryTasksAsync();
-                DGV_Tasks.DataSource = tasks;   // 自動綁定欄位
-                DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells; // 自動調整寬度
+                var dt = await SQLDatabase.QueryTasksTableAsync();
+                DGV_Tasks.AutoGenerateColumns = true;
+                DGV_Tasks.DataSource = dt;
+                DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+                //  啟用自動排序
+                foreach (DataGridViewColumn column in DGV_Tasks.Columns)
+                {
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+                DGV_Tasks.Columns["TaskName"].HeaderText = "任務名稱";
+                DGV_Tasks.Columns["Action"].HeaderText = "動作";
+                DGV_Tasks.Columns["RecieveTime"].HeaderText = "接收時間";
+                DGV_Tasks.Columns["StartTime"].HeaderText = "開始時間";
+                DGV_Tasks.Columns["FinishTime"].HeaderText = "完成時間";
+                DGV_Tasks.Columns["State"].HeaderText = "任務狀態";
             }
             catch (Exception ex)
             {

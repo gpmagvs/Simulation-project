@@ -9,7 +9,7 @@ namespace AutoProjectSystem
 {
     public static class SQLConfig
     {
-        public static string DBConnection { get; set; } = "Server=127.0.0.1;Database=GPMAGVs;User Id=sa;Password=12345678;Encrypt=False;MultipleActiveResultSets=True;Connection Lifetime=1;Min Pool Size=5;Max Pool Size=250;MultipleActiveResultSets=True;";
+        public static string DBConnection { get; set; } = "Server=127.0.0.1;Database=UMTC-5F-MEC;User Id=sa;Password=12345678;Encrypt=False;MultipleActiveResultSets=True;Connection Lifetime=1;Min Pool Size=5;Max Pool Size=250;MultipleActiveResultSets=True;";
         /// <summary>
         /// 若你想在程式啟動時覆蓋（例如讀設定檔），就呼叫這個方法。
         /// </summary>

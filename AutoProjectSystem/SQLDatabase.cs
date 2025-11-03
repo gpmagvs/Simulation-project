@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using AutoProjectSystem.Controllers;
 using System.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.Logging;
+
 
 namespace AutoProjectSystem
 {
@@ -75,12 +75,29 @@ namespace AutoProjectSystem
             // public DbSet<TaskEntity> Tasks { get; set; }
 
         }
+        public static async Task<DataTable> QueryTasksTableAsync(int? top = null)
+        {
+            var sql = $@"
+            SELECT {(top.HasValue ? "TOP (@top)" : "")}
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State 
+            FROM Tasks
+            ORDER BY RecieveTime DESC;";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            var dt = new DataTable();
+            dt.Load(rd);                 // ← 一次載入全部欄位
+            return dt;
+        }
         public static async Task<List<TaskRow>> QueryTasksAsync(int? top = null)
         {
                         var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, Action, RecieveTime, StartTime, FinishTime, State, DispatcherName
-            FROM dbo.Tasks
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State 
+            FROM Tasks
             ORDER BY RecieveTime DESC;";
 
             using var conn = GetOpenConnection();
@@ -99,7 +116,7 @@ namespace AutoProjectSystem
                     StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
                     FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
                     State = Convert.ToInt32(rd["State"]),
-                    DispatcherName = rd["DispatcherName"] as string
+                   // DispatcherName = rd["DispatcherName"] as string
                 });
             }
             return list;
@@ -114,7 +131,7 @@ namespace AutoProjectSystem
 
             // 以 FinishTime NULL 或 0001-01-01 當作未完成；必要時可再加上 State 判定。
                             var sql = @"
-                SELECT TaskName, Action, RecieveTime, StartTime, FinishTime, State, Dispatcher
+                SELECT TaskName, Action, RecieveTime, StartTime, FinishTime, State
                 FROM dbo.Tasks
                 WHERE (FinishTime IS NULL OR FinishTime = '0001-01-01T00:00:00')
                   AND DATEADD(SECOND, @sec, RecieveTime) < GETDATE()
@@ -136,7 +153,7 @@ namespace AutoProjectSystem
                     StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
                     FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
                     State = Convert.ToInt32(rd["State"]),
-                    DispatcherName = rd["DispatcherName"] as string
+                    //DispatcherName = rd["DispatcherName"] as string
                 });
             }
             return list;
