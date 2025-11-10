@@ -25,6 +25,7 @@ using System.Windows.Forms.Design;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Globalization;
+using System.Data;
 
 namespace AutoProjectSystem
 {
@@ -60,6 +61,8 @@ namespace AutoProjectSystem
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
             DGV_Tasks.Sorted += DGV_Tasks_Sorted;
+            ApplyTaskRowStyles();
+
 
             this.Shown += async (_, __) =>
             {
@@ -173,10 +176,39 @@ namespace AutoProjectSystem
                     row.DefaultCellStyle.BackColor = Color.MistyRose;
                     row.DefaultCellStyle.ForeColor = Color.DarkRed;
                 }
+                row.Tag = markRed ? 1 : 0;
             }
 
             DGV_Tasks.ResumeLayout();
+
+            //標記任務排在最上面
+            if (DGV_Tasks.DataSource is DataTable dt)
+            {
+                //清除排序
+                dt.DefaultView.Sort = "";
+                //if( !dt.Columns.Contains("_IsOvertime"))
+                //    dt.Columns.Add("_IsOvertime", typeof(int));
+                foreach (DataRow dr in dt.Rows)
+                {
+                    var recieve = dr[COL_RECIEVE] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(dr[COL_RECIEVE]);
+                    var state = dr[COL_STATE] == DBNull.Value ? 0 : Convert.ToInt32(dr[COL_STATE]);
+                    bool isOvertime = recieve.HasValue && (now - recieve.Value) > threshold;
+                    bool markRed = isOvertime && state == 1;
+                  //  dr["_IsOvertime"] = markRed ? 1 : 0;
+                }
+                // 讓紅色的在最上面，再依 RecieveTime DESC
+                //dt.DefaultView.Sort = "_IsOvertime DESC, RecieveTime DESC";
+                //DGV_Tasks.DataSource = dt.DefaultView;
+            }
+            else if (DGV_Tasks.DataSource is BindingSource bs && bs.DataSource is DataTable bdt)
+            {
+                // 若你的 DGV 用 BindingSource 包 DataTable
+                //bdt.DefaultView.Sort = "_IsOvertime DESC, RecieveTime DESC";
+                //bs.DataSource = bdt.DefaultView;
+                //DGV_Tasks.DataSource = bs;
+            }
         }
+
 
         // 小工具：安全取值
         private static DateTime? GetCellDateTime(DataGridViewRow row, string col)
@@ -200,28 +232,38 @@ namespace AutoProjectSystem
         }
         private async void btnLoadTasks_Click(object sender, EventArgs e)
         {
+            btn_taskquery.Enabled = false;
+            var oldCursor = Cursor.Current;
+            Cursor.Current = Cursors.WaitCursor;
+
             try
             {
-                var dt = await SQLDatabase.QueryTasksTableAsync();
+                // 1) 查資料（建議回傳 DataTable）
+                var table = await SQLDatabase.QueryTasksTableAsync();
+
+                // 2) 綁定到 DGV
+                DGV_Tasks.SuspendLayout();
                 DGV_Tasks.AutoGenerateColumns = true;
-                DGV_Tasks.DataSource = dt;
+                DGV_Tasks.DataSource = table;
                 DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
-                //  啟用自動排序
-                foreach (DataGridViewColumn column in DGV_Tasks.Columns)
-                {
-                    column.SortMode = DataGridViewColumnSortMode.Automatic;
-                }
-                DGV_Tasks.Columns["TaskName"].HeaderText = "任務名稱";
-                DGV_Tasks.Columns["Action"].HeaderText = "動作";
-                DGV_Tasks.Columns["RecieveTime"].HeaderText = "接收時間";
-                DGV_Tasks.Columns["StartTime"].HeaderText = "開始時間";
-                DGV_Tasks.Columns["FinishTime"].HeaderText = "完成時間";
-                DGV_Tasks.Columns["State"].HeaderText = "任務狀態";
+                // 3) 開啟每欄可點擊排序（升/降冪）
+                foreach (DataGridViewColumn col in DGV_Tasks.Columns)
+                    col.SortMode = DataGridViewColumnSortMode.Automatic;
+                DGV_Tasks.ResumeLayout();
+
+                // 4) 依規則：現在時間 - RecieveTime > 1 分鐘 且 State == 6
+                //    → 標紅並「自動置頂」
+                ApplyTaskRowStyles();   // ← 這裡會同時上色與把紅色排最上面
             }
             catch (Exception ex)
             {
-                MessageBox.Show("查詢失敗：" + ex.Message);
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+                Cursor.Current = oldCursor;
+                btn_taskquery.Enabled = true;
             }
         }
         private void establishSQL()

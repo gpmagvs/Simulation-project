@@ -438,7 +438,7 @@
             tabPage5.Name = "tabPage5";
             tabPage5.Size = new Size(1248, 591);
             tabPage5.TabIndex = 4;
-            tabPage5.Text = "派車系統狀態";
+            tabPage5.Text = "腳本任務狀態";
             tabPage5.UseVisualStyleBackColor = true;
             // 
             // btn_taskquery
