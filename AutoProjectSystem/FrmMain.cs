@@ -98,14 +98,14 @@ namespace AutoProjectSystem
                 // 成功：變綠色
                 btn_SQLstatus.BackColor = System.Drawing.Color.Lime;
                 //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
-                btn_SQLstatus.Text = "DB Connected ";
+                btn_SQLstatus.Text = "資料庫連線成功 ";
             }
             catch (Exception ex)
             {
                 // 
                 btn_SQLstatus.BackColor = System.Drawing.Color.Red;
                 //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
-                btn_SQLstatus.Text = "DB Failed ";
+                btn_SQLstatus.Text = "資料庫連線失敗 ";
 
                 // 可選：顯示詳細錯誤
                 MessageBox.Show($"資料庫連線失敗：{ex.Message}",
