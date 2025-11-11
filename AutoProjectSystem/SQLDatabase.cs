@@ -7,6 +7,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.Logging;
+using static System.Windows.Forms.AxHost;
 
 
 namespace AutoProjectSystem
@@ -69,7 +70,7 @@ namespace AutoProjectSystem
         /// 
         public class AutoProjectDbContext : DbContext
         {
-            public AutoProjectDbContext(DbContextOptions<AutoProjectDbContext> options): base(options){ }
+            public AutoProjectDbContext(DbContextOptions<AutoProjectDbContext> options) : base(options) { }
 
             // 範例：之後可以放資料表對應
             // public DbSet<TaskEntity> Tasks { get; set; }
@@ -92,9 +93,39 @@ namespace AutoProjectSystem
             dt.Load(rd);                 // ← 一次載入全部欄位
             return dt;
         }
+        public static async Task<DataTable> QueryUNdoneTasksAsync(int state = 1, int? top = null)
+        {
+            var sql = $@"
+            SELECT {(top.HasValue ? "TOP (@top)" : "")} TaskName
+            FROM Tasks WITH (NOLOCK)
+            WHERE [State] = @state
+            ORDER BY RecieveTime DESC;";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@state", state);
+            if (top.HasValue) cmd.Parameters.AddWithValue("@top", top.Value);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+            var dt = new DataTable();
+            //dt.Columns.Add("TaskName", typeof(string)); // Ensure the DataTable has the correct schema
+
+            //while (await reader.ReadAsync())
+            //{
+            //    var name = reader["TaskName"]?.ToString();
+            //    if (!string.IsNullOrWhiteSpace(name))
+            //    {
+            //        var row = dt.NewRow();
+            //        row["TaskName"] = name;
+            //        dt.Rows.Add(row);
+            //    }
+            //}
+            dt.Load(reader);
+            return dt;
+        }
         public static async Task<List<TaskRow>> QueryTasksAsync(int? top = null)
         {
-                        var sql = $@"
+            var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
                    TaskName, Action, RecieveTime, StartTime, FinishTime, State 
             FROM Tasks
@@ -116,7 +147,7 @@ namespace AutoProjectSystem
                     StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
                     FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
                     State = Convert.ToInt32(rd["State"]),
-                   // DispatcherName = rd["DispatcherName"] as string
+                    // DispatcherName = rd["DispatcherName"] as string
                 });
             }
             return list;
@@ -130,7 +161,7 @@ namespace AutoProjectSystem
             threshold ??= TimeSpan.FromMinutes(1);
 
             // 以 FinishTime NULL 或 0001-01-01 當作未完成；必要時可再加上 State 判定。
-                            var sql = @"
+            var sql = @"
                 SELECT TaskName, Action, RecieveTime, StartTime, FinishTime, State
                 FROM dbo.Tasks
                 WHERE (FinishTime IS NULL OR FinishTime = '0001-01-01T00:00:00')

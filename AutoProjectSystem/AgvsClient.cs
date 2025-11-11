@@ -110,4 +110,62 @@ static class AgvsClient
             throw new HttpRequestException($"Move 失敗：{(int)resp.StatusCode} {resp.ReasonPhrase}\n{body}");
         return body;
     }
+    /// <summary>
+    /// 取消任務
+    /// </summary>
+    /// <param name="taskName"></param>
+    /// <param name="reason"></param>
+    /// <param name="raiserName"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
+    public static async Task<ApiResult<bool>> CancelTaskAsync(string taskName,string? reason = null,string? raiserName = null)
+    {
+        if (string.IsNullOrWhiteSpace(taskName))
+            return new ApiResult<bool>(false, false, "taskName 不可為空。");
+
+        // 尚未登入則嘗試自動登入一次（如不想自動登入，可改為直接回傳錯誤）
+        if (string.IsNullOrEmpty(_jwt))
+        {
+            var login = await LoginAsync("dev", "12345678");
+            if (!login.OK)
+                return new ApiResult<bool>(false, false, "尚未登入且自動登入失敗：" + login.Error);
+        }
+
+        // 做 URL 編碼，避免特殊字元破壞查詢字串
+        string qTask = Uri.EscapeDataString(taskName);
+        string qReason = Uri.EscapeDataString(reason ?? string.Empty);
+        string qRaiser = Uri.EscapeDataString(raiserName ?? string.Empty);
+
+        string url = $"api/Task/Cancel?task_name={qTask}&reason={qReason}&raiserName={qRaiser}";
+
+        try
+        {
+            using var req = new HttpRequestMessage(HttpMethod.Get, url);
+            using var resp = await Http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead);
+            var payload = await resp.Content.ReadAsStringAsync();
+
+            if (!resp.IsSuccessStatusCode)
+                return new ApiResult<bool>(false, false, $"HTTP {(int)resp.StatusCode} {resp.ReasonPhrase}: {payload}", resp.StatusCode);
+
+            // 後端 Ok(true/false) -> 這裡接受 "true"/"false" 或 JSON true/false
+            // 若後端回傳加了引號例如 "true"，Trim('"') 仍可解析
+            if (bool.TryParse(payload.Trim().Trim('"'), out bool ok))
+                return new ApiResult<bool>(true, ok, null, resp.StatusCode);
+
+            // 也許後端回傳 JSON 物件；此處可再補更完整的解析
+            return new ApiResult<bool>(false, false, $"回應無法解析為布林值：{payload}", resp.StatusCode);
+        }
+        catch (TaskCanceledException)
+        {
+            return new ApiResult<bool>(false, false, "連線逾時。");
+        }
+        catch (HttpRequestException ex)
+        {
+            return new ApiResult<bool>(false, false, "連線失敗（伺服器未啟動或網址錯誤）。\r\n" + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return new ApiResult<bool>(false, false, "未知錯誤：" + ex.Message);
+        }
+    }
 }

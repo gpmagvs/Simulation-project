@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -64,6 +64,7 @@
             Action = new DataGridViewTextBoxColumn();
             End = new DataGridViewTextBoxColumn();
             tabPage5 = new TabPage();
+            button13 = new Button();
             btn_taskquery = new Button();
             DGV_Tasks = new DataGridView();
             tabPage1 = new TabPage();
@@ -420,8 +421,8 @@
             DGV_Script.Location = new Point(540, 44);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -458,6 +459,7 @@
             // 
             // tabPage5
             // 
+            tabPage5.Controls.Add(button13);
             tabPage5.Controls.Add(btn_taskquery);
             tabPage5.Controls.Add(DGV_Tasks);
             tabPage5.Location = new Point(4, 24);
@@ -467,6 +469,16 @@
             tabPage5.TabIndex = 4;
             tabPage5.Text = "腳本任務狀態";
             tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // button13
+            // 
+            button13.Location = new Point(139, 14);
+            button13.Name = "button13";
+            button13.Size = new Size(75, 23);
+            button13.TabIndex = 18;
+            button13.Text = "取消任務";
+            button13.UseVisualStyleBackColor = true;
+            button13.Click += CancelUNdoneTask_Click;
             // 
             // btn_taskquery
             // 
@@ -773,5 +785,6 @@
         private DataGridView DGV_Tasks;
         private Button btn_taskquery;
         private Label label9;
+        private Button button13;
     }
 }

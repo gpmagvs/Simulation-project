@@ -34,7 +34,7 @@ namespace AutoProjectSystem
         public FrmMain()
         {
             InitializeComponent();
-            
+
         }
         private System.Windows.Forms.Timer Timer;
         private bool _isChecking;
@@ -79,7 +79,7 @@ namespace AutoProjectSystem
                 _pollCts = new CancellationTokenSource();
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
-            
+
         }
 
         private void CheckDatabaseConnection()
@@ -194,7 +194,7 @@ namespace AutoProjectSystem
                     var state = dr[COL_STATE] == DBNull.Value ? 0 : Convert.ToInt32(dr[COL_STATE]);
                     bool isOvertime = recieve.HasValue && (now - recieve.Value) > threshold;
                     bool markRed = isOvertime && state == 1;
-                  //  dr["_IsOvertime"] = markRed ? 1 : 0;
+                    //  dr["_IsOvertime"] = markRed ? 1 : 0;
                 }
                 // 讓紅色的在最上面，再依 RecieveTime DESC
                 //dt.DefaultView.Sort = "_IsOvertime DESC, RecieveTime DESC";
@@ -677,7 +677,69 @@ namespace AutoProjectSystem
                 }
             }
         }
+        private async void CancelUNdoneTask_Click(object sender, EventArgs e)
+        {
 
+            try
+            {
+                // 1) 向資料庫查詢 State = 1 的任務
+                DataTable dt = await SQLDatabase.QueryUNdoneTasksAsync(1);
+                var taskname = dt.AsEnumerable()
+                                 .Select(r => r.Field<string>("TaskName"))
+                                 .Where(s => !string.IsNullOrWhiteSpace(s))
+                                 .ToList();
+                //if (dt == 0)
+                //{
+                //    MessageBox.Show("查無狀態為 1 的任務。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //    return;
+                //}
+                if (taskname.Count == 0)
+                {
+                    return; 
+                }
+                // 2) 顯示確認（列出前幾筆）
+                var preview = string.Join("\r\n", taskname.Take(5));
+                var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
+                var confirm = MessageBox.Show(
+                    $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
+                    "確認取消",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question);
+
+                if (confirm != DialogResult.OK) return;
+
+                // 3) 逐一呼叫後端取消（建議序列化處理，避免後端過載）
+                int okCount = 0, failCount = 0;
+                var sbFail = new System.Text.StringBuilder();
+
+                foreach (var name in taskname)
+                {
+                    var ret = await AgvsClient.CancelTaskAsync(name, reason: "取消交管失敗任務", raiserName: Environment.UserName);
+                    if (ret.OK && ret.Data == true)
+                    {
+                        okCount++;
+                    }
+                    else
+                    {
+                        failCount++;
+                        sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
+                    }
+                }
+
+                // 4) 顯示結果
+                var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
+                MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
+                    failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+                // 5) 選擇性：刷新畫面
+                // await ReloadTasksAsync(); // 若你有查詢刷新方法就呼叫
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("執行取消時發生錯誤：\r\n" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
 
 
