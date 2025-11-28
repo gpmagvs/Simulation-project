@@ -622,9 +622,28 @@ namespace AutoProjectSystem
         }
         private void btn_Scripts_Click(object sender, EventArgs e)
         {
-            Locate_task_AGV();
-            Thread.Sleep(3000);
-            move_task_click();
+            //bool islogin = false; 
+            var result = MessageBox.Show(
+                "派車系統未連線，無法執行任務",
+                "連線警告",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            if (login_status.BackColor == Color.Red)
+            {
+                MessageBox.Show(
+                    "派車系統未連線，無法執行任務",
+                    "連線錯誤",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+            if (login_status.BackColor == Color.Lime)
+            {
+                Locate_task_AGV();
+                Thread.Sleep(3000);
+                move_task_click();
+            }
 
         }
         private async void Locate_task_AGV()
@@ -677,6 +696,10 @@ namespace AutoProjectSystem
                 }
             }
         }
+        private async void AutoCancelTask(object sender, EventArgs e)
+        {
+
+        }
         private async void CancelUNdoneTask_Click(object sender, EventArgs e)
         {
 
@@ -695,7 +718,7 @@ namespace AutoProjectSystem
                 //}
                 if (taskname.Count == 0)
                 {
-                    return; 
+                    return;
                 }
                 // 2) 顯示確認（列出前幾筆）
                 var preview = string.Join("\r\n", taskname.Take(5));

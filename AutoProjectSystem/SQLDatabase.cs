@@ -76,6 +76,31 @@ namespace AutoProjectSystem
             // public DbSet<TaskEntity> Tasks { get; set; }
 
         }
+
+        public static async Task<DataTable> QueryCancelTaskAsync(int? top = null)
+        {
+            var sql = $@"
+            SELECT {(top.HasValue ? "TOP (@top)" : "")}
+                   TaskName, 
+                   Action, 
+                   RecieveTime, 
+                   StartTime, 
+                   FinishTime, 
+                   State
+            FROM Tasks
+            WHERE State = 1
+            ORDER BY RecieveTime DESC;";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
+
+            using var rd = await cmd.ExecuteReaderAsync();
+            var dt = new DataTable();
+            dt.Load(rd);                 // ← 一次載入全部欄位
+            return dt;
+            ///回傳要取消的任務
+        }
         public static async Task<DataTable> QueryTasksTableAsync(int? top = null)
         {
             var sql = $@"
