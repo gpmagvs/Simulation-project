@@ -147,6 +147,26 @@ namespace AutoProjectSystem
         //    確保每次排序都會套色
 
         // 4) 套色邏輯：>1分鐘未完成=紅；未完成(<=1分鐘)=黃；完成=綠
+        private void ApplyRunningTask()
+        {
+            foreach (DataGridViewRow row in DGV_Tasks.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                int state = GetCellInt(row, "State");
+
+                if (state == 1)
+                {
+                    row.DefaultCellStyle.BackColor = Color.Lime;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                }
+            }
+        }
         private void ApplyTaskRowStyles()
         {
             var threshold = TimeSpan.FromMinutes(1);
@@ -254,7 +274,8 @@ namespace AutoProjectSystem
 
                 // 4) 依規則：現在時間 - RecieveTime > 1 分鐘 且 State == 6
                 //    → 標紅並「自動置頂」
-                ApplyTaskRowStyles();   // ← 這裡會同時上色與把紅色排最上面
+                ApplyRunningTask();
+                //ApplyTaskRowStyles();   // ← 這裡會同時上色與把紅色排最上面
             }
             catch (Exception ex)
             {
@@ -622,13 +643,6 @@ namespace AutoProjectSystem
         }
         private void btn_Scripts_Click(object sender, EventArgs e)
         {
-            //bool islogin = false; 
-            var result = MessageBox.Show(
-                "派車系統未連線，無法執行任務",
-                "連線警告",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
             if (login_status.BackColor == Color.Red)
             {
                 MessageBox.Show(
@@ -644,7 +658,6 @@ namespace AutoProjectSystem
                 Thread.Sleep(3000);
                 move_task_click();
             }
-
         }
         private async void Locate_task_AGV()
         {
@@ -696,9 +709,20 @@ namespace AutoProjectSystem
                 }
             }
         }
-        private async void AutoCancelTask(object sender, EventArgs e)
+        private async Task ReloadTasklist()
         {
+            try
+            {
+                var dt = await SQLDatabase.QueryTasksAsync();
+                DGV_Tasks.AutoGenerateColumns = true;
+                DGV_Tasks.DataSource = dt;
+                DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
         }
         private async void CancelUNdoneTask_Click(object sender, EventArgs e)
         {
@@ -716,52 +740,61 @@ namespace AutoProjectSystem
                 //    MessageBox.Show("查無狀態為 1 的任務。", "訊息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 //    return;
                 //}
+                if (taskname.Count != 0)
+                {
+                    // 2) 顯示確認（列出前幾筆）
+                    var preview = string.Join("\r\n", taskname.Take(5));
+                    var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
+                    var confirm = MessageBox.Show(
+                        $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
+                        "確認取消",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Question);
+
+                    if (confirm != DialogResult.OK) return;
+
+                    // 3) 逐一呼叫後端取消（建議序列化處理，避免後端過載）
+                    int okCount = 0, failCount = 0;
+                    var sbFail = new System.Text.StringBuilder();
+
+                    foreach (var name in taskname)
+                    {
+                        var ret = await AgvsClient.CancelTaskAsync(name, reason: "取消交管失敗任務", raiserName: Environment.UserName);
+                        if (ret.OK && ret.Data == true)
+                        {
+                            okCount++;
+                        }
+                        else
+                        {
+                            failCount++;
+                            sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
+                        }
+                    }
+
+                    // 4) 顯示結果
+                    var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                    if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
+                    MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
+                        failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+                    // 5) 選擇性：刷新畫面
+                    // await ReloadTasksAsync(); // 若你有查詢刷新方法就呼叫
+                }
                 if (taskname.Count == 0)
                 {
-                    return;
+                    var cancelbox = MessageBox.Show(
+                       $"任務皆已經完成");
+                    if (cancelbox != DialogResult.OK) return;
                 }
-                // 2) 顯示確認（列出前幾筆）
-                var preview = string.Join("\r\n", taskname.Take(5));
-                var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
-                var confirm = MessageBox.Show(
-                    $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
-                    "確認取消",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Question);
-
-                if (confirm != DialogResult.OK) return;
-
-                // 3) 逐一呼叫後端取消（建議序列化處理，避免後端過載）
-                int okCount = 0, failCount = 0;
-                var sbFail = new System.Text.StringBuilder();
-
-                foreach (var name in taskname)
-                {
-                    var ret = await AgvsClient.CancelTaskAsync(name, reason: "取消交管失敗任務", raiserName: Environment.UserName);
-                    if (ret.OK && ret.Data == true)
-                    {
-                        okCount++;
-                    }
-                    else
-                    {
-                        failCount++;
-                        sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
-                    }
-                }
-
-                // 4) 顯示結果
-                var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
-                if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
-                MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
-                    failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-
-                // 5) 選擇性：刷新畫面
-                // await ReloadTasksAsync(); // 若你有查詢刷新方法就呼叫
+               
             }
+              
             catch (Exception ex)
             {
                 MessageBox.Show("執行取消時發生錯誤：\r\n" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            await Task.Delay(2000);
+            await ReloadTasklist();
         }
 
 
