@@ -60,8 +60,9 @@ namespace AutoProjectSystem
             CheckDatabaseConnection();
             //InitScriptList();        // 建立腳本清單與事件
             //背景自動登入
-            DGV_Tasks.Sorted += DGV_Tasks_Sorted;
-            ApplyTaskRowStyles();
+
+            //查詢任務才用到
+            //ApplyTaskRowStyles();
 
 
             this.Shown += async (_, __) =>
@@ -138,10 +139,7 @@ namespace AutoProjectSystem
                 MessageBox.Show("查詢失敗：" + ex.Message);
             }
         }
-        private void DGV_Tasks_Sorted(object sender, EventArgs e)
-        {
-            ApplyTaskRowStyles();
-        }
+
 
         // 3) 綁在 Form_Load（或建構子）
         //    確保每次排序都會套色
@@ -158,6 +156,11 @@ namespace AutoProjectSystem
                 if (state == 1)
                 {
                     row.DefaultCellStyle.BackColor = Color.Lime;
+                    row.DefaultCellStyle.ForeColor = Color.Black;
+                }
+                if(state == 5)
+                {
+                    row.DefaultCellStyle.BackColor = Color.Green;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
                 else
@@ -597,16 +600,6 @@ namespace AutoProjectSystem
             }
         }
 
-        private void DumpGridColumns(DataGridView dgv)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine("DataGridView Columns:");
-            foreach (DataGridViewColumn c in dgv.Columns)
-            {
-                sb.AppendLine($"Index={c.Index}, Name='{c.Name}', HeaderText='{c.HeaderText}', DataPropertyName='{c.DataPropertyName}'");
-            }
-            MessageBox.Show(sb.ToString());
-        }
         private string GetCellStringSafe(DataGridViewRow row, string wantedNameOrHeader)
         {
             var dgv = row.DataGridView;
@@ -711,12 +704,27 @@ namespace AutoProjectSystem
         }
         private async Task ReloadTasklist()
         {
+            //var table = await SQLDatabase.QueryTasksTableAsync();
+
+            //// 2) 綁定到 DGV
+            //DGV_Tasks.SuspendLayout();
+            //DGV_Tasks.AutoGenerateColumns = true;
+            //DGV_Tasks.DataSource = table;
+            //DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+            // 3) 開啟每欄可點擊排序（升/降冪）
+
+           // DGV_Tasks.ResumeLayout();
             try
             {
-                var dt = await SQLDatabase.QueryTasksAsync();
+                var table = await SQLDatabase.QueryTasksAsync();
+                DGV_Tasks.SuspendLayout();
                 DGV_Tasks.AutoGenerateColumns = true;
-                DGV_Tasks.DataSource = dt;
+                DGV_Tasks.DataSource = table;
                 DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
+                foreach (DataGridViewColumn col in DGV_Tasks.Columns)
+                    col.SortMode = DataGridViewColumnSortMode.Automatic;
             }
             catch (Exception)
             {
@@ -795,6 +803,8 @@ namespace AutoProjectSystem
             }
             await Task.Delay(2000);
             await ReloadTasklist();
+            //先加上去不要顯示
+            DGV_Tasks.Columns["DispatcherName"].Visible = false;
         }
 
 

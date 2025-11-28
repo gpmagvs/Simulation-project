@@ -125,7 +125,11 @@ namespace AutoProjectSystem
             FROM Tasks WITH (NOLOCK)
             WHERE [State] = @state
             ORDER BY RecieveTime DESC;";
-
+            //var sql = $@"
+            //SELECT {(top.HasValue ? "TOP (@top)" : "")}
+            //       TaskName, Action, RecieveTime, StartTime, FinishTime, State 
+            //FROM Tasks
+            //ORDER BY RecieveTime DESC;";
             using var conn = GetOpenConnection();
             using var cmd = new SqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("@state", state);
