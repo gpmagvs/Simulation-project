@@ -158,7 +158,7 @@ namespace AutoProjectSystem
                     row.DefaultCellStyle.BackColor = Color.Lime;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
-                if(state == 5)
+                else if (state == 5)
                 {
                     row.DefaultCellStyle.BackColor = Color.Green;
                     row.DefaultCellStyle.ForeColor = Color.Black;
