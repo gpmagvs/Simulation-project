@@ -153,14 +153,14 @@ namespace AutoProjectSystem
 
                 int state = GetCellInt(row, "State");
 
-                if (state == 1)
+                if      (state == 1)
                 {
                     row.DefaultCellStyle.BackColor = Color.Lime;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
                 else if (state == 5)
                 {
-                    row.DefaultCellStyle.BackColor = Color.Green;
+                    row.DefaultCellStyle.BackColor = Color.Orange;
                     row.DefaultCellStyle.ForeColor = Color.Black;
                 }
                 else
