@@ -153,7 +153,7 @@ namespace AutoProjectSystem
 
                 int state = GetCellInt(row, "State");
 
-                if      (state == 1)
+                if (state == 1)
                 {
                     row.DefaultCellStyle.BackColor = Color.Lime;
                     row.DefaultCellStyle.ForeColor = Color.Black;
@@ -636,6 +636,15 @@ namespace AutoProjectSystem
         }
         private void btn_Scripts_Click(object sender, EventArgs e)
         {
+            if (isTaskNull())
+            {
+                 MessageBox.Show(
+                    "請確認任務列表是否有空值",
+                    "任務列表錯誤",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
             if (login_status.BackColor == Color.Red)
             {
                 MessageBox.Show(
@@ -651,6 +660,23 @@ namespace AutoProjectSystem
                 Thread.Sleep(3000);
                 move_task_click();
             }
+
+
+        }
+        private bool isTaskNull()
+        {
+            foreach(DataGridViewRow row in DGV_Script.Rows)
+            {
+                if (row.IsNewRow) continue;
+                string agvName = GetCellStringSafe(row, "AGVName"); // 可以用欄位名稱或 header text
+                string start = GetCellStringSafe(row, "Start");
+                string End = GetCellStringSafe(row, "End");
+                if (string.IsNullOrEmpty(agvName) || string.IsNullOrEmpty(start) || string.IsNullOrEmpty(End))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         private async void Locate_task_AGV()
         {
@@ -714,7 +740,7 @@ namespace AutoProjectSystem
 
             // 3) 開啟每欄可點擊排序（升/降冪）
 
-           // DGV_Tasks.ResumeLayout();
+            // DGV_Tasks.ResumeLayout();
             try
             {
                 var table = await SQLDatabase.QueryTasksAsync();
@@ -794,9 +820,9 @@ namespace AutoProjectSystem
                        $"任務皆已經完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
-               
+
             }
-              
+
             catch (Exception ex)
             {
                 MessageBox.Show("執行取消時發生錯誤：\r\n" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
