@@ -105,7 +105,7 @@ namespace AutoProjectSystem
         {
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, Action, RecieveTime, StartTime, FinishTime, State 
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName
             FROM Tasks
             ORDER BY RecieveTime DESC;";
 
@@ -156,7 +156,7 @@ namespace AutoProjectSystem
         {
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, Action, RecieveTime, StartTime, FinishTime, State 
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName
             FROM Tasks
             ORDER BY RecieveTime DESC;";
 

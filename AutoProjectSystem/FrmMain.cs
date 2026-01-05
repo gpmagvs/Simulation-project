@@ -44,6 +44,7 @@ namespace AutoProjectSystem
         private readonly BindingSource _scriptBS = new();
         private readonly BindingSource _tasksBS = new();
 
+
         private MultiMapRoot _data = new();
         private string _configPath = "multi-maps_test.json";
 
@@ -789,7 +790,9 @@ namespace AutoProjectSystem
             // DGV_Tasks.ResumeLayout();
             try
             {
-                var table = await SQLDatabase.QueryTasksAsync();
+                //var table = await SQLDatabase.QueryTasksAsync();
+                var table = await SQLDatabase.QueryTasksTableAsync();
+                
                 DGV_Tasks.SuspendLayout();
                 DGV_Tasks.AutoGenerateColumns = true;
                 DGV_Tasks.DataSource = table;
@@ -876,7 +879,7 @@ namespace AutoProjectSystem
             await Task.Delay(2000);
             await ReloadTasklist();
             //先加上去不要顯示
-            DGV_Tasks.Columns["DispatcherName"].Visible = false;
+            //DGV_Tasks.Columns["DispatcherName"].Visible = false;
         }
 
 
@@ -1003,11 +1006,36 @@ namespace AutoProjectSystem
 
         private void add_task(object sender, EventArgs e)
         {
-            if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("請先選擇一個腳本"); return; }
-            if (_tasksBS.List is BindingList<TaskItemDto> list)
+            //if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("請先選擇一個腳本"); return; }
+            //if (_tasksBS.List is BindingList<TaskItemDto> list)
+            //{
+            //    list.Add(new TaskItemDto { Start = "0", Action = _actionOptions[0], End = "0" });
+            //}
+            if (lstScripts.SelectedItem is not ScriptDto s)
             {
-                list.Add(new TaskItemDto { Start = "0", Action = _actionOptions[0], End = "0" });
+                MessageBox.Show("請先選擇一個腳本");
+                return;
             }
+
+            var newTask = new TaskItemDto
+            {
+                Start = "0",
+                Action = _actionOptions[0],
+                End = "0"
+            };
+
+            // ✅ 先加到 _data 本體（真正會被 Serialize 的地方）
+            s.Tasks.Add(newTask);
+
+            // ✅ 再讓畫面更新：如果目前 DGV 的資料來源是 BindingList，就同步加進去
+            //if (_tasksBS.List is BindingList<TaskItemDto> bl)
+            //{
+            //    bl.Add(newTask);
+            //}
+
+                // 如果不是 BindingList，乾脆直接重綁一次
+                _tasksBS.DataSource = new BindingList<TaskItemDto>(s.Tasks);
+                DGV_Script.DataSource = _tasksBS;
         }
 
         private void Delete_task(object sender, EventArgs e)
@@ -1061,12 +1089,6 @@ namespace AutoProjectSystem
                 _data.Maps.Remove(m);
                 _mapBS.ResetBindings(false);
             }
-            // 否則什麼都不做（使用者選 No）
-            //if (listMapBox.SelectedItem is MapDto m)
-            //{
-            //    _data.Maps.Remove(m);
-            //    _mapBS.ResetBindings(false);
-            //}
         }
 
         private void btnRenameMap_Click(object sender, EventArgs e)
@@ -1085,6 +1107,20 @@ namespace AutoProjectSystem
             var name = Prompt("腳本名稱：", "新增腳本", "NewScript");
             if (string.IsNullOrWhiteSpace(name)) return;
 
+            // ✅ 檢查是否有相同名稱（不分大小寫）
+            bool isDuplicated = m.Scripts.Any(s =>
+                string.Equals(s.ScriptName, name, StringComparison.OrdinalIgnoreCase));
+
+            if (isDuplicated)
+            {
+                MessageBox.Show(
+                    $"已存在相同名稱的腳本：{name}",
+                    "新增失敗",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
             var s = new ScriptDto { ScriptName = name, Tasks = new List<TaskItemDto>() };
             m.Scripts.Add(s);
             _scriptBS.ResetBindings(false);
