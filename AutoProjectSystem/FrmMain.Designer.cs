@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -152,7 +152,7 @@
             // 
             button1.BackColor = Color.FromArgb(255, 128, 0);
             button1.Location = new Point(539, 22);
-            button1.Margin = new Padding(2, 2, 2, 2);
+            button1.Margin = new Padding(2);
             button1.Name = "button1";
             button1.Size = new Size(73, 23);
             button1.TabIndex = 8;
@@ -210,7 +210,7 @@
             tabPage4.Controls.Add(DGV_Script);
             tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Padding = new Padding(3, 3, 3, 3);
+            tabPage4.Padding = new Padding(3);
             tabPage4.Size = new Size(1248, 591);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "腳本設定";
@@ -377,7 +377,7 @@
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
             button7.Location = new Point(386, 333);
-            button7.Margin = new Padding(2, 2, 2, 2);
+            button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(92, 28);
             button7.TabIndex = 2;
@@ -431,8 +431,8 @@
             DGV_Script.Location = new Point(540, 44);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -477,7 +477,7 @@
             tabPage5.Controls.Add(btn_taskquery);
             tabPage5.Controls.Add(DGV_Tasks);
             tabPage5.Location = new Point(4, 24);
-            tabPage5.Margin = new Padding(2, 2, 2, 2);
+            tabPage5.Margin = new Padding(2);
             tabPage5.Name = "tabPage5";
             tabPage5.Size = new Size(1248, 591);
             tabPage5.TabIndex = 4;
@@ -498,7 +498,7 @@
             // 
             button14.BackColor = Color.Orange;
             button14.Location = new Point(140, 45);
-            button14.Margin = new Padding(2, 2, 2, 2);
+            button14.Margin = new Padding(2);
             button14.Name = "button14";
             button14.Size = new Size(73, 23);
             button14.TabIndex = 21;
@@ -508,7 +508,7 @@
             // 
             button9.BackColor = Color.Lime;
             button9.Location = new Point(140, 14);
-            button9.Margin = new Padding(2, 2, 2, 2);
+            button9.Margin = new Padding(2);
             button9.Name = "button9";
             button9.Size = new Size(73, 23);
             button9.TabIndex = 20;
@@ -568,7 +568,7 @@
             tabPage1.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 136);
             tabPage1.Location = new Point(4, 24);
             tabPage1.Name = "tabPage1";
-            tabPage1.Padding = new Padding(3, 3, 3, 3);
+            tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1248, 591);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "參數讀取";
@@ -605,7 +605,7 @@
             tabPage2.Controls.Add(button3);
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3, 3, 3, 3);
+            tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1248, 591);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "車載設定";

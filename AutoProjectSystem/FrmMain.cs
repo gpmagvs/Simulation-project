@@ -333,36 +333,68 @@ namespace AutoProjectSystem
                 listMapBox.SelectedIndex = 0;
         }
 
+        private bool _isWiringOrLoading = false;
+
         private void WireEvents()
         {
             // Map → Scripts
             listMapBox.SelectedIndexChanged += (_, __) =>
             {
-                var map = listMapBox.SelectedItem as MapDto;
+                if (_isWiringOrLoading) return;
 
-                var scripts = map?.Scripts != null
-                    ? new BindingList<ScriptDto>(map.Scripts)
-                    : new BindingList<ScriptDto>();
+                try
+                {
+                    _isWiringOrLoading = true;
 
-                _scriptBS.DataSource = scripts;
-                lstScripts.DataSource = _scriptBS;
-                lstScripts.DisplayMember = nameof(ScriptDto.ScriptName);
+                    var map = listMapBox.SelectedItem as MapDto;
 
-                lstScripts.SelectedIndex = lstScripts.Items.Count > 0 ? 0 : -1;
+                    var scripts = (map?.Scripts != null && map.Scripts.Count > 0)
+                        ? new BindingList<ScriptDto>(map.Scripts)
+                        : new BindingList<ScriptDto>();
+
+                    _scriptBS.DataSource = scripts;
+                    lstScripts.DataSource = _scriptBS;
+                    lstScripts.DisplayMember = nameof(ScriptDto.ScriptName);
+
+                    // 清空任務表（避免殘留上一個 map 的任務）
+                    _tasksBS.DataSource = new BindingList<TaskItemDto>();
+                    DGV_Script.DataSource = _tasksBS;
+
+                    // ✅ 自動選第一個腳本（用 BindingSource 比較穩）
+                    if (scripts.Count > 0)
+                    {
+                        _scriptBS.Position = 0; // 等同選第一筆
+                        LoadTasksFromSelectedScript(); // ✅ 保證任務會顯示
+                    }
+                    else
+                    {
+                        lstScripts.SelectedIndex = -1;
+                    }
+                }
+                finally
+                {
+                    _isWiringOrLoading = false;
+                }
             };
 
             // Script → Tasks (DGV)
             lstScripts.SelectedIndexChanged += (_, __) =>
             {
-                var script = lstScripts.SelectedItem as ScriptDto;
-
-                var tasks = script?.Tasks != null
-                    ? new BindingList<TaskItemDto>(script.Tasks)   // ⬅️ 這行就不會再報你那個錯
-                    : new BindingList<TaskItemDto>();
-
-                _tasksBS.DataSource = tasks;
-                DGV_Script.DataSource = _tasksBS;
+                if (_isWiringOrLoading) return;
+                LoadTasksFromSelectedScript();
             };
+        }
+
+        private void LoadTasksFromSelectedScript()
+        {
+            var script = lstScripts.SelectedItem as ScriptDto;
+
+            var tasks = (script?.Tasks != null && script.Tasks.Count > 0)
+                ? new BindingList<TaskItemDto>(script.Tasks)
+                : new BindingList<TaskItemDto>();
+
+            _tasksBS.DataSource = tasks;
+            DGV_Script.DataSource = _tasksBS;
         }
 
         private void InitGrid()
@@ -634,8 +666,20 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
+
         private void btn_Scripts_Click(object sender, EventArgs e)
         {
+            if (DGV_Script.Rows.Count == 0)
+            {
+                MessageBox.Show(
+                    "任務列表無任務，請新增任務",
+                    "任務列表錯誤",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                    );
+                return;
+            }
+
             if (isTaskNull())
             {
                  MessageBox.Show(
@@ -644,6 +688,7 @@ namespace AutoProjectSystem
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+                return;
             }
             if (login_status.BackColor == Color.Red)
             {
@@ -653,6 +698,7 @@ namespace AutoProjectSystem
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+                return;
             }
             if (login_status.BackColor == Color.Lime)
             {
