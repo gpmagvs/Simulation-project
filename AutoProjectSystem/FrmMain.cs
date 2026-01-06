@@ -667,8 +667,11 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
+        private async void Auto_RunScripts_Click(object snder , EventArgs e)
+        {
 
-        private void btn_Scripts_Click(object sender, EventArgs e)
+        }
+        private async void btn_Scripts_Click(object sender, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
             {
@@ -704,7 +707,8 @@ namespace AutoProjectSystem
             if (login_status.BackColor == Color.Lime)
             {
                 Locate_task_AGV();
-                Thread.Sleep(3000);
+                await Task.Delay(3000);
+                //Thread.Sleep(3000);
                 move_task_click();
             }
 
