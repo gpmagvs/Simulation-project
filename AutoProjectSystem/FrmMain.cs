@@ -671,33 +671,18 @@ namespace AutoProjectSystem
         {
             if (DGV_Script.Rows.Count == 0)
             {
-                MessageBox.Show(
-                    "任務列表無任務，請新增任務",
-                    "任務列表錯誤",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                    );
+                MessageBox.Show("任務列表無任務，請新增任務","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
 
             if (isTaskNull())
             {
-                MessageBox.Show(
-                   "請確認任務列表是否有空值",
-                   "任務列表錯誤",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Error
-               );
+                MessageBox.Show("請確認任務列表是否有空值","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
             if (login_status.BackColor == Color.Red)
             {
-                MessageBox.Show(
-                    "派車系統未連線，無法執行任務",
-                    "連線錯誤",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("派車系統未連線，無法執行任務","連線錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
             Locate_task_AGV();
@@ -708,33 +693,18 @@ namespace AutoProjectSystem
         {
             if (DGV_Script.Rows.Count == 0)
             {
-                MessageBox.Show(
-                    "任務列表無任務，請新增任務",
-                    "任務列表錯誤",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                    );
+                MessageBox.Show("任務列表無任務，請新增任務","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
 
             if (isTaskNull())
             {
-                 MessageBox.Show(
-                    "請確認任務列表是否有空值",
-                    "任務列表錯誤",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                 MessageBox.Show("請確認任務列表是否有空值","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
             if (login_status.BackColor == Color.Red)
             {
-                MessageBox.Show(
-                    "派車系統未連線，無法執行任務",
-                    "連線錯誤",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                MessageBox.Show("派車系統未連線，無法執行任務","連線錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 return;
             }
             if (login_status.BackColor == Color.Lime)
