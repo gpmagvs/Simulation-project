@@ -712,7 +712,75 @@ namespace AutoProjectSystem
                 move_task_click();
             }
 
+            await RunCurrentScriptAsync();
 
+            // ✅ 跑完後，問要不要跑下一個（腳本二）
+            AskRunNextScriptIfAny();
+
+        }
+        private async Task RunCurrentScriptAsync()
+        {
+            // 送出任務（你現有流程）
+            Locate_task_AGV();
+            await Task.Delay(3000); // ✅ 不要 Thread.Sleep
+            move_task_click();
+
+            // ✅ 等待腳本完成（你要依你的系統實作完成判斷）
+            // 例如：輪詢 DB state=1 的任務全部完成 or 逾時
+            await WaitScriptFinishedAsync(timeout: TimeSpan.FromMinutes(5));
+        }
+        private async Task WaitScriptFinishedAsync(TimeSpan timeout)
+        {
+            var start = DateTime.Now;
+
+            while (DateTime.Now - start < timeout)
+            {
+                if (IsScriptFinished())
+                    return;
+
+                await Task.Delay(2000);
+            }
+
+            // 超時也視為結束（或你要提示）
+            MessageBox.Show("腳本執行逾時（5分鐘），已結束等待。", "提示",
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+        /// <summary>
+        /// /需要確認腳本是否完成
+        /// </summary>
+        /// <returns></returns>
+        private bool IsScriptFinished()
+        {
+            // ✅ 你可以用：
+            // 1) 查 DB：這次下的任務是否都 Finish/State!=1
+            // 2) API 回報：所有任務完成事件都收到了
+            // 3) 你自己的 HotRunManager：有沒有收到腳本結束訊號
+
+            // 先給你假資料，請改成真正判斷
+            return true;
+        }
+        private void AskRunNextScriptIfAny()
+        {
+            int idx = lstScripts.SelectedIndex;
+            if (idx < 0) return;
+
+            int nextIdx = idx + 1;
+            if (nextIdx >= lstScripts.Items.Count) return; // 沒有下一個
+
+            var nextScript = lstScripts.Items[nextIdx] as ScriptDto;
+            var nextName = nextScript?.ScriptName ?? $"腳本{nextIdx + 1}";
+
+            var result = MessageBox.Show(
+                $"腳本已執行完畢。\n是否要執行下一個腳本：{nextName}？",
+                "執行下一個腳本",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                lstScripts.SelectedIndex = nextIdx; // 切換到腳本二（任務列表會自動更新）
+                btn_Scripts_Click(this, EventArgs.Empty); // 直接再跑一次（或改成呼叫 RunCurrentScriptAsync）
+            }
         }
         private bool isTaskNull()
         {

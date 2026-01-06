@@ -384,7 +384,6 @@
             button7.TabIndex = 2;
             button7.Text = "執行腳本";
             button7.UseVisualStyleBackColor = false;
-            button7.Click += btn_Scripts_Click;
             // 
             // btn_removeTask
             // 
