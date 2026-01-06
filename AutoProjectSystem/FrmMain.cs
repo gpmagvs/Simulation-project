@@ -667,11 +667,44 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
-        private async void Auto_RunScripts_Click(object snder , EventArgs e)
+        private async void btn_Scripts_Click(object snder , EventArgs e)
         {
+            if (DGV_Script.Rows.Count == 0)
+            {
+                MessageBox.Show(
+                    "任務列表無任務，請新增任務",
+                    "任務列表錯誤",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                    );
+                return;
+            }
 
+            if (isTaskNull())
+            {
+                MessageBox.Show(
+                   "請確認任務列表是否有空值",
+                   "任務列表錯誤",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Error
+               );
+                return;
+            }
+            if (login_status.BackColor == Color.Red)
+            {
+                MessageBox.Show(
+                    "派車系統未連線，無法執行任務",
+                    "連線錯誤",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+            Locate_task_AGV();
+            await Task.Delay(2000);
+            move_task_click();
         }
-        private async void btn_Scripts_Click(object sender, EventArgs e)
+        private async void Auto_RunScripts_Click(object sender, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
             {
@@ -779,7 +812,7 @@ namespace AutoProjectSystem
             if (result == DialogResult.Yes)
             {
                 lstScripts.SelectedIndex = nextIdx; // 切換到腳本二（任務列表會自動更新）
-                btn_Scripts_Click(this, EventArgs.Empty); // 直接再跑一次（或改成呼叫 RunCurrentScriptAsync）
+                Auto_RunScripts_Click(this, EventArgs.Empty); // 直接再跑一次（或改成呼叫 RunCurrentScriptAsync）
             }
         }
         private bool isTaskNull()
