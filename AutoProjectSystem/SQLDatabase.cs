@@ -77,18 +77,13 @@ namespace AutoProjectSystem
 
         }
 
-        public static async Task<DataTable> QueryCancelTaskAsync(int n ,int? top = null)
+        public static async Task<DataTable> QueryCancelTaskAsync(int state ,int? top = null)
         {
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, 
-                   Action, 
-                   RecieveTime, 
-                   StartTime, 
-                   FinishTime, 
-                   State
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State, DesignatedAGVName
             FROM Tasks
-            WHERE State = {n}
+            WHERE State = {state}
             ORDER BY RecieveTime DESC;";
 
             using var conn = GetOpenConnection();
@@ -105,7 +100,7 @@ namespace AutoProjectSystem
         {
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State  ,DesignatedAGVName
             FROM Tasks
             ORDER BY RecieveTime DESC;";
 
@@ -118,13 +113,18 @@ namespace AutoProjectSystem
             dt.Load(rd);                 // ← 一次載入全部欄位
             return dt;
         }
-        public static async Task<DataTable> QueryUNdoneTasksAsync(int state = 1, int? top = null)
+        public static async Task<DataTable> QueryUNdoneTasksAsync(int state , int? top = null)
         {
             var sql = $@"
-            SELECT {(top.HasValue ? "TOP (@top)" : "")} TaskName
-            FROM Tasks WITH (NOLOCK)
-            WHERE [State] = @state
+            SELECT {{(top.HasValue ? ""TOP (@top)"" : """")}}
+                   TaskName, Action, RecieveTime, StartTime, FinishTime, State, DesignatedAGVName
+            FROM Tasks
+            WHERE State = {state}
             ORDER BY RecieveTime DESC;";
+            //SELECT {(top.HasValue ? "TOP (@top)" : "")} TaskName
+            //FROM Tasks WITH (NOLOCK)
+            //WHERE [State] = @state
+            //ORDER BY RecieveTime DESC;";
             //var sql = $@"
             //SELECT {(top.HasValue ? "TOP (@top)" : "")}
             //       TaskName, Action, RecieveTime, StartTime, FinishTime, State 

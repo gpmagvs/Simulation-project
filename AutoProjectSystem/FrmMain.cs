@@ -943,7 +943,7 @@ namespace AutoProjectSystem
             try
             {
                 // 1) 向資料庫查詢 State = 1 的任務
-                DataTable dt = await SQLDatabase.QueryUNdoneTasksAsync(1);
+                DataTable dt = await SQLDatabase.QueryCancelTaskAsync(1);
                 var taskname = dt.AsEnumerable()
                                  .Select(r => r.Field<string>("TaskName"))
                                  .Where(s => !string.IsNullOrWhiteSpace(s))
