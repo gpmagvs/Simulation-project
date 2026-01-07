@@ -66,6 +66,7 @@
             Action = new DataGridViewTextBoxColumn();
             End = new DataGridViewTextBoxColumn();
             tabPage5 = new TabPage();
+            button17 = new Button();
             button16 = new Button();
             button14 = new Button();
             button9 = new Button();
@@ -493,6 +494,7 @@
             // 
             // tabPage5
             // 
+            tabPage5.Controls.Add(button17);
             tabPage5.Controls.Add(button16);
             tabPage5.Controls.Add(button14);
             tabPage5.Controls.Add(button9);
@@ -507,6 +509,16 @@
             tabPage5.Text = "腳本任務狀態";
             tabPage5.UseVisualStyleBackColor = true;
             // 
+            // button17
+            // 
+            button17.Location = new Point(233, 44);
+            button17.Name = "button17";
+            button17.Size = new Size(171, 23);
+            button17.TabIndex = 24;
+            button17.Text = "查詢是否有未執行完的任務";
+            button17.UseVisualStyleBackColor = true;
+            button17.Click += test_hasrunningTASK;
+            // 
             // button16
             // 
             button16.Location = new Point(135, 44);
@@ -520,7 +532,7 @@
             // button14
             // 
             button14.BackColor = Color.Orange;
-            button14.Location = new Point(408, 14);
+            button14.Location = new Point(233, 16);
             button14.Margin = new Padding(2);
             button14.Name = "button14";
             button14.Size = new Size(73, 23);
@@ -531,7 +543,7 @@
             // button9
             // 
             button9.BackColor = Color.Lime;
-            button9.Location = new Point(331, 14);
+            button9.Location = new Point(135, 14);
             button9.Margin = new Padding(2);
             button9.Name = "button9";
             button9.Size = new Size(73, 23);
@@ -861,5 +873,6 @@
         private Button button14;
         private Button button15;
         private Button button16;
+        private Button button17;
     }
 }

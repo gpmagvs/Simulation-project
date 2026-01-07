@@ -152,13 +152,22 @@ namespace AutoProjectSystem
             dt.Load(reader);
             return dt;
         }
+        public static async Task<bool> HasRunningOrIdleTaskAsync()
+        {
+            var sql = @"SELECT 1WHERE EXISTS (SELECT 1FROM Tasks WITH (NOLOCK)WHERE State IN (1, 5));";
+
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            
+            // var result = await cmd.ExecuteNonQueryAsync();
+            var result = await cmd.ExecuteScalarAsync();
+
+
+            return result != null;
+        }
         public static async Task<List<TaskRow>> QueryTasksAsync(int? top = null)
         {
-            var sql = $@"
-            SELECT {(top.HasValue ? "TOP (@top)" : "")}
-                   TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName
-            FROM Tasks
-            ORDER BY RecieveTime DESC;";
+            var sql = $@"SELECT {(top.HasValue ? "TOP (@top)" : "")}TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName FROM Tasks ORDER BY RecieveTime DESC;";
 
             using var conn = GetOpenConnection();
             using var cmd = new SqlCommand(sql, conn);

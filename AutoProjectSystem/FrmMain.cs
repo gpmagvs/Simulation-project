@@ -725,6 +725,26 @@ namespace AutoProjectSystem
             //Thread.Sleep(3000);
             move_task_click();
         }
+
+        private async void test_hasrunningTASK(object sender, EventArgs e)
+        {
+            try
+            {
+                // 1) 查資料（建議回傳 DataTable）
+                bool isRunning = await SQLDatabase.HasRunningOrIdleTaskAsync();
+
+                if (isRunning)
+                {
+
+                    MessageBox.Show("有未完成的任務 幹");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+
+        }
         private async Task RunCurrentScriptAsync()
         {
             // ✅ 等待腳本完成（你要依你的系統實作完成判斷）
