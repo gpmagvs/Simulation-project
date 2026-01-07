@@ -696,7 +696,6 @@ namespace AutoProjectSystem
                 MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
             if (isTaskNull())
             {
                 MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -728,14 +727,13 @@ namespace AutoProjectSystem
         }
         private async Task RunCurrentScriptAsync()
         {
-            //// 送出任務（你現有流程）
-            //Locate_task_AGV();
-            //await Task.Delay(3000); // ✅ 不要 Thread.Sleep
-            //move_task_click();
-
             // ✅ 等待腳本完成（你要依你的系統實作完成判斷）
             // 例如：輪詢 DB state=1 的任務全部完成 or 逾時
-            await WaitScriptFinishedAsync(timeout: TimeSpan.FromMinutes(5));
+            //TODO每1~5秒詢問一次資料庫 詢問是否還有state=1 or state=5任務 如果還有的話則腳本還沒完成
+
+
+
+           // await WaitScriptFinishedAsync(timeout: TimeSpan.FromMinutes(5));
         }
         private async Task WaitScriptFinishedAsync(TimeSpan timeout)
         {
@@ -888,8 +886,46 @@ namespace AutoProjectSystem
                        $"任務皆已經完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
-                if (taskname.Count > 0)
+                if (taskname.Count != 0)
                 {
+                    // 2) 彈窗顯示取消的任務
+                    var preview = string.Join("\r\n", taskname.Take(5));
+                    var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
+                    var confirm = MessageBox.Show(
+                        $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
+                        "確認取消",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Question);
+                    if (confirm != DialogResult.OK) return;
+
+                    // 3) 逐一呼叫後端取消（建議序列化處理，避免後端過載）
+                    int okCount = 0, failCount = 0;
+                    var sbFail = new System.Text.StringBuilder();
+
+                    foreach (var name in taskname)
+                    {
+                        var ret = await AgvsClient.CancelTaskAsync(name, reason: "取消交管失敗任務", raiserName: Environment.UserName);
+                        if (ret.OK && ret.Data == true)
+                        {
+                            okCount++;
+                        }
+                        else
+                        {
+                            failCount++;
+                            sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
+                        }
+                    }
+                    // 4) 顯示結果
+                    var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                    if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
+                    MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
+                        failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+                }
+                if (taskname.Count == 0)
+                {
+                    var cancelbox = MessageBox.Show(
+                       $"任務皆已經完成");
+                    if (cancelbox != DialogResult.OK) return;
                 }
             }
             catch (Exception)
@@ -897,6 +933,9 @@ namespace AutoProjectSystem
 
                 throw;
             }
+            await Task.Delay(1000);
+            ///刷新畫面
+            await ReloadTasklist();
         }
         private async void Cancel_runningTask_Click(object sender, EventArgs e)
         {

@@ -77,7 +77,7 @@ namespace AutoProjectSystem
 
         }
 
-        public static async Task<DataTable> QueryCancelTaskAsync(int? top = null)
+        public static async Task<DataTable> QueryCancelTaskAsync(int n ,int? top = null)
         {
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
@@ -88,7 +88,7 @@ namespace AutoProjectSystem
                    FinishTime, 
                    State
             FROM Tasks
-            WHERE State = 1
+            WHERE State = {n}
             ORDER BY RecieveTime DESC;";
 
             using var conn = GetOpenConnection();
