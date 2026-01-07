@@ -667,52 +667,49 @@ namespace AutoProjectSystem
             // 4) 都沒找到，回 null
             return null;
         }
-        private async void btn_Scripts_Click(object snder , EventArgs e)
+        private async void btn_Scripts_Click(object snder, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
             {
-                MessageBox.Show("任務列表無任務，請新增任務","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (isTaskNull())
             {
-                MessageBox.Show("請確認任務列表是否有空值","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (login_status.BackColor == Color.Red)
             {
-                MessageBox.Show("派車系統未連線，無法執行任務","連線錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            Locate_task_AGV();
-            await Task.Delay(2000);
-            move_task_click();
+
+            ///執行列表任務的第一筆任務
+            await Task_runAsync();
         }
         private async void Auto_RunScripts_Click(object sender, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
             {
-                MessageBox.Show("任務列表無任務，請新增任務","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (isTaskNull())
             {
-                 MessageBox.Show("請確認任務列表是否有空值","任務列表錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (login_status.BackColor == Color.Red)
             {
-                MessageBox.Show("派車系統未連線，無法執行任務","連線錯誤",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (login_status.BackColor == Color.Lime)
+            if (login_status.BackColor == Color.Lime && btn_SQLstatus.BackColor == Color.Lime)
             {
-                Locate_task_AGV();
-                await Task.Delay(3000);
-                //Thread.Sleep(3000);
-                move_task_click();
+                await Task_runAsync();
             }
 
             await RunCurrentScriptAsync();
@@ -721,12 +718,20 @@ namespace AutoProjectSystem
             AskRunNextScriptIfAny();
 
         }
+        //執行任務列表任務
+        private async Task Task_runAsync()
+        {
+            Locate_task_AGV();
+            await Task.Delay(3000);
+            //Thread.Sleep(3000);
+            move_task_click();
+        }
         private async Task RunCurrentScriptAsync()
         {
-            // 送出任務（你現有流程）
-            Locate_task_AGV();
-            await Task.Delay(3000); // ✅ 不要 Thread.Sleep
-            move_task_click();
+            //// 送出任務（你現有流程）
+            //Locate_task_AGV();
+            //await Task.Delay(3000); // ✅ 不要 Thread.Sleep
+            //move_task_click();
 
             // ✅ 等待腳本完成（你要依你的系統實作完成判斷）
             // 例如：輪詢 DB state=1 的任務全部完成 or 逾時
@@ -852,22 +857,10 @@ namespace AutoProjectSystem
         }
         private async Task ReloadTasklist()
         {
-            //var table = await SQLDatabase.QueryTasksTableAsync();
-
-            //// 2) 綁定到 DGV
-            //DGV_Tasks.SuspendLayout();
-            //DGV_Tasks.AutoGenerateColumns = true;
-            //DGV_Tasks.DataSource = table;
-            //DGV_Tasks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-
-            // 3) 開啟每欄可點擊排序（升/降冪）
-
-            // DGV_Tasks.ResumeLayout();
             try
             {
                 //var table = await SQLDatabase.QueryTasksAsync();
                 var table = await SQLDatabase.QueryTasksTableAsync();
-                
                 DGV_Tasks.SuspendLayout();
                 DGV_Tasks.AutoGenerateColumns = true;
                 DGV_Tasks.DataSource = table;
@@ -878,11 +871,34 @@ namespace AutoProjectSystem
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+        private async void Cancel_idleTask_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable dt = await SQLDatabase.QueryCancelTaskAsync(5);
+                var taskname = dt.AsEnumerable().Select(r => r.Field<string>("TaskName"))
+                                 .Where(s => !string.IsNullOrWhiteSpace(s))
+                                 .ToList();
+                if (taskname.Count == 0)
+                {
+                    var cancelbox = MessageBox.Show(
+                       $"任務皆已經完成");
+                    if (cancelbox != DialogResult.OK) return;
+                }
+                if (taskname.Count > 0)
+                {
+                }
+            }
+            catch (Exception)
+            {
 
                 throw;
             }
         }
-        private async void CancelUNdoneTask_Click(object sender, EventArgs e)
+        private async void Cancel_runningTask_Click(object sender, EventArgs e)
         {
 
             try
@@ -1108,9 +1124,9 @@ namespace AutoProjectSystem
             //    bl.Add(newTask);
             //}
 
-                // 如果不是 BindingList，乾脆直接重綁一次
-                _tasksBS.DataSource = new BindingList<TaskItemDto>(s.Tasks);
-                DGV_Script.DataSource = _tasksBS;
+            // 如果不是 BindingList，乾脆直接重綁一次
+            _tasksBS.DataSource = new BindingList<TaskItemDto>(s.Tasks);
+            DGV_Script.DataSource = _tasksBS;
         }
 
         private void Delete_task(object sender, EventArgs e)

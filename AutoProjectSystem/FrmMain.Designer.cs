@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -40,6 +40,7 @@
             button2 = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
+            button15 = new Button();
             label9 = new Label();
             button8 = new Button();
             button12 = new Button();
@@ -65,10 +66,9 @@
             Action = new DataGridViewTextBoxColumn();
             End = new DataGridViewTextBoxColumn();
             tabPage5 = new TabPage();
-            label11 = new Label();
+            button16 = new Button();
             button14 = new Button();
             button9 = new Button();
-            label10 = new Label();
             button13 = new Button();
             btn_taskquery = new Button();
             DGV_Tasks = new DataGridView();
@@ -190,6 +190,7 @@
             // 
             // tabPage4
             // 
+            tabPage4.Controls.Add(button15);
             tabPage4.Controls.Add(label9);
             tabPage4.Controls.Add(button8);
             tabPage4.Controls.Add(button12);
@@ -216,6 +217,17 @@
             tabPage4.TabIndex = 3;
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // button15
+            // 
+            button15.BackColor = Color.DarkOrange;
+            button15.Location = new Point(276, 372);
+            button15.Name = "button15";
+            button15.Size = new Size(92, 28);
+            button15.TabIndex = 17;
+            button15.Text = "自動執行腳本";
+            button15.UseVisualStyleBackColor = false;
+            button15.Click += Auto_RunScripts_Click;
             // 
             // label9
             // 
@@ -384,6 +396,7 @@
             button7.TabIndex = 2;
             button7.Text = "執行腳本";
             button7.UseVisualStyleBackColor = false;
+            button7.Click += btn_Scripts_Click;
             // 
             // btn_removeTask
             // 
@@ -429,21 +442,21 @@
             DGV_Script.AllowUserToResizeRows = false;
             DGV_Script.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Microsoft JhengHei UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Microsoft JhengHei UI", 9F);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
             DGV_Script.Location = new Point(540, 44);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle6;
             DGV_Script.Size = new Size(593, 274);
             DGV_Script.TabIndex = 0;
             // 
@@ -480,10 +493,9 @@
             // 
             // tabPage5
             // 
-            tabPage5.Controls.Add(label11);
+            tabPage5.Controls.Add(button16);
             tabPage5.Controls.Add(button14);
             tabPage5.Controls.Add(button9);
-            tabPage5.Controls.Add(label10);
             tabPage5.Controls.Add(button13);
             tabPage5.Controls.Add(btn_taskquery);
             tabPage5.Controls.Add(DGV_Tasks);
@@ -495,45 +507,36 @@
             tabPage5.Text = "腳本任務狀態";
             tabPage5.UseVisualStyleBackColor = true;
             // 
-            // label11
+            // button16
             // 
-            label11.AutoSize = true;
-            label11.Location = new Point(237, 49);
-            label11.Margin = new Padding(2, 0, 2, 0);
-            label11.Name = "label11";
-            label11.Size = new Size(28, 15);
-            label11.TabIndex = 22;
-            label11.Text = "Idle";
+            button16.Location = new Point(135, 44);
+            button16.Name = "button16";
+            button16.Size = new Size(92, 23);
+            button16.TabIndex = 23;
+            button16.Text = "取消idle任務";
+            button16.UseVisualStyleBackColor = true;
             // 
             // button14
             // 
             button14.BackColor = Color.Orange;
-            button14.Location = new Point(140, 45);
+            button14.Location = new Point(408, 14);
             button14.Margin = new Padding(2);
             button14.Name = "button14";
             button14.Size = new Size(73, 23);
             button14.TabIndex = 21;
+            button14.Text = "idle";
             button14.UseVisualStyleBackColor = false;
             // 
             // button9
             // 
             button9.BackColor = Color.Lime;
-            button9.Location = new Point(140, 14);
+            button9.Location = new Point(331, 14);
             button9.Margin = new Padding(2);
             button9.Name = "button9";
             button9.Size = new Size(73, 23);
             button9.TabIndex = 20;
+            button9.Text = "Running";
             button9.UseVisualStyleBackColor = false;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(226, 18);
-            label10.Margin = new Padding(2, 0, 2, 0);
-            label10.Name = "label10";
-            label10.Size = new Size(54, 15);
-            label10.TabIndex = 19;
-            label10.Text = "Running";
             // 
             // button13
             // 
@@ -543,7 +546,7 @@
             button13.TabIndex = 18;
             button13.Text = "取消任務";
             button13.UseVisualStyleBackColor = true;
-            button13.Click += CancelUNdoneTask_Click;
+            button13.Click += Cancel_runningTask_Click;
             // 
             // btn_taskquery
             // 
@@ -785,7 +788,6 @@
             tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Script).EndInit();
             tabPage5.ResumeLayout(false);
-            tabPage5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)DGV_Tasks).EndInit();
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -855,8 +857,8 @@
         private Button btn_taskquery;
         private Label label9;
         private Button button13;
-        private Label label10;
         private Button button14;
-        private Label label11;
+        private Button button15;
+        private Button button16;
     }
 }
