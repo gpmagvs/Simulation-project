@@ -721,7 +721,7 @@ namespace AutoProjectSystem
         private async Task Task_runAsync()
         {
             Locate_task_AGV();
-            await Task.Delay(3000);
+            await Task.Delay(2000);
             //Thread.Sleep(3000);
             move_task_click();
         }
