@@ -295,6 +295,14 @@ namespace AutoProjectSystem
                 btn_taskquery.Enabled = true;
             }
         }
+        private bool isSQL_Connected()
+        {
+            return btn_SQLstatus.BackColor == Color.Lime;
+        }
+        private bool isAGVS_Connected()
+        {
+            return login_status.BackColor == Color.Lime;
+        }
         private void establishSQL()
         {
             try
@@ -684,7 +692,7 @@ namespace AutoProjectSystem
                 MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (login_status.BackColor == Color.Red)
+            if (!isAGVS_Connected())
             {
                 MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -705,7 +713,7 @@ namespace AutoProjectSystem
                 MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (login_status.BackColor == Color.Red)
+            if (!isAGVS_Connected())
             {
                 MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -715,8 +723,14 @@ namespace AutoProjectSystem
                 await Task_runAsync();
             }
 
-            await RunCurrentScriptAsync();
+            //await RunCurrentScriptAsync();
+            bool ok = await RunCurrentScriptAsync();
 
+            if (!ok)
+            {
+                MessageBox.Show("腳本超過 3 分鐘仍有 State=1 任務，判定此腳本失敗，將執行下一個腳本。",
+                    "腳本失敗", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
             // ✅ 跑完後，問要不要跑下一個（腳本二）
             AskRunNextScriptIfAny();
 
@@ -753,16 +767,34 @@ namespace AutoProjectSystem
             }
 
         }
-        private async Task RunCurrentScriptAsync()
+        private async Task<bool> RunCurrentScriptAsync()
         {
-            // ✅ 等待腳本完成（你要依你的系統實作完成判斷）
-            // 例如：輪詢 DB state=1 的任務全部完成 or 逾時
-            //TODO每1~5秒詢問一次資料庫 詢問是否還有state=1 or state=5任務 如果還有的話則腳本還沒完成
+            // TODO: 你原本這裡應該是「送出目前腳本的任務」
+            // 例如：SendTasksToBackend(); / ExecuteSelectedScriptAsync();
+            // 如果你已經在外層送出了，這裡就只負責等待即可。
 
+            TimeSpan timeout = TimeSpan.FromMinutes(3);
+            int pollMs = 2000; // 每 2 秒問一次（1~5 秒都可以）
 
+            var start = DateTime.Now;
 
-           // await WaitScriptFinishedAsync(timeout: TimeSpan.FromMinutes(5));
+            while (DateTime.Now - start < timeout)
+            {
+                bool hasRunning = await SQLDatabase.HasTaskState1Async();
+
+                if (!hasRunning)
+                {
+                    // ✅ 沒有 State=1 → 視為腳本完成
+                    return true;
+                }
+
+                await Task.Delay(pollMs);
+            }
+
+            // ❌ 超過 3 分鐘還有 State=1 → 視為腳本失敗
+            return false;
         }
+
         private async Task WaitScriptFinishedAsync(TimeSpan timeout)
         {
             var start = DateTime.Now;
@@ -902,12 +934,12 @@ namespace AutoProjectSystem
         }
         private async void Cancel_idleTask_Click(object sender, EventArgs e)
         {
-            if (login_status.BackColor == Color.Red)
+            if (!isAGVS_Connected())
             {
                 MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (btn_SQLstatus.BackColor == Color.Red)
+            if (!isSQL_Connected())
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -976,12 +1008,12 @@ namespace AutoProjectSystem
         }
         private async void Cancel_runningTask_Click(object sender, EventArgs e)
         {
-            if (login_status.BackColor == Color.Red)
+            if (!isAGVS_Connected())
             {
                 MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if (btn_SQLstatus.BackColor == Color.Red)
+            if(!isSQL_Connected())
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
