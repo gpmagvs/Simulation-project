@@ -256,6 +256,10 @@ namespace AutoProjectSystem
         }
         private async void btnLoadTasks_Click(object sender, EventArgs e)
         {
+            if (btn_SQLstatus.BackColor == Color.Red)
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             btn_taskquery.Enabled = false;
             var oldCursor = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
@@ -728,6 +732,10 @@ namespace AutoProjectSystem
 
         private async void test_hasrunningTASK(object sender, EventArgs e)
         {
+            if (btn_SQLstatus.BackColor == Color.Red)
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             try
             {
                 // 1) 查資料（建議回傳 DataTable）
@@ -894,6 +902,15 @@ namespace AutoProjectSystem
         }
         private async void Cancel_idleTask_Click(object sender, EventArgs e)
         {
+            if (login_status.BackColor == Color.Red)
+            {
+                MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (btn_SQLstatus.BackColor == Color.Red)
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             try
             {
                 DataTable dt = await SQLDatabase.QueryCancelTaskAsync(5);
@@ -959,7 +976,15 @@ namespace AutoProjectSystem
         }
         private async void Cancel_runningTask_Click(object sender, EventArgs e)
         {
-
+            if (login_status.BackColor == Color.Red)
+            {
+                MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (btn_SQLstatus.BackColor == Color.Red)
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             try
             {
                 // 1) 向資料庫查詢 State = 1 的任務
