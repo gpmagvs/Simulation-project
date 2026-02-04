@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.Logging;
 using static System.Windows.Forms.AxHost;
+using System.Formats.Asn1;
 
 
 namespace AutoProjectSystem
@@ -76,9 +77,22 @@ namespace AutoProjectSystem
             // public DbSet<TaskEntity> Tasks { get; set; }
 
         }
-
+        //todo查詢的任務可以參數化
+        //是否有正在執行中的任務
+        public static  async Task<bool> HasTaskState1Async()
+        {
+            var sql = @"SELECT COUNT(*) FROM Tasks WHERE State IN (1, 5);";
+            using var conn = GetOpenConnection();
+            using var cmd = new SqlCommand(sql, conn);
+            //var result = await cmd.ExecuteScalarAsync();
+            //return result != null;
+            int count = (int)await cmd.ExecuteScalarAsync();
+            return count > 0;
+        }
         public static async Task<DataTable> QueryCancelTaskAsync(int state ,int? top = null)
         {
+            bool HasTask = false;
+
             var sql = $@"
             SELECT {(top.HasValue ? "TOP (@top)" : "")}
                    TaskName, Action, RecieveTime, StartTime, FinishTime, State, DesignatedAGVName
@@ -154,10 +168,10 @@ namespace AutoProjectSystem
         }
         public static async Task<bool> HasRunningOrIdleTaskAsync()
         {
-            var sql = @"SELECT 1WHERE EXISTS (SELECT 1FROM Tasks WITH (NOLOCK)WHERE State IN (1, 5));";
+            var sql = @"SELECT 1WHERE EXISTS (SELECT 1 FROM Tasks WITH (NOLOCK) WHERE State IN (1, 5));";
 
             using var conn = GetOpenConnection();
-            using var cmd = new SqlCommand(sql, conn);
+            using var cmd = new SqlCommand(sql, conn);  
             
             // var result = await cmd.ExecuteNonQueryAsync();
             var result = await cmd.ExecuteScalarAsync();

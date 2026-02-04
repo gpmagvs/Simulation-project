@@ -701,6 +701,222 @@ namespace AutoProjectSystem
             ///執行列表任務的第一筆任務
             await Task_runAsync();
         }
+        //0204自動腳本任務
+        private CancellationTokenSource? _autoCts;
+        private bool _autoRunning = false;
+        private async void Auto_RunScripts(object sender, EventArgs e)
+        {
+            if (_autoRunning) return;
+
+            // 1) 基本檢查（照你原本的）
+            if (DGV_Script.Rows.Count == 0)
+            {
+                MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (isTaskNull())
+            {
+                MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!isAGVS_Connected())
+            {
+                MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!(login_status.BackColor == Color.Lime && btn_SQLstatus.BackColor == Color.Lime))
+            {
+                MessageBox.Show("AGVS 或 SQL 未連線", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // 2) 啟動自動流程
+            _autoRunning = true;
+            btn_AutoRunTask.Enabled = false;
+
+            _autoCts?.Cancel();
+            _autoCts = new CancellationTokenSource();
+
+            try
+            {
+                await RunAutoScriptsFlowAsync(_autoCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("自動腳本已取消。", "取消", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "執行錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                _autoRunning = false;
+                btn_AutoRunTask.Enabled = true;
+            }
+        }
+        private async Task RunAutoScriptsFlowAsync(CancellationToken ct)
+        {
+            if (lstScripts.SelectedIndex < 0)
+            {
+                MessageBox.Show("請先選擇一個腳本開始。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            int idx = lstScripts.SelectedIndex;
+
+            // 自動腳本開始：從目前選到的腳本一路往下跑
+            while (idx < lstScripts.Items.Count)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                // 腳本A開始（或當前腳本）
+                lstScripts.SelectedIndex = idx; // 這行會讓你的 DGV 任務清單切到該腳本資料（如果你已做 SelectedIndexChanged 綁定）
+                var script = lstScripts.Items[idx] as ScriptDto;
+                string scriptName = script?.ScriptName ?? $"腳本{idx + 1}";
+
+                // 先下任務（你原本的 Task_runAsync）
+                await Task_runAsync();
+
+                // 監控任務是否結束：每 5~10 秒輪詢一次，超時 3 分鐘視為失敗並取消任務
+
+                //記得標記LOG
+                bool ok = await MonitorScriptTasksAsync(
+                    scriptName,
+                    timeout: TimeSpan.FromMinutes(3),
+                    pollInterval: TimeSpan.FromSeconds(5),
+                    ct: ct
+                );
+
+                if (!ok)
+                {
+                    // 腳本A任務取消（照你的圖）
+                    await CancelScriptTasksAsync(ct);
+
+                    MessageBox.Show(
+                        $"[{scriptName}] 超過 3 分鐘仍有 State=1 任務，已判定失敗並取消未完成任務，將詢問是否執行下一個腳本。",
+                        "腳本失敗",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
+
+                // 腳本A任務結束（成功或失敗都算結束），跳出詢問視窗：是否執行腳本B
+                int nextIdx = idx + 1;
+                if (nextIdx >= lstScripts.Items.Count)
+                {
+                    MessageBox.Show("已無下一個腳本，自動腳本結束。", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                var nextScript = lstScripts.Items[nextIdx] as ScriptDto;
+                var nextName = nextScript?.ScriptName ?? $"腳本{nextIdx + 1}";
+
+                var result = MessageBox.Show(
+                    $"[{scriptName}] 已結束。\n是否要執行下一個腳本：{nextName}？",
+                    "執行下一個腳本",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    // 自動腳本結束（照圖）
+                    MessageBox.Show("已停止自動腳本。", "結束", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // 腳本B任務開始：回到 while 迴圈下一輪
+                idx = nextIdx;
+            }
+        }
+        private async Task<bool> MonitorScriptTasksAsync(
+            string scriptName,
+            TimeSpan timeout,
+            TimeSpan pollInterval,
+            CancellationToken ct)
+        {
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+
+            while (true)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                // 查 State=1、State=5 各取 1 筆就好（只需要知道「有沒有」）
+                var dt1 = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: 1);
+                var dt5 = await SQLDatabase.QueryUNdoneTasksAsync(state: 5, top: 1);
+
+                bool hasState1 = dt1 != null && dt1.Rows.Count > 0;
+                bool hasState5 = dt5 != null && dt5.Rows.Count > 0;
+
+                bool hasRunning = hasState1 || hasState5;
+
+                // ✅ 沒有 State=1 也沒有 State=5 → 腳本完成
+                if (!hasRunning)
+                    return true;
+
+                // ❌ 超過 3 分鐘仍有 State=1 或 State=5 → 判定失敗
+                if (sw.Elapsed >= timeout)
+                {
+                    //MessageBox.Show(
+                    //    $"[{scriptName}] 超過 {timeout.TotalMinutes:0} 分鐘仍有 State=1/5 任務，判定此腳本失敗。",
+                    //    "腳本失敗",
+                    //    MessageBoxButtons.OK,
+                    //    MessageBoxIcon.Warning);
+                    ///需記LOG
+                    return false;
+                }
+
+                // 每次輪詢間隔
+                await Task.Delay(pollInterval, ct);
+            }
+        }
+
+        private async Task CancelScriptTasksAsync(CancellationToken ct)
+        {
+            // 1) 先抓出目前所有 State=1 的 TaskName
+            var dt = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: null);
+            if (dt == null || dt.Rows.Count == 0) return;
+
+            // 2) 逐筆呼叫你現有的取消 API / Client（你自己替換成你實際的取消方法）
+            foreach (System.Data.DataRow row in dt.Rows)
+            {
+                ct.ThrowIfCancellationRequested();
+
+                string taskName = row["TaskName"]?.ToString() ?? "";
+                if (string.IsNullOrWhiteSpace(taskName)) continue;
+
+                try
+                {
+                    // TODO: 換成你實際的取消函數
+                    // await AgvsClient.CancelTaskAsync(taskName);
+
+                    await Task.Delay(10, ct); // 占位：避免你貼上後忘記替換仍可編譯
+                }
+                catch
+                {
+                    // 取消失敗先不要整個流程炸掉，可視需求記 log
+                }
+            }
+        }
+        private async Task<bool> HasRunningTasksAsync(CancellationToken ct)
+        {
+            // 查詢 State = 1 或 State = 5 的任務
+            var dt1 = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: 1);
+            var dt5 = await SQLDatabase.QueryUNdoneTasksAsync(state: 5, top: 1);
+
+            bool hasState1 = dt1 != null && dt1.Rows.Count > 0;
+            bool hasState5 = dt5 != null && dt5.Rows.Count > 0;
+
+            return hasState1 || hasState5;
+        }
+        //private async Task<bool> HasState1TasksAsync(CancellationToken ct)
+        //{
+        //    // 方案A：你如果已經有 HasRunningOrIdleTaskAsync()，直接用它
+        //    // return await SQLDatabase.HasRunningOrIdleTaskAsync();
+
+        //    // 方案B：如果你有 QueryUNdoneTasksAsync(state=1)
+        //    var dt = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: 1);
+        //    return dt != null && dt.Rows.Count > 0;
+        //}
         private async void Auto_RunScripts_Click(object sender, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
@@ -764,7 +980,7 @@ namespace AutoProjectSystem
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-            }
+            } 
 
         }
         private async Task<bool> RunCurrentScriptAsync()
@@ -772,25 +988,20 @@ namespace AutoProjectSystem
             // TODO: 你原本這裡應該是「送出目前腳本的任務」
             // 例如：SendTasksToBackend(); / ExecuteSelectedScriptAsync();
             // 如果你已經在外層送出了，這裡就只負責等待即可。
-
             TimeSpan timeout = TimeSpan.FromMinutes(3);
             int pollMs = 2000; // 每 2 秒問一次（1~5 秒都可以）
-
             var start = DateTime.Now;
 
             while (DateTime.Now - start < timeout)
             {
                 bool hasRunning = await SQLDatabase.HasTaskState1Async();
-
                 if (!hasRunning)
                 {
                     // ✅ 沒有 State=1 → 視為腳本完成
                     return true;
                 }
-
-                await Task.Delay(pollMs);
+                await Task.Delay(pollMs); 
             }
-
             // ❌ 超過 3 分鐘還有 State=1 → 視為腳本失敗
             return false;
         }

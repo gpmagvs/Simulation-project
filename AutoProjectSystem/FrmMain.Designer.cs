@@ -40,7 +40,7 @@
             button2 = new Button();
             tabControl1 = new TabControl();
             tabPage4 = new TabPage();
-            button15 = new Button();
+            btn_AutoRunTask = new Button();
             label9 = new Label();
             button8 = new Button();
             button12 = new Button();
@@ -191,7 +191,7 @@
             // 
             // tabPage4
             // 
-            tabPage4.Controls.Add(button15);
+            tabPage4.Controls.Add(btn_AutoRunTask);
             tabPage4.Controls.Add(label9);
             tabPage4.Controls.Add(button8);
             tabPage4.Controls.Add(button12);
@@ -219,16 +219,16 @@
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
             // 
-            // button15
+            // btn_AutoRunTask
             // 
-            button15.BackColor = Color.DarkOrange;
-            button15.Location = new Point(276, 372);
-            button15.Name = "button15";
-            button15.Size = new Size(92, 28);
-            button15.TabIndex = 17;
-            button15.Text = "自動執行腳本";
-            button15.UseVisualStyleBackColor = false;
-            button15.Click += Auto_RunScripts_Click;
+            btn_AutoRunTask.BackColor = Color.DarkOrange;
+            btn_AutoRunTask.Location = new Point(276, 372);
+            btn_AutoRunTask.Name = "btn_AutoRunTask";
+            btn_AutoRunTask.Size = new Size(92, 28);
+            btn_AutoRunTask.TabIndex = 17;
+            btn_AutoRunTask.Text = "自動執行腳本";
+            btn_AutoRunTask.UseVisualStyleBackColor = false;
+            btn_AutoRunTask.Click += Auto_RunScripts_Click;
             // 
             // label9
             // 
@@ -871,7 +871,7 @@
         private Label label9;
         private Button button13;
         private Button button14;
-        private Button button15;
+        private Button btn_AutoRunTask;
         private Button button16;
         private Button button17;
     }
