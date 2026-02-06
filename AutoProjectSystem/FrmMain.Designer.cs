@@ -228,7 +228,7 @@
             btn_AutoRunTask.TabIndex = 17;
             btn_AutoRunTask.Text = "自動執行腳本";
             btn_AutoRunTask.UseVisualStyleBackColor = false;
-            btn_AutoRunTask.Click += Auto_RunScripts_Click;
+            btn_AutoRunTask.Click += Auto_RunScripts;
             // 
             // label9
             // 

@@ -706,35 +706,29 @@ namespace AutoProjectSystem
         private bool _autoRunning = false;
         private async void Auto_RunScripts(object sender, EventArgs e)
         {
-            if (_autoRunning) return;
+            //if (_autoRunning) return;
+            var confirm = MessageBox.Show(
+                "是否要啟動『自動執行腳本』功能？\n" +
+                "（將依序執行目前選取腳本之後的所有腳本）",
+                "啟動自動腳本",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-            // 1) 基本檢查（照你原本的）
-            if (DGV_Script.Rows.Count == 0)
+            if (confirm != DialogResult.Yes)
             {
-                MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return; // ❌ 不執行後續流程
+            }
+            if (_autoRunning)
+            {
+                MessageBox.Show("自動腳本執行中。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            if (isTaskNull())
-            {
-                MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!isAGVS_Connected())
-            {
-                MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!(login_status.BackColor == Color.Lime && btn_SQLstatus.BackColor == Color.Lime))
-            {
-                MessageBox.Show("AGVS 或 SQL 未連線", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
             // 2) 啟動自動流程
             _autoRunning = true;
             btn_AutoRunTask.Enabled = false;
 
             _autoCts?.Cancel();
+            _autoCts?.Dispose();
             _autoCts = new CancellationTokenSource();
 
             try
@@ -757,6 +751,29 @@ namespace AutoProjectSystem
         }
         private async Task RunAutoScriptsFlowAsync(CancellationToken ct)
         {
+
+            // 1) 基本檢查（照你原本的）
+            if (DGV_Script.Rows.Count == 0)
+            {
+                MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (isTaskNull())
+            {
+                MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!isAGVS_Connected())
+            {
+                MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!(login_status.BackColor == Color.Lime && btn_SQLstatus.BackColor == Color.Lime))
+            {
+                MessageBox.Show("AGVS 或 SQL 未連線", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //要選腳本
             if (lstScripts.SelectedIndex < 0)
             {
                 MessageBox.Show("請先選擇一個腳本開始。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -976,6 +993,11 @@ namespace AutoProjectSystem
 
                     MessageBox.Show("有未完成的任務 幹");
                 }
+                else if (isRunning == false)
+                {
+                    MessageBox.Show("無未執行的任務");
+                }
+                
             }
             catch (Exception ex)
             {

@@ -129,11 +129,13 @@ namespace AutoProjectSystem
         }
         public static async Task<DataTable> QueryUNdoneTasksAsync(int state , int? top = null)
         {
+            string topClause = top.HasValue ? "TOP (@top) " : "";   // 🔥 注意後面有空白
+
             var sql = $@"
-            SELECT {{(top.HasValue ? ""TOP (@top)"" : """")}}
+            SELECT {topClause}
                    TaskName, Action, RecieveTime, StartTime, FinishTime, State, DesignatedAGVName
             FROM Tasks
-            WHERE State = {state}
+            WHERE State = @state
             ORDER BY RecieveTime DESC;";
             //SELECT {(top.HasValue ? "TOP (@top)" : "")} TaskName
             //FROM Tasks WITH (NOLOCK)
@@ -144,10 +146,16 @@ namespace AutoProjectSystem
             //       TaskName, Action, RecieveTime, StartTime, FinishTime, State 
             //FROM Tasks
             //ORDER BY RecieveTime DESC;";
+            System.Diagnostics.Debug.WriteLine("==== SQL ====");
+            System.Diagnostics.Debug.WriteLine(sql);
+            System.Diagnostics.Debug.WriteLine($"state={state}, top={(top?.ToString() ?? "null")}");
+            System.Diagnostics.Debug.WriteLine("=============");
             using var conn = GetOpenConnection();
             using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.AddWithValue("@state", state);
-            if (top.HasValue) cmd.Parameters.AddWithValue("@top", top.Value);
+            cmd.Parameters.Add("@state", SqlDbType.Int).Value = state;
+
+            if (top.HasValue)
+                cmd.Parameters.Add("@top", SqlDbType.Int).Value = top.Value;
 
             using var reader = await cmd.ExecuteReaderAsync();
             var dt = new DataTable();
