@@ -886,15 +886,67 @@ namespace AutoProjectSystem
                 await Task.Delay(pollInterval, ct);
             }
         }
+        private CancellationTokenSource _cancelCts;
+        private async void btn_CancelTasks_Click(object sender, EventArgs e)
+        {
+            // 先詢問使用者
+            var confirm = MessageBox.Show(
+                "確定要取消所有 State=1 與 State=5 的任務嗎？",
+                "取消任務確認",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
 
+            if (confirm != DialogResult.Yes)
+                return;
+
+            // 防止重複點擊
+            btn_CancelrunidleTask.Enabled = false;
+
+            // 建立 CancellationTokenSource
+            _cancelCts?.Cancel();
+            _cancelCts?.Dispose();
+            _cancelCts = new CancellationTokenSource();
+
+            try
+            {
+                await CancelScriptTasksAsync(_cancelCts.Token);
+                MessageBox.Show("任務取消請求已送出。", "完成",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (OperationCanceledException)
+            {
+                MessageBox.Show("取消任務已被中止。", "取消",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "執行錯誤",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btn_CancelrunidleTask.Enabled = true;
+            }
+        }
         private async Task CancelScriptTasksAsync(CancellationToken ct)
         {
             // 1) 先抓出目前所有 State=1 的 TaskName
-            var dt = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: null);
-            if (dt == null || dt.Rows.Count == 0) return;
+            var dt1 = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: null);
+            var dt5 = await SQLDatabase.QueryUNdoneTasksAsync(state: 5, top: null);
 
+
+
+            var allRows = new List<System.Data.DataRow>();
+            if (dt1 != null && dt1.Rows.Count > 0)
+                allRows.AddRange(dt1.AsEnumerable());
+
+            if (dt5 != null && dt5.Rows.Count > 0)
+                allRows.AddRange(dt5.AsEnumerable());
+
+            if (allRows.Count == 0) return; // 沒有需要取消的任務
+            
             // 2) 逐筆呼叫你現有的取消 API / Client（你自己替換成你實際的取消方法）
-            foreach (System.Data.DataRow row in dt.Rows)
+            foreach (var row in allRows)
             {
                 ct.ThrowIfCancellationRequested();
 
@@ -1321,7 +1373,94 @@ namespace AutoProjectSystem
             //先加上去不要顯示
             //DGV_Tasks.Columns["DispatcherName"].Visible = false;
         }
+        private async void Cancel_runidleTask_Click(object sender, EventArgs e)
+        {
+            await CancelTasksByStatesAsync(1, 5);
+        }   
+        private async Task CancelTasksByStatesAsync(params int[] states)
+        {
+            // 基本檢查
+            if (!isAGVS_Connected())
+            {
+                MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!isSQL_Connected())
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                var taskNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var st in states.Distinct())
+                {
+                    DataTable dt = await SQLDatabase.QueryCancelTaskAsync(st);
+                    if (dt == null || dt.Rows.Count == 0) 
+                    {
+                        continue;
+                    }
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        var name = row.Field<string>("TaskName");
+                        if (!string.IsNullOrWhiteSpace(name))
+                            taskNames.Add(name.Trim());
+                    } 
+                }
+                ///tasknames 沒有取消的任務先繼續
+                var list = taskNames.ToList();
+                var preview = string.Join("\r\n", list.Take(5));
+                var more = list.Count > 5 ? $"\r\n... 共 {list.Count} 筆" : $"（共 {list.Count} 筆）";
 
+                string stateText = string.Join(", ", states.Distinct().OrderBy(x=>x));
+                var  confirm = MessageBox.Show(
+                    $"確定要取消下列 State={stateText} 的任務？\r\n{preview}\r\n{more}",
+                    "確認取消",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question);
+                if (confirm != DialogResult.OK) return;
+
+                // 3) 逐筆取消
+                int okCount = 0, failCount = 0;
+                var sbFail = new System.Text.StringBuilder();
+
+                foreach (var name in list)
+                {
+                    var ret = await AgvsClient.CancelTaskAsync(name, reason: "取消交管失敗任務", raiserName: Environment.UserName);
+                    if (ret.OK && ret.Data == true)
+                    {
+                        okCount++;
+                    }
+                    else
+                    {
+                        failCount++;
+                        sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
+                    }
+                }
+
+                // 4) 顯示結果
+                var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
+
+                MessageBox.Show(
+                    msg,
+                    "批次取消結果",
+                    MessageBoxButtons.OK,
+                    failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                await Task.Delay(1000);
+                await ReloadTasklist();
+            }
+        }
+
+
+        
 
 
 
