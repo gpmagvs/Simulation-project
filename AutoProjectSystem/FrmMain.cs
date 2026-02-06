@@ -808,7 +808,7 @@ namespace AutoProjectSystem
                 if (!ok)
                 {
                     // 腳本A任務取消（照你的圖）
-                    await CancelScriptTasksAsync(ct);
+                    await CancelTasksByStatesAsync(1, 5);
 
                     MessageBox.Show(
                         $"[{scriptName}] 超過 3 分鐘仍有 State=1 任務，已判定失敗並取消未完成任務，將詢問是否執行下一個腳本。",
@@ -1376,7 +1376,7 @@ namespace AutoProjectSystem
         private async void Cancel_runidleTask_Click(object sender, EventArgs e)
         {
             await CancelTasksByStatesAsync(1, 5);
-        }   
+        }
         private async Task CancelTasksByStatesAsync(params int[] states)
         {
             // 基本檢查

@@ -519,7 +519,7 @@
             btn_CancelrunidleTask.TabIndex = 25;
             btn_CancelrunidleTask.Text = "取消run和idle任務";
             btn_CancelrunidleTask.UseVisualStyleBackColor = true;
-            btn_CancelrunidleTask.Click += Cancel_runidleTask_Click;
+            btn_CancelrunidleTask.Click += btn_CancelTasks_Click;
             // 
             // button17
             // 
