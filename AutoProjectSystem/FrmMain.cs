@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-
+using NLog;
 using System.Net.Http;
 using System.Threading.Tasks;
 using AutoProjectSystem.Controllers;
@@ -53,6 +53,7 @@ namespace AutoProjectSystem
 
         private AGVSController APIController = new AGVSController("localhost:5216", new HttpClient());
         private HotRunController HotRunController = new HotRunController();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private void Form1_Load(object sender, EventArgs e)
         {
             InitGrid();          // 設定 DGV 欄位
@@ -81,7 +82,7 @@ namespace AutoProjectSystem
                 _pollCts = new CancellationTokenSource();
                 _ = PollConnectionAsync(TimeSpan.FromSeconds(5), _pollCts.Token);
             };
-
+            logger.Info("畫面載入完成");
         }
 
         private void CheckDatabaseConnection()
@@ -101,6 +102,7 @@ namespace AutoProjectSystem
                 btn_SQLstatus.BackColor = System.Drawing.Color.Lime;
                 //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
                 btn_SQLstatus.Text = "資料庫連線成功 ";
+                
             }
             catch (Exception ex)
             {
@@ -112,6 +114,7 @@ namespace AutoProjectSystem
                 // 可選：顯示詳細錯誤
                 MessageBox.Show($"資料庫連線失敗：{ex.Message}",
                     "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Info("資料庫斷線");
             }
         }
         private async void LoadTasks_Click(object sender, EventArgs e)
@@ -259,6 +262,7 @@ namespace AutoProjectSystem
             if (btn_SQLstatus.BackColor == Color.Red)
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error("載入任務失敗");
             }
             btn_taskquery.Enabled = false;
             var oldCursor = Cursor.Current;
@@ -287,6 +291,7 @@ namespace AutoProjectSystem
             }
             catch (Exception ex)
             {
+                logger.Warn(ex);
                 MessageBox.Show(ex.ToString());
             }
             finally
@@ -303,20 +308,6 @@ namespace AutoProjectSystem
         {
             return login_status.BackColor == Color.Lime;
         }
-        private void establishSQL()
-        {
-            try
-            {
-                SQLDatabase.Initialize();
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-            ApplicationConfiguration.Initialize();
-            Application.Run(new FrmMain());
-        }
         public class MultiMapRoot
         {
             [JsonPropertyName("version")]
@@ -325,10 +316,6 @@ namespace AutoProjectSystem
             [JsonPropertyName("maps")]
             public List<MapDto> Maps { get; set; } = new();
         }
-
-
-
-
         private void LoadData()
         {
             var json = File.ReadAllText(_configPath);
@@ -344,6 +331,7 @@ namespace AutoProjectSystem
 
             if (listMapBox.Items.Count > 0)
                 listMapBox.SelectedIndex = 0;
+            logger.Info("載入地圖資料完成");
         }
 
         private bool _isWiringOrLoading = false;
@@ -535,33 +523,51 @@ namespace AutoProjectSystem
         }
         private async void btn_StartHotRun_Click(object sender, EventArgs e)
         {
-            if (DGV_HotRunlist.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                if (DGV_HotRunlist.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                var selectedRow = DGV_HotRunlist.SelectedRows[0];
+                string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
+                var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    await HotRunController.StartHotRunApiAsync(scriptID);
+                }
             }
-            var selectedRow = DGV_HotRunlist.SelectedRows[0];
-            string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-            var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
+            catch (Exception ex)
             {
-                await HotRunController.StartHotRunApiAsync(scriptID);
+                logger.Warn(ex);
+                throw;
             }
+
         }
         private async void btn_StopHotRun_Click(object sender, EventArgs e)
         {
-            if (DGV_HotRunlist.SelectedRows.Count == 0)
+            try
             {
-                MessageBox.Show("請先選擇一筆欲執行腳本", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                if (DGV_HotRunlist.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("請先選擇一筆欲執行腳本", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+                var selectedRow = DGV_HotRunlist.SelectedRows[0];
+                string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
+                var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.Yes)
+                {
+                    await HotRunController.StopHotRunApiAsync(scriptID);
+                }
             }
-            var selectedRow = DGV_HotRunlist.SelectedRows[0];
-            string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-            var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes)
+            catch (Exception ex)
             {
-                await HotRunController.StopHotRunApiAsync(scriptID);
+                logger.Warn(ex);
+                throw;
             }
+
         }
         private void DGV_HotRunlist_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
@@ -581,31 +587,40 @@ namespace AutoProjectSystem
         }
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            try
             {
-                openFileDialog.Title = "選擇JSON檔案";
-                openFileDialog.Filter = "JSON檔案 (*.json)|*.json|所有檔案 (*.*)|*.*";
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    string filePath = openFileDialog.FileName;
-                    // 修正：顯示完整路徑
-                    textBox_appsetting.Text = filePath;
-                    // 讀取並解析JSON
-                    try
+                    openFileDialog.Title = "選擇JSON檔案";
+                    openFileDialog.Filter = "JSON檔案 (*.json)|*.json|所有檔案 (*.*)|*.*";
+
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        string content = File.ReadAllText(filePath);
-                        textBox_content.Text = content;
-                        // 使用 JsonNode 解析並遞迴顯示
-                        //var node = JsonNode.Parse(jsonText);
-                        //DisplayJsonNode(node, "");
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("讀取或解析JSON失敗: " + ex.Message);
+                        string filePath = openFileDialog.FileName;
+                        // 修正：顯示完整路徑
+                        textBox_appsetting.Text = filePath;
+                        // 讀取並解析JSON
+                        try
+                        {
+                            string content = File.ReadAllText(filePath);
+                            textBox_content.Text = content;
+                            // 使用 JsonNode 解析並遞迴顯示
+                            //var node = JsonNode.Parse(jsonText);
+                            //DisplayJsonNode(node, "");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("讀取或解析JSON失敗: " + ex.Message);
+                        }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                logger.Warn(ex);
+                throw;
+            }
+
         }
 
         private async void btnLogin_Click(object sender, EventArgs e)
@@ -616,17 +631,16 @@ namespace AutoProjectSystem
                 await AgvsClient.LoginAsync("dev", "12345678");
                 MessageBox.Show("登入成功！", "成功",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("派車系統登入成功");
             }
             catch (Exception ex)
             {
                 MessageBox.Show("登入失敗：\r\n" + ex.Message, "錯誤",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                //   btnLogin.Enabled = true;
+                logger.Error(ex ,"派車系統登入失敗");
             }
         }
+        //移動任務測試
         private async void btn_MoveTask_Click(object sender, EventArgs e)
         {
             // btnMove.Enabled = false;
@@ -637,6 +651,7 @@ namespace AutoProjectSystem
             }
             catch (Exception ex)
             {
+                logger.Warn(ex);
                 //    txtOutput.Text = "Move 失敗：\r\n" + ex.Message;
             }
             finally
@@ -716,11 +731,13 @@ namespace AutoProjectSystem
 
             if (confirm != DialogResult.Yes)
             {
+                logger.Info("自動執行腳本任務取消(尚未開始)");
                 return; // ❌ 不執行後續流程
             }
             if (_autoRunning)
             {
                 MessageBox.Show("自動腳本執行中。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("自動腳本執行開始");
                 return;
             }
             // 2) 啟動自動流程
@@ -738,10 +755,12 @@ namespace AutoProjectSystem
             catch (OperationCanceledException)
             {
                 MessageBox.Show("自動腳本已取消。", "取消", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("自動腳本任務取消");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "執行錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Warn(ex);
             }
             finally
             {
@@ -752,7 +771,7 @@ namespace AutoProjectSystem
         private async Task RunAutoScriptsFlowAsync(CancellationToken ct)
         {
 
-            // 1) 基本檢查（照你原本的）
+            // 1) 基本檢查
             if (DGV_Script.Rows.Count == 0)
             {
                 MessageBox.Show("任務列表無任務，請新增任務", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -879,6 +898,7 @@ namespace AutoProjectSystem
                     //    MessageBoxButtons.OK,
                     //    MessageBoxIcon.Warning);
                     ///需記LOG
+                    logger.Warn(scriptName + "超過時間","此腳本失敗");
                     return false;
                 }
 
@@ -1027,6 +1047,7 @@ namespace AutoProjectSystem
             await Task.Delay(2000);
             //Thread.Sleep(3000);
             move_task_click();
+            logger.Info("開始執行列表中的任務");
         }
 
         private async void test_hasrunningTASK(object sender, EventArgs e)
@@ -1383,11 +1404,13 @@ namespace AutoProjectSystem
             if (!isAGVS_Connected())
             {
                 MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Warn("取消任務失敗，因為派車系統未連線");
                 return;
             }
             if (!isSQL_Connected())
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Warn("取消任務失敗，因為資料庫未連線");
                 return;
             }
             try
@@ -1441,16 +1464,16 @@ namespace AutoProjectSystem
                 // 4) 顯示結果
                 var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
                 if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
-
+                logger.Info("取消任務數: {OkCount}", okCount);
                 MessageBox.Show(
-                    msg,
-                    "批次取消結果",
+                    msg,"批次取消結果",
                     MessageBoxButtons.OK,
                     failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               // MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Warn(ex);
             }
             finally
             {
