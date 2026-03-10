@@ -82,8 +82,6 @@ static class AgvsClient
                 throw new InvalidOperationException("尚未登入，請先呼叫 LoginAsync。");
                 //throw;
             }
-           
-
         var payload = new
         {
             Action = 0,

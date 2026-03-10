@@ -104,3 +104,4 @@ C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\runtimes\win\lib\net6.0\System.Runtime.Caching.dll
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\NLog.dll
+C:\Users\user\Downloads\repo\UMTC\AutoProjectSystem\AutoProjectSystem\bin\Debug\net8.0-windows\nlog.config

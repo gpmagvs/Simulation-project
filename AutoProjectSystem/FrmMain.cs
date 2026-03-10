@@ -102,7 +102,7 @@ namespace AutoProjectSystem
                 btn_SQLstatus.BackColor = System.Drawing.Color.Lime;
                 //btn_SQLstatus.ForeColor = System.Drawing.Color.White;
                 btn_SQLstatus.Text = "資料庫連線成功 ";
-                
+
             }
             catch (Exception ex)
             {
@@ -637,7 +637,7 @@ namespace AutoProjectSystem
             {
                 MessageBox.Show("登入失敗：\r\n" + ex.Message, "錯誤",
                 MessageBoxButtons.OK, MessageBoxIcon.Error);
-                logger.Error(ex ,"派車系統登入失敗");
+                logger.Error(ex, "派車系統登入失敗");
             }
         }
         //移動任務測試
@@ -898,7 +898,7 @@ namespace AutoProjectSystem
                     //    MessageBoxButtons.OK,
                     //    MessageBoxIcon.Warning);
                     ///需記LOG
-                    logger.Warn(scriptName + "超過時間","此腳本失敗");
+                    logger.Warn(scriptName + "超過時間", "此腳本失敗");
                     return false;
                 }
 
@@ -968,7 +968,7 @@ namespace AutoProjectSystem
                 allRows.AddRange(dt5.AsEnumerable());
 
             if (allRows.Count == 0) return; // 沒有需要取消的任務
-            
+
             // 2) 逐筆呼叫你現有的取消 API / Client（你自己替換成你實際的取消方法）
             foreach (var row in allRows)
             {
@@ -984,7 +984,7 @@ namespace AutoProjectSystem
 
                     await Task.Delay(10, ct); // 占位：避免你貼上後忘記替換仍可編譯
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     logger.Info(ex);
                     // 取消失敗先不要整個流程炸掉，可視需求記 log
@@ -1066,12 +1066,12 @@ namespace AutoProjectSystem
                 {
                     MessageBox.Show("無未執行的任務");
                 }
-                
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-            } 
+            }
 
         }
         private async Task<bool> RunCurrentScriptAsync()
@@ -1091,7 +1091,7 @@ namespace AutoProjectSystem
                     // ✅ 沒有 State=1 → 視為腳本完成
                     return true;
                 }
-                await Task.Delay(pollMs); 
+                await Task.Delay(pollMs);
             }
             // ❌ 超過 3 分鐘還有 State=1 → 視為腳本失敗
             logger.Warn("腳本失敗，超過設定時間" + pollMs);
@@ -1131,7 +1131,7 @@ namespace AutoProjectSystem
         }
         private bool isTaskNull()
         {
-            foreach(DataGridViewRow row in DGV_Script.Rows)
+            foreach (DataGridViewRow row in DGV_Script.Rows)
             {
                 if (row.IsNewRow) continue;
                 string agvName = GetCellStringSafe(row, "AGVName"); // 可以用欄位名稱或 header text
@@ -1189,7 +1189,7 @@ namespace AutoProjectSystem
                 try
                 {
                     await AgvsClient.PostMoveAsync(agvName, End, false);
-                    logger.Info("將" + agvName+"移動到" + End);
+                    logger.Info("將" + agvName + "移動到" + End);
                 }
                 catch (Exception ex)
                 {
@@ -1296,7 +1296,7 @@ namespace AutoProjectSystem
                 MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            if(!isSQL_Connected())
+            if (!isSQL_Connected())
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -1398,7 +1398,7 @@ namespace AutoProjectSystem
                 foreach (var st in states.Distinct())
                 {
                     DataTable dt = await SQLDatabase.QueryCancelTaskAsync(st);
-                    if (dt == null || dt.Rows.Count == 0) 
+                    if (dt == null || dt.Rows.Count == 0)
                     {
                         continue;
                     }
@@ -1407,15 +1407,15 @@ namespace AutoProjectSystem
                         var name = row.Field<string>("TaskName");
                         if (!string.IsNullOrWhiteSpace(name))
                             taskNames.Add(name.Trim());
-                    } 
+                    }
                 }
                 ///tasknames 沒有取消的任務先繼續
                 var list = taskNames.ToList();
                 var preview = string.Join("\r\n", list.Take(5));
                 var more = list.Count > 5 ? $"\r\n... 共 {list.Count} 筆" : $"（共 {list.Count} 筆）";
 
-                string stateText = string.Join(", ", states.Distinct().OrderBy(x=>x));
-                var  confirm = MessageBox.Show(
+                string stateText = string.Join(", ", states.Distinct().OrderBy(x => x));
+                var confirm = MessageBox.Show(
                     $"確定要取消下列 State={stateText} 的任務？\r\n{preview}\r\n{more}",
                     "確認取消",
                     MessageBoxButtons.OKCancel,
@@ -1448,10 +1448,10 @@ namespace AutoProjectSystem
                     msg, "批次取消結果",
                     MessageBoxButtons.OK,
                     failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-                }
+            }
             catch (Exception ex)
             {
-               // MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 logger.Error(ex);
             }
             finally
