@@ -909,6 +909,7 @@ namespace AutoProjectSystem
         private CancellationTokenSource _cancelCts;
         private async void btn_CancelTasks_Click(object sender, EventArgs e)
         {
+            logger.Info("使用者點擊取消任務按鈕");
             // 先詢問使用者
             var confirm = MessageBox.Show(
                 "確定要取消所有 State=1 與 State=5 的任務嗎？",
@@ -932,16 +933,19 @@ namespace AutoProjectSystem
                 await CancelScriptTasksAsync(_cancelCts.Token);
                 MessageBox.Show("任務取消請求已送出。", "完成",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("任務取消請求已送出");
             }
             catch (OperationCanceledException)
             {
                 MessageBox.Show("取消任務已被中止。", "取消",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("取消任務已被中止");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "執行錯誤",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Info(ex);
             }
             finally
             {
@@ -972,7 +976,7 @@ namespace AutoProjectSystem
 
                 string taskName = row["TaskName"]?.ToString() ?? "";
                 if (string.IsNullOrWhiteSpace(taskName)) continue;
-
+                logger.Info("正在取消任務: " + taskName);
                 try
                 {
                     // TODO: 換成你實際的取消函數
@@ -980,8 +984,9 @@ namespace AutoProjectSystem
 
                     await Task.Delay(10, ct); // 占位：避免你貼上後忘記替換仍可編譯
                 }
-                catch
+                catch(Exception ex)
                 {
+                    logger.Info(ex);
                     // 取消失敗先不要整個流程炸掉，可視需求記 log
                 }
             }
@@ -997,15 +1002,6 @@ namespace AutoProjectSystem
 
             return hasState1 || hasState5;
         }
-        //private async Task<bool> HasState1TasksAsync(CancellationToken ct)
-        //{
-        //    // 方案A：你如果已經有 HasRunningOrIdleTaskAsync()，直接用它
-        //    // return await SQLDatabase.HasRunningOrIdleTaskAsync();
-
-        //    // 方案B：如果你有 QueryUNdoneTasksAsync(state=1)
-        //    var dt = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: 1);
-        //    return dt != null && dt.Rows.Count > 0;
-        //}
         private async void Auto_RunScripts_Click(object sender, EventArgs e)
         {
             if (DGV_Script.Rows.Count == 0)
@@ -1098,17 +1094,8 @@ namespace AutoProjectSystem
                 await Task.Delay(pollMs); 
             }
             // ❌ 超過 3 分鐘還有 State=1 → 視為腳本失敗
+            logger.Warn("腳本失敗，超過設定時間" + pollMs);
             return false;
-        }
-        private bool IsScriptFinished()
-        {
-            // ✅ 你可以用：
-            // 1) 查 DB：這次下的任務是否都 Finish/State!=1
-            // 2) API 回報：所有任務完成事件都收到了
-            // 3) 你自己的 HotRunManager：有沒有收到腳本結束訊號
-
-            // 先給你假資料，請改成真正判斷
-            return true;
         }
         private void AskRunNextScriptIfAny()
         {
@@ -1136,7 +1123,7 @@ namespace AutoProjectSystem
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "切換腳本失敗");
+                    logger.Error(ex, "執行下一個腳本失敗");
                     throw;
                 }
 
@@ -1174,10 +1161,12 @@ namespace AutoProjectSystem
                 try
                 {
                     var res = await APIController.APIAGVLocate(agvName, start); // 你已有的 API helper
+                    logger.Info("將" + agvName + "定位在" + start);
                 }
                 catch (Exception ex)
                 {
                     // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
+                    logger.Error(ex);
                 }
             }
         }
@@ -1200,9 +1189,11 @@ namespace AutoProjectSystem
                 try
                 {
                     await AgvsClient.PostMoveAsync(agvName, End, false);
+                    logger.Info("將" + agvName+"移動到" + End);
                 }
                 catch (Exception ex)
                 {
+                    logger.Error(ex);
                     // row.Cells["Status"].Value = $"錯誤: {ex.Message}";
                 }
             }
@@ -1220,9 +1211,11 @@ namespace AutoProjectSystem
 
                 foreach (DataGridViewColumn col in DGV_Tasks.Columns)
                     col.SortMode = DataGridViewColumnSortMode.Automatic;
+                logger.Info("重整任務列表");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Error(ex, "重整任務列表失敗");
                 throw;
             }
         }
@@ -1247,6 +1240,7 @@ namespace AutoProjectSystem
                 {
                     var cancelbox = MessageBox.Show(
                        $"任務皆已經完成");
+                    logger.Info("不用取消任務因為任務皆已完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
                 if (taskname.Count != 0)
@@ -1277,6 +1271,7 @@ namespace AutoProjectSystem
                             failCount++;
                             sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
                         }
+                        logger.Info("取消idle任務，任務名稱:" + taskname);
                     }
                     // 4) 顯示結果
                     var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
@@ -1284,16 +1279,10 @@ namespace AutoProjectSystem
                     MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
                         failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
                 }
-                if (taskname.Count == 0)
-                {
-                    var cancelbox = MessageBox.Show(
-                       $"任務皆已經完成");
-                    if (cancelbox != DialogResult.OK) return;
-                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                logger.Error(ex, "取消idle任務失敗");
                 throw;
             }
             await Task.Delay(1000);
@@ -1360,7 +1349,7 @@ namespace AutoProjectSystem
                     if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
                     MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
                         failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-
+                    logger.Info("取消running任務，任務名稱:" + taskname);
                     // 5) 選擇性：刷新畫面
                     // await ReloadTasksAsync(); // 若你有查詢刷新方法就呼叫
                 }
@@ -1368,6 +1357,7 @@ namespace AutoProjectSystem
                 {
                     var cancelbox = MessageBox.Show(
                        $"任務皆已經完成");
+                    logger.Info("不用取消任務因為任務皆已完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
 
@@ -1376,6 +1366,7 @@ namespace AutoProjectSystem
             catch (Exception ex)
             {
                 MessageBox.Show("執行取消時發生錯誤：\r\n" + ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error(ex, "取消running任務失敗");
             }
             await Task.Delay(2000);
             await ReloadTasklist();
@@ -1441,6 +1432,7 @@ namespace AutoProjectSystem
                     if (ret.OK && ret.Data == true)
                     {
                         okCount++;
+                        logger.Info("取消任務" + name);
                     }
                     else
                     {
@@ -1448,20 +1440,19 @@ namespace AutoProjectSystem
                         sbFail.AppendLine($"{name} -> {ret.Error ?? "後端回傳 false"}");
                     }
                 }
-
                 // 4) 顯示結果
                 var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
                 if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
                 logger.Info("取消任務數: {OkCount}", okCount);
                 MessageBox.Show(
-                    msg,"批次取消結果",
+                    msg, "批次取消結果",
                     MessageBoxButtons.OK,
                     failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
-            }
+                }
             catch (Exception ex)
             {
                // MessageBox.Show("執行取消時發生錯誤：\r\n" + ex, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                logger.Warn(ex);
+                logger.Error(ex);
             }
             finally
             {
@@ -1469,12 +1460,6 @@ namespace AutoProjectSystem
                 await ReloadTasklist();
             }
         }
-
-
-        
-
-
-
         private List<TaskItemDto> GetTasksFromGrid()
         {
             if (DGV_Script.DataSource is BindingSource bs)
@@ -1520,10 +1505,12 @@ namespace AutoProjectSystem
                     {
                         File.WriteAllText(filePath, textBox_content.Text);
                         MessageBox.Show("儲存成功: " + filePath);
+                        logger.Info("參數儲存成功，儲存路徑為:" + filePath);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("保存配置文件時出錯: " + ex.Message);
+                        logger.Error(ex, "保存配置文件失敗");
                     }
                 }
             }
@@ -1542,11 +1529,13 @@ namespace AutoProjectSystem
                 string response = await APIController.RestartAGVS();
                 richTextBox_content.AppendText(response + Environment.NewLine);
                 MessageBox.Show("已執行重啟派車系統。");
+                logger.Info("重啟派車系統");
             }
             else
             {
                 // 取消，不做任何事
                 MessageBox.Show("已取消，下次別亂按");
+                logger.Info("使用者取消重啟派車系統");
             }
         }
         //地圖加上腳本
@@ -1575,13 +1564,6 @@ namespace AutoProjectSystem
             MessageBox.Show("已成功儲存。", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void btnLoadJson_Click(object sender, EventArgs e)
-        {
-            using var ofd = new OpenFileDialog { Filter = "JSON|*.json" };
-            if (ofd.ShowDialog() != DialogResult.OK) return;
-            _configPath = ofd.FileName;
-            LoadData();
-        }
         private static string Prompt(string text, string title, string defaultValue = "")
         {
             var form = new Form { Width = 380, Height = 160, Text = title, StartPosition = FormStartPosition.CenterParent };
@@ -1596,14 +1578,10 @@ namespace AutoProjectSystem
 
         private void add_task(object sender, EventArgs e)
         {
-            //if (lstScripts.SelectedItem is not ScriptDto) { MessageBox.Show("請先選擇一個腳本"); return; }
-            //if (_tasksBS.List is BindingList<TaskItemDto> list)
-            //{
-            //    list.Add(new TaskItemDto { Start = "0", Action = _actionOptions[0], End = "0" });
-            //}
             if (lstScripts.SelectedItem is not ScriptDto s)
             {
                 MessageBox.Show("請先選擇一個腳本");
+                logger.Info("任務列表中新增任務");
                 return;
             }
 
@@ -1660,6 +1638,7 @@ namespace AutoProjectSystem
             if (!(listMapBox.SelectedItem is MapDto m))
             {
                 MessageBox.Show("請先選取要刪除的地圖。", "無選取項目", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                logger.Info("刪除地圖失敗，因為沒有選取地圖");
                 return;
             }
 
@@ -1677,19 +1656,10 @@ namespace AutoProjectSystem
             if (dr == DialogResult.Yes)
             {
                 _data.Maps.Remove(m);
+                logger.Info($"刪除地圖{m.GetType().Name}");
                 _mapBS.ResetBindings(false);
             }
         }
-
-        private void btnRenameMap_Click(object sender, EventArgs e)
-        {
-            if (listMapBox.SelectedItem is not MapDto m) return;
-            var name = Prompt("新地圖名稱：", "重新命名地圖", m.MapName);
-            if (string.IsNullOrWhiteSpace(name)) return;
-            m.MapName = name;
-            _mapBS.ResetBindings(false);
-        }
-
         // Script
         private void btnAddScript_Click(object sender, EventArgs e)
         {
@@ -1715,6 +1685,7 @@ namespace AutoProjectSystem
             m.Scripts.Add(s);
             _scriptBS.ResetBindings(false);
             lstScripts.SelectedItem = s;
+            logger.Info("新增腳本成功");
         }
 
         private void btnDeleteScript_Click(object sender, EventArgs e)

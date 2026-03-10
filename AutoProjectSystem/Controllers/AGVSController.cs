@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Net;
 using static System.Net.WebRequestMethods;
+using NLog;
 
 namespace AutoProjectSystem.Controllers
 {
@@ -100,6 +101,7 @@ namespace AutoProjectSystem.Controllers
             catch (Exception ex)
             {
                 return $"發生錯誤: {ex.Message}";
+               
             }
 
         }
