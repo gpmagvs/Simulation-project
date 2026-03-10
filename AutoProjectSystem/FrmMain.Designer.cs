@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -115,7 +115,7 @@
             btn_chooseproject.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             btn_chooseproject.Location = new Point(14, 21);
             btn_chooseproject.Name = "btn_chooseproject";
-            btn_chooseproject.Size = new Size(148, 23);
+            btn_chooseproject.Size = new Size(148, 28);
             btn_chooseproject.TabIndex = 1;
             btn_chooseproject.Text = "選擇AGVS參數檔";
             btn_chooseproject.UseVisualStyleBackColor = false;
@@ -123,14 +123,14 @@
             // 
             // textBox_appsetting
             // 
-            textBox_appsetting.Location = new Point(191, 22);
+            textBox_appsetting.Location = new Point(180, 25);
             textBox_appsetting.Name = "textBox_appsetting";
             textBox_appsetting.Size = new Size(313, 23);
             textBox_appsetting.TabIndex = 4;
             // 
             // textBox_content
             // 
-            textBox_content.Location = new Point(14, 91);
+            textBox_content.Location = new Point(14, 111);
             textBox_content.Multiline = true;
             textBox_content.Name = "textBox_content";
             textBox_content.ScrollBars = ScrollBars.Vertical;
@@ -147,7 +147,7 @@
             // 
             // bnt_APItest
             // 
-            bnt_APItest.Location = new Point(136, 469);
+            bnt_APItest.Location = new Point(97, 469);
             bnt_APItest.Name = "bnt_APItest";
             bnt_APItest.Size = new Size(84, 23);
             bnt_APItest.TabIndex = 7;
@@ -158,10 +158,10 @@
             // button1
             // 
             button1.BackColor = Color.FromArgb(255, 128, 0);
-            button1.Location = new Point(539, 22);
+            button1.Location = new Point(507, 21);
             button1.Margin = new Padding(2);
             button1.Name = "button1";
-            button1.Size = new Size(73, 23);
+            button1.Size = new Size(73, 28);
             button1.TabIndex = 8;
             button1.Text = "儲存";
             button1.UseVisualStyleBackColor = false;
@@ -171,7 +171,7 @@
             // 
             button2.BackColor = Color.Red;
             button2.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button2.Location = new Point(245, 466);
+            button2.Location = new Point(187, 466);
             button2.Name = "button2";
             button2.Size = new Size(130, 33);
             button2.TabIndex = 9;
@@ -324,21 +324,21 @@
             DGV_Script.AllowUserToResizeRows = false;
             DGV_Script.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Microsoft JhengHei UI", 9F);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Microsoft JhengHei UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
             DGV_Script.Location = new Point(3, 35);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
             DGV_Script.Size = new Size(623, 292);
             DGV_Script.TabIndex = 0;
             // 
@@ -661,11 +661,11 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            label2.Location = new Point(14, 54);
+            label2.Location = new Point(14, 88);
             label2.Name = "label2";
-            label2.Size = new Size(120, 20);
+            label2.Size = new Size(89, 20);
             label2.TabIndex = 11;
-            label2.Text = "JSON_Content";
+            label2.Text = "參數檔內容";
             // 
             // label1
             // 
@@ -673,9 +673,9 @@
             label1.Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 136);
             label1.Location = new Point(14, 469);
             label1.Name = "label1";
-            label1.Size = new Size(105, 20);
+            label1.Size = new Size(68, 20);
             label1.TabIndex = 10;
-            label1.Text = "API_Content";
+            label1.Text = "API內容";
             // 
             // tabPage2
             // 
