@@ -574,9 +574,10 @@
             // btn_CancelrunidleTask
             // 
             btn_CancelrunidleTask.BackColor = Color.DeepSkyBlue;
-            btn_CancelrunidleTask.Location = new Point(220, 48);
+            btn_CancelrunidleTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            btn_CancelrunidleTask.Location = new Point(201, 48);
             btn_CancelrunidleTask.Name = "btn_CancelrunidleTask";
-            btn_CancelrunidleTask.Size = new Size(137, 28);
+            btn_CancelrunidleTask.Size = new Size(171, 28);
             btn_CancelrunidleTask.TabIndex = 25;
             btn_CancelrunidleTask.Text = "取消run和idle任務";
             btn_CancelrunidleTask.UseVisualStyleBackColor = false;
@@ -585,7 +586,8 @@
             // button17
             // 
             button17.BackColor = Color.DeepSkyBlue;
-            button17.Location = new Point(220, 14);
+            button17.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            button17.Location = new Point(24, 48);
             button17.Name = "button17";
             button17.Size = new Size(171, 28);
             button17.TabIndex = 24;
@@ -596,7 +598,8 @@
             // button16
             // 
             button16.BackColor = Color.DeepSkyBlue;
-            button16.Location = new Point(122, 48);
+            button16.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            button16.Location = new Point(220, 14);
             button16.Name = "button16";
             button16.Size = new Size(92, 28);
             button16.TabIndex = 23;
@@ -607,7 +610,8 @@
             // button13
             // 
             button13.BackColor = Color.DeepSkyBlue;
-            button13.Location = new Point(24, 48);
+            button13.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
+            button13.Location = new Point(122, 14);
             button13.Name = "button13";
             button13.Size = new Size(92, 28);
             button13.TabIndex = 18;
@@ -618,6 +622,7 @@
             // btn_taskquery
             // 
             btn_taskquery.BackColor = Color.DeepSkyBlue;
+            btn_taskquery.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             btn_taskquery.ForeColor = SystemColors.ControlText;
             btn_taskquery.Location = new Point(24, 14);
             btn_taskquery.Name = "btn_taskquery";

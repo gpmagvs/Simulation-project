@@ -832,6 +832,15 @@ namespace AutoProjectSystem
         private CancellationTokenSource _cancelCts;
         private async void btn_CancelTasks_Click(object sender, EventArgs e)
         {
+            if (!isAGVS_Connected())
+            {
+                MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!isSQL_Connected())
+            {
+                MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             logger.Info("使用者點擊取消任務按鈕");
             // 先詢問使用者
             var confirm = MessageBox.Show(
