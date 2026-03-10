@@ -1064,7 +1064,7 @@ namespace AutoProjectSystem
                 if (isRunning)
                 {
 
-                    MessageBox.Show("有未完成的任務 幹");
+                    MessageBox.Show("有未完成的任務");
                 }
                 else if (isRunning == false)
                 {
@@ -1100,27 +1100,6 @@ namespace AutoProjectSystem
             // ❌ 超過 3 分鐘還有 State=1 → 視為腳本失敗
             return false;
         }
-
-        private async Task WaitScriptFinishedAsync(TimeSpan timeout)
-        {
-            var start = DateTime.Now;
-
-            while (DateTime.Now - start < timeout)
-            {
-                if (IsScriptFinished())
-                    return;
-
-                await Task.Delay(2000);
-            }
-
-            // 超時也視為結束（或你要提示）
-            MessageBox.Show("腳本執行逾時（5分鐘），已結束等待。", "提示",
-                MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-        /// <summary>
-        /// /需要確認腳本是否完成
-        /// </summary>
-        /// <returns></returns>
         private bool IsScriptFinished()
         {
             // ✅ 你可以用：
@@ -1150,8 +1129,17 @@ namespace AutoProjectSystem
 
             if (result == DialogResult.Yes)
             {
-                lstScripts.SelectedIndex = nextIdx; // 切換到腳本二（任務列表會自動更新）
-                Auto_RunScripts_Click(this, EventArgs.Empty); // 直接再跑一次（或改成呼叫 RunCurrentScriptAsync）
+                try
+                {
+                    lstScripts.SelectedIndex = nextIdx; // 切換到腳本二（任務列表會自動更新）
+                    Auto_RunScripts_Click(this, EventArgs.Empty); // 直接再跑一次（或改成呼叫 RunCurrentScriptAsync）
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "切換腳本失敗");
+                    throw;
+                }
+
             }
         }
         private bool isTaskNull()

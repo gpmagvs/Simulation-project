@@ -9,12 +9,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic.Logging;
 using static System.Windows.Forms.AxHost;
 using System.Formats.Asn1;
+using NLog;
 
 
 namespace AutoProjectSystem
 {
     public static class SQLDatabase
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         /// <summary>
         /// 可在 Program.cs 啟動時呼叫一次，用來測試與初始化（可選）。
         /// </summary>
@@ -117,15 +119,23 @@ namespace AutoProjectSystem
                    TaskName, Action, RecieveTime, StartTime, FinishTime, State  ,DesignatedAGVName
             FROM Tasks
             ORDER BY RecieveTime DESC;";
+            try
+            {
+                using var conn = GetOpenConnection();
+                using var cmd = new SqlCommand(sql, conn);
+                if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
 
-            using var conn = GetOpenConnection();
-            using var cmd = new SqlCommand(sql, conn);
-            if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
+                using var rd = await cmd.ExecuteReaderAsync();
+                var dt = new DataTable();
+                dt.Load(rd);                 // ← 一次載入全部欄位
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                logger.Info(ex, "查詢任務失敗");
+                throw;
+            }
 
-            using var rd = await cmd.ExecuteReaderAsync();
-            var dt = new DataTable();
-            dt.Load(rd);                 // ← 一次載入全部欄位
-            return dt;
         }
         public static async Task<DataTable> QueryUNdoneTasksAsync(int state , int? top = null)
         {
@@ -137,42 +147,30 @@ namespace AutoProjectSystem
             FROM Tasks
             WHERE State = @state
             ORDER BY RecieveTime DESC;";
-            //SELECT {(top.HasValue ? "TOP (@top)" : "")} TaskName
-            //FROM Tasks WITH (NOLOCK)
-            //WHERE [State] = @state
-            //ORDER BY RecieveTime DESC;";
-            //var sql = $@"
-            //SELECT {(top.HasValue ? "TOP (@top)" : "")}
-            //       TaskName, Action, RecieveTime, StartTime, FinishTime, State 
-            //FROM Tasks
-            //ORDER BY RecieveTime DESC;";
             System.Diagnostics.Debug.WriteLine("==== SQL ====");
             System.Diagnostics.Debug.WriteLine(sql);
             System.Diagnostics.Debug.WriteLine($"state={state}, top={(top?.ToString() ?? "null")}");
             System.Diagnostics.Debug.WriteLine("=============");
-            using var conn = GetOpenConnection();
-            using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.Add("@state", SqlDbType.Int).Value = state;
+            try
+            {
+                using var conn = GetOpenConnection();
+                using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.Add("@state", SqlDbType.Int).Value = state;
 
-            if (top.HasValue)
-                cmd.Parameters.Add("@top", SqlDbType.Int).Value = top.Value;
+                if (top.HasValue)
+                    cmd.Parameters.Add("@top", SqlDbType.Int).Value = top.Value;
 
-            using var reader = await cmd.ExecuteReaderAsync();
-            var dt = new DataTable();
-            //dt.Columns.Add("TaskName", typeof(string)); // Ensure the DataTable has the correct schema
+                using var reader = await cmd.ExecuteReaderAsync();
+                var dt = new DataTable();
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"查詢 State={state} 的任務失敗");
+                throw;
+            }
 
-            //while (await reader.ReadAsync())
-            //{
-            //    var name = reader["TaskName"]?.ToString();
-            //    if (!string.IsNullOrWhiteSpace(name))
-            //    {
-            //        var row = dt.NewRow();
-            //        row["TaskName"] = name;
-            //        dt.Rows.Add(row);
-            //    }
-            //}
-            dt.Load(reader);
-            return dt;
         }
         public static async Task<bool> HasRunningOrIdleTaskAsync()
         {
@@ -187,80 +185,6 @@ namespace AutoProjectSystem
 
             return result != null;
         }
-        public static async Task<List<TaskRow>> QueryTasksAsync(int? top = null)
-        {
-            var sql = $@"SELECT {(top.HasValue ? "TOP (@top)" : "")}TaskName, Action, RecieveTime, StartTime, FinishTime, State ,DesignatedAGVName FROM Tasks ORDER BY RecieveTime DESC;";
-
-            using var conn = GetOpenConnection();
-            using var cmd = new SqlCommand(sql, conn);
-            if (top.HasValue) cmd.Parameters.Add(new SqlParameter("@top", SqlDbType.Int) { Value = top.Value });
-
-            var list = new List<TaskRow>();
-            using var rd = await cmd.ExecuteReaderAsync();
-            while (await rd.ReadAsync())
-            {
-                list.Add(new TaskRow
-                {
-                    TaskName = rd["TaskName"] as string,
-                    Action = Convert.ToInt32(rd["Action"]),
-                    RecieveTime = Convert.ToDateTime(rd["RecieveTime"]),
-                    StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
-                    FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
-                    State = Convert.ToInt32(rd["State"]),
-                    // DispatcherName = rd["DispatcherName"] as string
-                });
-            }
-            return list;
-        }
-        /// <summary>
-        /// 查「超過指定時間仍未完成」的任務（預設 1 分鐘）。
-        /// 完成判定：FinishTime 為 NULL 或 0001-01-01 視為未完成。
-        /// </summary>
-        public static async Task<List<TaskRow>> QueryOvertimeUnfinishedAsync(TimeSpan? threshold = null)
-        {
-            threshold ??= TimeSpan.FromMinutes(1);
-
-            // 以 FinishTime NULL 或 0001-01-01 當作未完成；必要時可再加上 State 判定。
-            var sql = @"
-                SELECT TaskName, Action, RecieveTime, StartTime, FinishTime, State
-                FROM dbo.Tasks
-                WHERE (FinishTime IS NULL OR FinishTime = '0001-01-01T00:00:00')
-                  AND DATEADD(SECOND, @sec, RecieveTime) < GETDATE()
-                ORDER BY RecieveTime DESC;";
-
-            using var conn = GetOpenConnection();
-            using var cmd = new SqlCommand(sql, conn);
-            cmd.Parameters.Add(new SqlParameter("@sec", SqlDbType.Int) { Value = (int)threshold.Value.TotalSeconds });
-
-            var list = new List<TaskRow>();
-            using var rd = await cmd.ExecuteReaderAsync();
-            while (await rd.ReadAsync())
-            {
-                list.Add(new TaskRow
-                {
-                    TaskName = rd["TaskName"] as string,
-                    Action = Convert.ToInt32(rd["Action"]),
-                    RecieveTime = Convert.ToDateTime(rd["RecieveTime"]),
-                    StartTime = rd["StartTime"] is DBNull ? null : Convert.ToDateTime(rd["StartTime"]),
-                    FinishTime = rd["FinishTime"] is DBNull ? null : Convert.ToDateTime(rd["FinishTime"]),
-                    State = Convert.ToInt32(rd["State"]),
-                    //DispatcherName = rd["DispatcherName"] as string
-                });
-            }
-            return list;
-        }
-
-        /// <summary>
-        /// 依需求對超時未完成任務做標記（示範：寫入 Log；若有欄位可更新可在這裡UPDATE）。
-        /// </summary>
-        //public static async Task MarkOvertimeUnfinishedAsync(TimeSpan? threshold = null)
-        //{
-        //    var overtime = await QueryOvertimeUnfinishedAsync(threshold);
-        //    var log = NLog.LogManager.GetCurrentClassLogger();
-        //    foreach (var t in overtime)
-        //        log.Warn($"[OVERTIME] {t.TaskName} | RecieveTime={t.RecieveTime:yyyy-MM-dd HH:mm:ss}");
-        //    // 若你有 Tasks 表的「Remark/IsOvertime」欄位，可在這裡用 UPDATE 對它們加標記。
-        //}
     }
 
 }
