@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -324,7 +324,7 @@
             panel5.Controls.Add(label8);
             panel5.Location = new Point(515, 13);
             panel5.Name = "panel5";
-            panel5.Size = new Size(620, 324);
+            panel5.Size = new Size(629, 330);
             panel5.TabIndex = 22;
             // 
             // DGV_Script
@@ -335,22 +335,22 @@
             DGV_Script.AllowUserToResizeRows = false;
             DGV_Script.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = SystemColors.Control;
-            dataGridViewCellStyle5.Font = new Font("Microsoft JhengHei UI", 9F);
-            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
-            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Microsoft JhengHei UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
-            DGV_Script.Location = new Point(3, 27);
+            DGV_Script.Location = new Point(3, 35);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle6;
-            DGV_Script.Size = new Size(614, 294);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            DGV_Script.Size = new Size(623, 292);
             DGV_Script.TabIndex = 0;
             // 
             // No
@@ -402,7 +402,7 @@
             panel4.Controls.Add(btn_removeScript);
             panel4.Controls.Add(button7);
             panel4.Controls.Add(btn_AutoRunTask);
-            panel4.Location = new Point(264, 365);
+            panel4.Location = new Point(267, 365);
             panel4.Name = "panel4";
             panel4.Size = new Size(198, 132);
             panel4.TabIndex = 21;
@@ -447,7 +447,7 @@
             // 
             // btn_AutoRunTask
             // 
-            btn_AutoRunTask.BackColor = Color.DarkOrange;
+            btn_AutoRunTask.BackColor = Color.Orange;
             btn_AutoRunTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             btn_AutoRunTask.Location = new Point(2, 99);
             btn_AutoRunTask.Name = "btn_AutoRunTask";
@@ -463,7 +463,7 @@
             panel3.Controls.Add(lstScripts);
             panel3.Location = new Point(266, 13);
             panel3.Name = "panel3";
-            panel3.Size = new Size(201, 330);
+            panel3.Size = new Size(204, 330);
             panel3.TabIndex = 20;
             // 
             // label6
@@ -501,9 +501,9 @@
             listMapBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             listMapBox.FormattingEnabled = true;
             listMapBox.ItemHeight = 15;
-            listMapBox.Location = new Point(3, 35);
+            listMapBox.Location = new Point(3, 38);
             listMapBox.Name = "listMapBox";
-            listMapBox.Size = new Size(201, 289);
+            listMapBox.Size = new Size(195, 289);
             listMapBox.TabIndex = 10;
             // 
             // label7
@@ -523,9 +523,9 @@
             panel1.Controls.Add(btn_saveScript);
             panel1.Controls.Add(btn_AddMap);
             panel1.Controls.Add(btn_DeleteMap);
-            panel1.Location = new Point(12, 365);
+            panel1.Location = new Point(10, 365);
             panel1.Name = "panel1";
-            panel1.Size = new Size(201, 94);
+            panel1.Size = new Size(209, 106);
             panel1.TabIndex = 18;
             // 
             // btn_saveScript
@@ -533,7 +533,7 @@
             btn_saveScript.AutoSize = true;
             btn_saveScript.BackColor = Color.LimeGreen;
             btn_saveScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_saveScript.Location = new Point(0, 63);
+            btn_saveScript.Location = new Point(1, 63);
             btn_saveScript.Name = "btn_saveScript";
             btn_saveScript.Size = new Size(201, 28);
             btn_saveScript.TabIndex = 5;
@@ -546,7 +546,7 @@
             btn_AddMap.AutoSize = true;
             btn_AddMap.BackColor = Color.DeepSkyBlue;
             btn_AddMap.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_AddMap.Location = new Point(0, 3);
+            btn_AddMap.Location = new Point(1, 3);
             btn_AddMap.Name = "btn_AddMap";
             btn_AddMap.Size = new Size(201, 28);
             btn_AddMap.TabIndex = 11;
@@ -556,9 +556,9 @@
             // 
             // btn_DeleteMap
             // 
-            btn_DeleteMap.BackColor = Color.Red;
+            btn_DeleteMap.BackColor = Color.OrangeRed;
             btn_DeleteMap.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_DeleteMap.Location = new Point(0, 34);
+            btn_DeleteMap.Location = new Point(1, 34);
             btn_DeleteMap.Name = "btn_DeleteMap";
             btn_DeleteMap.Size = new Size(201, 28);
             btn_DeleteMap.TabIndex = 12;
