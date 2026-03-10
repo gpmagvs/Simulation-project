@@ -508,83 +508,6 @@ namespace AutoProjectSystem
                 }
             }
         }
-        private async void AutoLogin(object sender, EventArgs e)
-        {
-            try
-            {
-                await AgvsClient.LoginAsync("dev", "12345678");
-                login_status.BackColor = Color.Lime;
-            }
-            catch (Exception)
-            {
-                login_status.BackColor = Color.Red;
-                throw;
-            }
-        }
-        private async void btn_StartHotRun_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (DGV_HotRunlist.SelectedRows.Count == 0)
-                {
-                    MessageBox.Show("請先選擇一筆 HotRun 資料", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                var selectedRow = DGV_HotRunlist.SelectedRows[0];
-                string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-                var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                {
-                    await HotRunController.StartHotRunApiAsync(scriptID);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Warn(ex);
-                throw;
-            }
-
-        }
-        private async void btn_StopHotRun_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (DGV_HotRunlist.SelectedRows.Count == 0)
-                {
-                    MessageBox.Show("請先選擇一筆欲執行腳本", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                var selectedRow = DGV_HotRunlist.SelectedRows[0];
-                string scriptID = selectedRow.Cells["ScriptID"].Value.ToString();
-                var result = MessageBox.Show($"確定要執行 HotRun 腳本：{scriptID}？", "執行確認", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.Yes)
-                {
-                    await HotRunController.StopHotRunApiAsync(scriptID);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Warn(ex);
-                throw;
-            }
-
-        }
-        private void DGV_HotRunlist_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            // 確保索引範圍合法
-            if (DGV_HotRunlist.Columns[e.ColumnIndex].Name == "State" && e.Value != null)
-            {
-                string stateValue = e.Value.ToString()?.ToUpper();
-                if (stateValue == "RUNNING")
-                {
-                    e.CellStyle.BackColor = Color.LightGreen;
-                }
-                else if (stateValue == "IDLE")
-                {
-                    e.CellStyle.BackColor = Color.Orange;
-                }
-            }
-        }
         private void btn_chooseproject_Click(object sender, EventArgs e)
         {
             try
@@ -1718,7 +1641,7 @@ namespace AutoProjectSystem
             {
                 m.Scripts.Remove(s);
                 _scriptBS.ResetBindings(false);
-
+                logger.Info("刪除腳本:"+scriptName+"完成");
                 // 刪除後調整選取（若還有腳本則選第一筆，否則清除選取）
                 if (m.Scripts.Count > 0)
                     lstScripts.SelectedIndex = 0;
@@ -1726,15 +1649,6 @@ namespace AutoProjectSystem
                     lstScripts.SelectedIndex = -1;
             }
 
-        }
-
-        private void btnRenameScript_Click(object sender, EventArgs e)
-        {
-            if (lstScripts.SelectedItem is not ScriptDto s) return;
-            var name = Prompt("新腳本名稱：", "重新命名腳本", s.ScriptName);
-            if (string.IsNullOrWhiteSpace(name)) return;
-            s.ScriptName = name;
-            _scriptBS.ResetBindings(false);
         }
     }
 }

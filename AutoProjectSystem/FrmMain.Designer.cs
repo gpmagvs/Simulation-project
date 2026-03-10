@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -76,8 +76,6 @@
             btn_CancelrunidleTask = new Button();
             button17 = new Button();
             button16 = new Button();
-            button14 = new Button();
-            button9 = new Button();
             button13 = new Button();
             btn_taskquery = new Button();
             DGV_Tasks = new DataGridView();
@@ -92,12 +90,6 @@
             textBox_AGVName = new TextBox();
             richTextBox_AGVStatus = new RichTextBox();
             button3 = new Button();
-            tabPage3 = new TabPage();
-            button6 = new Button();
-            button4 = new Button();
-            button5 = new Button();
-            btn_startHotRun = new Button();
-            DGV_HotRunlist = new DataGridView();
             Timer = new System.Windows.Forms.Timer(components);
             login_status = new Button();
             btn_SQLstatus = new Button();
@@ -115,8 +107,6 @@
             ((System.ComponentModel.ISupportInitialize)DGV_Tasks).BeginInit();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
-            tabPage3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).BeginInit();
             SuspendLayout();
             // 
             // btn_chooseproject
@@ -196,7 +186,6 @@
             tabControl1.Controls.Add(tabPage5);
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
             tabControl1.ImeMode = ImeMode.NoControl;
             tabControl1.Location = new Point(11, 46);
             tabControl1.Name = "tabControl1";
@@ -298,7 +287,7 @@
             // 
             btn_addTask.BackColor = Color.DeepSkyBlue;
             btn_addTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_addTask.Location = new Point(3, 5);
+            btn_addTask.Location = new Point(3, 4);
             btn_addTask.Name = "btn_addTask";
             btn_addTask.Size = new Size(195, 28);
             btn_addTask.TabIndex = 1;
@@ -310,7 +299,7 @@
             // 
             btn_removeTask.BackColor = Color.DeepSkyBlue;
             btn_removeTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_removeTask.Location = new Point(3, 39);
+            btn_removeTask.Location = new Point(3, 37);
             btn_removeTask.Name = "btn_removeTask";
             btn_removeTask.Size = new Size(195, 28);
             btn_removeTask.TabIndex = 1;
@@ -335,21 +324,21 @@
             DGV_Script.AllowUserToResizeRows = false;
             DGV_Script.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Microsoft JhengHei UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = SystemColors.Control;
+            dataGridViewCellStyle5.Font = new Font("Microsoft JhengHei UI", 9F);
+            dataGridViewCellStyle5.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
             DGV_Script.Location = new Point(3, 35);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle6;
             DGV_Script.Size = new Size(623, 292);
             DGV_Script.TabIndex = 0;
             // 
@@ -571,8 +560,6 @@
             tabPage5.Controls.Add(btn_CancelrunidleTask);
             tabPage5.Controls.Add(button17);
             tabPage5.Controls.Add(button16);
-            tabPage5.Controls.Add(button14);
-            tabPage5.Controls.Add(button9);
             tabPage5.Controls.Add(button13);
             tabPage5.Controls.Add(btn_taskquery);
             tabPage5.Controls.Add(DGV_Tasks);
@@ -581,89 +568,73 @@
             tabPage5.Name = "tabPage5";
             tabPage5.Size = new Size(1248, 591);
             tabPage5.TabIndex = 4;
-            tabPage5.Text = "腳本任務狀態";
+            tabPage5.Text = "任務列表";
             tabPage5.UseVisualStyleBackColor = true;
             // 
             // btn_CancelrunidleTask
             // 
-            btn_CancelrunidleTask.Location = new Point(246, 42);
+            btn_CancelrunidleTask.BackColor = Color.DeepSkyBlue;
+            btn_CancelrunidleTask.Location = new Point(220, 48);
             btn_CancelrunidleTask.Name = "btn_CancelrunidleTask";
-            btn_CancelrunidleTask.Size = new Size(137, 23);
+            btn_CancelrunidleTask.Size = new Size(137, 28);
             btn_CancelrunidleTask.TabIndex = 25;
             btn_CancelrunidleTask.Text = "取消run和idle任務";
-            btn_CancelrunidleTask.UseVisualStyleBackColor = true;
+            btn_CancelrunidleTask.UseVisualStyleBackColor = false;
             btn_CancelrunidleTask.Click += btn_CancelTasks_Click;
             // 
             // button17
             // 
-            button17.Location = new Point(414, 42);
+            button17.BackColor = Color.DeepSkyBlue;
+            button17.Location = new Point(220, 14);
             button17.Name = "button17";
-            button17.Size = new Size(171, 23);
+            button17.Size = new Size(171, 28);
             button17.TabIndex = 24;
             button17.Text = "查詢是否有未執行完的任務";
-            button17.UseVisualStyleBackColor = true;
+            button17.UseVisualStyleBackColor = false;
             button17.Click += test_hasrunningTASK;
             // 
             // button16
             // 
-            button16.Location = new Point(135, 44);
+            button16.BackColor = Color.DeepSkyBlue;
+            button16.Location = new Point(122, 48);
             button16.Name = "button16";
-            button16.Size = new Size(92, 23);
+            button16.Size = new Size(92, 28);
             button16.TabIndex = 23;
             button16.Text = "取消idle任務";
-            button16.UseVisualStyleBackColor = true;
+            button16.UseVisualStyleBackColor = false;
             button16.Click += Cancel_idleTask_Click;
-            // 
-            // button14
-            // 
-            button14.BackColor = Color.Orange;
-            button14.Location = new Point(310, 14);
-            button14.Margin = new Padding(2);
-            button14.Name = "button14";
-            button14.Size = new Size(73, 23);
-            button14.TabIndex = 21;
-            button14.Text = "idle";
-            button14.UseVisualStyleBackColor = false;
-            // 
-            // button9
-            // 
-            button9.BackColor = Color.Lime;
-            button9.Location = new Point(214, 14);
-            button9.Margin = new Padding(2);
-            button9.Name = "button9";
-            button9.Size = new Size(73, 23);
-            button9.TabIndex = 20;
-            button9.Text = "Running";
-            button9.UseVisualStyleBackColor = false;
             // 
             // button13
             // 
-            button13.Location = new Point(24, 44);
+            button13.BackColor = Color.DeepSkyBlue;
+            button13.Location = new Point(24, 48);
             button13.Name = "button13";
-            button13.Size = new Size(92, 23);
+            button13.Size = new Size(92, 28);
             button13.TabIndex = 18;
             button13.Text = "取消任務";
-            button13.UseVisualStyleBackColor = true;
+            button13.UseVisualStyleBackColor = false;
             button13.Click += Cancel_runningTask_Click;
             // 
             // btn_taskquery
             // 
+            btn_taskquery.BackColor = Color.DeepSkyBlue;
+            btn_taskquery.ForeColor = SystemColors.ControlText;
             btn_taskquery.Location = new Point(24, 14);
             btn_taskquery.Name = "btn_taskquery";
-            btn_taskquery.Size = new Size(92, 23);
+            btn_taskquery.Size = new Size(92, 28);
             btn_taskquery.TabIndex = 1;
-            btn_taskquery.Text = "查詢";
-            btn_taskquery.UseVisualStyleBackColor = true;
+            btn_taskquery.Text = "查詢任務";
+            btn_taskquery.UseVisualStyleBackColor = false;
             btn_taskquery.Click += btnLoadTasks_Click;
             // 
             // DGV_Tasks
             // 
             DGV_Tasks.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Tasks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DGV_Tasks.Location = new Point(24, 77);
+            DGV_Tasks.Location = new Point(13, 82);
             DGV_Tasks.Name = "DGV_Tasks";
             DGV_Tasks.RowHeadersWidth = 51;
-            DGV_Tasks.Size = new Size(932, 338);
+            DGV_Tasks.Size = new Size(1222, 496);
             DGV_Tasks.TabIndex = 0;
             // 
             // tabPage1
@@ -720,7 +691,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(1248, 591);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "車載設定";
+            tabPage2.Text = "定位車載";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // label5
@@ -782,75 +753,6 @@
             button3.UseVisualStyleBackColor = true;
             button3.Click += btn_AGVSLocate_Click;
             // 
-            // tabPage3
-            // 
-            tabPage3.Controls.Add(button6);
-            tabPage3.Controls.Add(button4);
-            tabPage3.Controls.Add(button5);
-            tabPage3.Controls.Add(btn_startHotRun);
-            tabPage3.Controls.Add(DGV_HotRunlist);
-            tabPage3.Location = new Point(4, 24);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(1248, 591);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "任務清單";
-            tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // button6
-            // 
-            button6.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button6.Location = new Point(244, 18);
-            button6.Name = "button6";
-            button6.Size = new Size(92, 23);
-            button6.TabIndex = 4;
-            button6.Text = "新增腳本";
-            button6.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            button4.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button4.Location = new Point(131, 18);
-            button4.Name = "button4";
-            button4.Size = new Size(92, 23);
-            button4.TabIndex = 3;
-            button4.Text = "取消HotRun";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += btn_StopHotRun_Click;
-            // 
-            // button5
-            // 
-            button5.Location = new Point(1076, 555);
-            button5.Name = "button5";
-            button5.Size = new Size(75, 23);
-            button5.TabIndex = 2;
-            button5.Text = "button5";
-            button5.UseVisualStyleBackColor = true;
-            // 
-            // btn_startHotRun
-            // 
-            btn_startHotRun.Font = new Font("Microsoft JhengHei UI", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_startHotRun.Location = new Point(22, 18);
-            btn_startHotRun.Name = "btn_startHotRun";
-            btn_startHotRun.Size = new Size(92, 23);
-            btn_startHotRun.TabIndex = 1;
-            btn_startHotRun.Text = "執行HotRun";
-            btn_startHotRun.UseVisualStyleBackColor = true;
-            btn_startHotRun.Click += btn_StartHotRun_Click;
-            // 
-            // DGV_HotRunlist
-            // 
-            DGV_HotRunlist.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            DGV_HotRunlist.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            DGV_HotRunlist.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            DGV_HotRunlist.Location = new Point(22, 61);
-            DGV_HotRunlist.MultiSelect = false;
-            DGV_HotRunlist.Name = "DGV_HotRunlist";
-            DGV_HotRunlist.RowHeadersWidth = 51;
-            DGV_HotRunlist.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            DGV_HotRunlist.Size = new Size(1136, 453);
-            DGV_HotRunlist.TabIndex = 0;
-            DGV_HotRunlist.CellFormatting += DGV_HotRunlist_CellFormatting;
-            // 
             // login_status
             // 
             login_status.Location = new Point(11, 10);
@@ -903,8 +805,6 @@
             tabPage1.PerformLayout();
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
-            tabPage3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)DGV_HotRunlist).EndInit();
             ResumeLayout(false);
         }
 
@@ -921,7 +821,6 @@
         private TabPage tabPage2;
         private Label label1;
         private Label label2;
-        private TabPage tabPage3;
         private Button button3;
         private RichTextBox richTextBox_AGVStatus;
         private TextBox textBox_Location;
@@ -929,13 +828,7 @@
         private Label label4;
         private Label label3;
         private Label label5;
-        private DataGridView DGV_HotRunlist;
-        private Button btn_startHotRun;
-        private Button button5;
-        private Button button4;
         private System.Windows.Forms.Timer refreshTimer;
-        private Button button6;
-        private Button button9;
         private Button button8;
         private TabPage tabPage5;
         private Button login_status;
@@ -967,7 +860,6 @@
         private Button btn_taskquery;
         private Label label9;
         private Button button13;
-        private Button button14;
         private Button btn_AutoRunTask;
         private Button button16;
         private Button button17;
