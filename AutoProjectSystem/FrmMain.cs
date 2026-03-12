@@ -844,7 +844,7 @@ namespace AutoProjectSystem
             logger.Info("使用者點擊取消任務按鈕");
             // 先詢問使用者
             var confirm = MessageBox.Show(
-                "確定要取消所有 State=1 與 State=5 的任務嗎？",
+                "確定要取消所有running(State=1) 與 idle(State=5) 的任務嗎？",
                 "取消任務確認",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -1181,7 +1181,7 @@ namespace AutoProjectSystem
                     var preview = string.Join("\r\n", taskname.Take(5));
                     var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
                     var confirm = MessageBox.Show(
-                        $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
+                        $"確定要取消下列idle(State=5)的任務？\r\n{preview}\r\n{more}",
                         "確認取消",
                         MessageBoxButtons.OKCancel,
                         MessageBoxIcon.Question);
@@ -1251,7 +1251,7 @@ namespace AutoProjectSystem
                     var preview = string.Join("\r\n", taskname.Take(5));
                     var more = taskname.Count > 5 ? $"\r\n... 共 {taskname.Count} 筆" : $"（共 {taskname.Count} 筆）";
                     var confirm = MessageBox.Show(
-                        $"確定要取消下列 State=1 的任務？\r\n{preview}\r\n{more}",
+                        $"確定要取消下列running(State=1)的任務 ？\r\n{preview}\r\n{more}",
                         "確認取消",
                         MessageBoxButtons.OKCancel,
                         MessageBoxIcon.Question);
@@ -1596,10 +1596,10 @@ namespace AutoProjectSystem
         private void btnAddScript_Click(object sender, EventArgs e)
         {
             if (listMapBox.SelectedItem is not MapDto m) return;
+
             var name = Prompt("腳本名稱：", "新增腳本", "NewScript");
             if (string.IsNullOrWhiteSpace(name)) return;
 
-            // ✅ 檢查是否有相同名稱（不分大小寫）
             bool isDuplicated = m.Scripts.Any(s =>
                 string.Equals(s.ScriptName, name, StringComparison.OrdinalIgnoreCase));
 
@@ -1613,10 +1613,23 @@ namespace AutoProjectSystem
                 );
                 return;
             }
-            var s = new ScriptDto { ScriptName = name, Tasks = new List<TaskItemDto>() };
+
+            var s = new ScriptDto
+            {
+                ScriptName = name,
+                Tasks = new List<TaskItemDto>()
+            };
+
             m.Scripts.Add(s);
-            _scriptBS.ResetBindings(false);
+
+            // 重新綁定
+            _scriptBS.DataSource = null;
+            _scriptBS.DataSource = m.Scripts;
+
+            lstScripts.DisplayMember = "ScriptName";
+            lstScripts.DataSource = _scriptBS;
             lstScripts.SelectedItem = s;
+
             logger.Info("新增腳本成功");
         }
 

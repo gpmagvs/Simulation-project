@@ -599,7 +599,7 @@
             // 
             button16.BackColor = Color.DeepSkyBlue;
             button16.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button16.Location = new Point(220, 14);
+            button16.Location = new Point(280, 14);
             button16.Name = "button16";
             button16.Size = new Size(92, 28);
             button16.TabIndex = 23;
@@ -611,11 +611,11 @@
             // 
             button13.BackColor = Color.DeepSkyBlue;
             button13.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            button13.Location = new Point(122, 14);
+            button13.Location = new Point(139, 14);
             button13.Name = "button13";
-            button13.Size = new Size(92, 28);
+            button13.Size = new Size(123, 28);
             button13.TabIndex = 18;
-            button13.Text = "取消任務";
+            button13.Text = "取消running任務";
             button13.UseVisualStyleBackColor = false;
             button13.Click += Cancel_runningTask_Click;
             // 
