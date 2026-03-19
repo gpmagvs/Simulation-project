@@ -849,35 +849,127 @@ namespace AutoProjectSystem
                 MessageBox.Show("派車系統未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             if (!isSQL_Connected())
             {
                 MessageBox.Show("資料庫未連線，無法執行動作", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            logger.Info("使用者點擊取消任務按鈕");
-            // 先詢問使用者
-            var confirm = MessageBox.Show(
-                "確定要取消所有running(State=1) 與 idle(State=5) 的任務嗎？",
-                "取消任務確認",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (confirm != DialogResult.Yes)
                 return;
+            }
 
-            // 防止重複點擊
+            logger.Info("使用者點擊取消 running(State=1) 與 idle(State=5) 任務按鈕");
+
             btn_CancelrunidleTask.Enabled = false;
 
-            // 建立 CancellationTokenSource
             _cancelCts?.Cancel();
             _cancelCts?.Dispose();
             _cancelCts = new CancellationTokenSource();
 
             try
             {
-                await CancelScriptTasksAsync(_cancelCts.Token);
-                MessageBox.Show("任務取消請求已送出。", "完成",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                logger.Info("任務取消請求已送出");
+                var ct = _cancelCts.Token;
+
+                // 1) 查詢 State=1 與 State=5 的任務
+                DataTable dt1 = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: null);
+                DataTable dt5 = await SQLDatabase.QueryUNdoneTasksAsync(state: 5, top: null);
+
+                var runningTaskNames = dt1?.AsEnumerable()
+                    .Select(r => r.Field<string>("TaskName"))
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList() ?? new List<string>();
+
+                var idleTaskNames = dt5?.AsEnumerable()
+                    .Select(r => r.Field<string>("TaskName"))
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList() ?? new List<string>();
+
+                // 合併並去重複
+                var allTaskNames = runningTaskNames
+                    .Concat(idleTaskNames)
+                    .Distinct()
+                    .ToList();
+
+                logger.Info($"查詢到 running(State=1) 任務數: {runningTaskNames.Count}");
+                logger.Info($"查詢到 idle(State=5) 任務數: {idleTaskNames.Count}");
+                logger.Info($"總共需取消任務數: {allTaskNames.Count}");
+
+                if (allTaskNames.Count == 0)
+                {
+                    MessageBox.Show("目前沒有 running(State=1) 或 idle(State=5) 的任務可取消。", "訊息",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    logger.Info("沒有需要取消的 running / idle 任務");
+                    return;
+                }
+
+                // 2) 顯示確認視窗
+                var preview = string.Join("\r\n", allTaskNames.Take(5));
+                var more = allTaskNames.Count > 5 ? $"\r\n... 共 {allTaskNames.Count} 筆" : $"（共 {allTaskNames.Count} 筆）";
+
+                var confirm = MessageBox.Show(
+                    $"確定要取消 running(State=1) 與 idle(State=5) 的任務嗎？",
+                    "取消任務確認",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.OK)
+                {
+                    logger.Info("使用者取消批次取消任務");
+                    return;
+                }
+
+                // 3) 逐筆取消
+                int okCount = 0;
+                int failCount = 0;
+                var sbFail = new System.Text.StringBuilder();
+
+                foreach (var taskName in allTaskNames)
+                {
+                    ct.ThrowIfCancellationRequested();
+
+                    logger.Info($"正在取消任務: {taskName}");
+
+                    try
+                    {
+                        var ret = await AgvsClient.CancelTaskAsync(
+                            taskName,
+                            reason: "手動取消 running / idle 任務",
+                            raiserName: Environment.UserName);
+
+                        if (ret.OK && ret.Data == true)
+                        {
+                            okCount++;
+                            logger.Info($"取消成功: {taskName}");
+                        }
+                        else
+                        {
+                            failCount++;
+                            string err = ret.Error ?? "後端回傳 false";
+                            sbFail.AppendLine($"{taskName} -> {err}");
+                            logger.Warn($"取消失敗: {taskName}, Error={err}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        failCount++;
+                        sbFail.AppendLine($"{taskName} -> {ex.Message}");
+                        logger.Error(ex, $"取消任務例外: {taskName}");
+                    }
+                }
+
+                // 4) 顯示結果
+                var msg = $"取消任務請求已送出：成功 {okCount} 筆。";
+                if (failCount > 0)
+                {
+                    msg += $"\r\n失敗 {failCount} 筆。";
+                    msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
+                }
+
+                MessageBox.Show(
+                    msg,
+                    "批次取消結果",
+                    MessageBoxButtons.OK,
+                    failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+                logger.Info($"批次取消完成，成功 {okCount} 筆，失敗 {failCount} 筆");
             }
             catch (OperationCanceledException)
             {
@@ -887,13 +979,16 @@ namespace AutoProjectSystem
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "執行錯誤",
+                MessageBox.Show("執行取消時發生錯誤：\r\n" + ex.Message, "錯誤",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                logger.Info(ex);
+                logger.Error(ex, "批次取消 running / idle 任務失敗");
             }
             finally
             {
                 btn_CancelrunidleTask.Enabled = true;
+
+                await Task.Delay(2000);
+                await ReloadTasklist();
             }
         }
         private async Task CancelScriptTasksAsync(CancellationToken ct)
@@ -1218,7 +1313,7 @@ namespace AutoProjectSystem
                         logger.Info("取消idle任務，任務名稱:" + taskname);
                     }
                     // 4) 顯示結果
-                    var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                    var msg = $"取消任務已送出：共 {okCount} 筆。"; ;
                     if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
                     MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
                         failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
@@ -1289,7 +1384,7 @@ namespace AutoProjectSystem
                     }
 
                     // 4) 顯示結果
-                    var msg = $"取消完成：成功 {okCount} 筆，失敗 {failCount} 筆。";
+                    var msg = $"取消任務已送出：共 {okCount} 筆。";
                     if (failCount > 0) msg += "\r\n\r\n失敗清單：\r\n" + sbFail.ToString();
                     MessageBox.Show(msg, "批次取消結果", MessageBoxButtons.OK,
                         failCount == 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
