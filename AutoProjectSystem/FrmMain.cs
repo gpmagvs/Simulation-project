@@ -635,7 +635,16 @@ namespace AutoProjectSystem
                 MessageBox.Show("派車系統未連線，無法執行任務", "連線錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            var result = MessageBox.Show(
+                "是否要執行目前腳本任務？",
+                "執行確認",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
+            if (result != DialogResult.Yes)
+            {
+                return;
+            }
             ///執行列表任務的第一筆任務
             await Task_runAsync();
         }
@@ -794,41 +803,44 @@ namespace AutoProjectSystem
             CancellationToken ct)
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
+            bool hasEverStarted = false;
 
             while (true)
             {
                 ct.ThrowIfCancellationRequested();
 
-                // 查 State=1、State=5 各取 1 筆就好（只需要知道「有沒有」）
+                // 查 State=1、State=5 各取 1 筆
                 var dt1 = await SQLDatabase.QueryUNdoneTasksAsync(state: 1, top: 1);
                 var dt5 = await SQLDatabase.QueryUNdoneTasksAsync(state: 5, top: 1);
 
                 bool hasState1 = dt1 != null && dt1.Rows.Count > 0;
                 bool hasState5 = dt5 != null && dt5.Rows.Count > 0;
-
                 bool hasRunning = hasState1 || hasState5;
 
-                // ✅ 沒有 State=1 也沒有 State=5 → 腳本完成
-                if (!hasRunning)
-                    return true;
+                // 只要曾經查到有執行中，就標記為已開始
+                if (hasRunning)
+                {
+                    hasEverStarted = true;
+                }
 
-                // ❌ 超過 3 分鐘仍有 State=1 或 State=5 → 判定失敗
+                // ✅ 曾經開始過，而且現在沒在跑了 → 視為完成
+                if (hasEverStarted && !hasRunning)
+                {
+                    logger.Info($"[{scriptName}] 任務已完成");
+                    return true;
+                }
+
+                // ❌ 超時仍未完成
                 if (sw.Elapsed >= timeout)
                 {
-                    //MessageBox.Show(
-                    //    $"[{scriptName}] 超過 {timeout.TotalMinutes:0} 分鐘仍有 State=1/5 任務，判定此腳本失敗。",
-                    //    "腳本失敗",
-                    //    MessageBoxButtons.OK,
-                    //    MessageBoxIcon.Warning);
-                    ///需記LOG
-                    logger.Warn(scriptName + "超過時間", "此腳本失敗");
+                    logger.Warn($"[{scriptName}] 超過 {timeout.TotalMinutes:0} 分鐘仍未完成，判定失敗");
                     return false;
                 }
 
-                // 每次輪詢間隔
                 await Task.Delay(pollInterval, ct);
             }
         }
+        
         private CancellationTokenSource _cancelCts;
         private async void btn_CancelTasks_Click(object sender, EventArgs e)
         {
