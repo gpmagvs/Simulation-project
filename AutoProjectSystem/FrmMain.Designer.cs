@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             btn_chooseproject = new Button();
             textBox_appsetting = new TextBox();
             textBox_content = new TextBox();
@@ -209,6 +209,7 @@
             tabPage4.TabIndex = 3;
             tabPage4.Text = "腳本設定";
             tabPage4.UseVisualStyleBackColor = true;
+            tabPage4.Click += tabPage4_Click;
             // 
             // panel7
             // 
@@ -287,7 +288,7 @@
             // 
             btn_addTask.BackColor = Color.DeepSkyBlue;
             btn_addTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_addTask.Location = new Point(3, 4);
+            btn_addTask.Location = new Point(3, 3);
             btn_addTask.Name = "btn_addTask";
             btn_addTask.Size = new Size(195, 28);
             btn_addTask.TabIndex = 1;
@@ -297,9 +298,9 @@
             // 
             // btn_removeTask
             // 
-            btn_removeTask.BackColor = Color.DeepSkyBlue;
+            btn_removeTask.BackColor = Color.OrangeRed;
             btn_removeTask.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_removeTask.Location = new Point(3, 37);
+            btn_removeTask.Location = new Point(3, 34);
             btn_removeTask.Name = "btn_removeTask";
             btn_removeTask.Size = new Size(195, 28);
             btn_removeTask.TabIndex = 1;
@@ -324,22 +325,22 @@
             DGV_Script.AllowUserToResizeRows = false;
             DGV_Script.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             DGV_Script.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Microsoft JhengHei UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle7.BackColor = SystemColors.Control;
+            dataGridViewCellStyle7.Font = new Font("Microsoft JhengHei UI", 9F);
+            dataGridViewCellStyle7.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = DataGridViewTriState.True;
+            DGV_Script.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             DGV_Script.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             DGV_Script.Columns.AddRange(new DataGridViewColumn[] { No, AGVName, Start, Action, End });
-            DGV_Script.Location = new Point(3, 35);
+            DGV_Script.Location = new Point(3, 38);
             DGV_Script.Name = "DGV_Script";
             DGV_Script.RowHeadersWidth = 51;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            DGV_Script.Size = new Size(623, 292);
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            DGV_Script.RowsDefaultCellStyle = dataGridViewCellStyle8;
+            DGV_Script.Size = new Size(623, 289);
             DGV_Script.TabIndex = 0;
             // 
             // No
@@ -391,9 +392,9 @@
             panel4.Controls.Add(btn_removeScript);
             panel4.Controls.Add(button7);
             panel4.Controls.Add(btn_AutoRunTask);
-            panel4.Location = new Point(267, 365);
+            panel4.Location = new Point(265, 365);
             panel4.Name = "panel4";
-            panel4.Size = new Size(198, 132);
+            panel4.Size = new Size(200, 132);
             panel4.TabIndex = 21;
             // 
             // btn_addScript
@@ -412,7 +413,7 @@
             // 
             btn_removeScript.BackColor = Color.OrangeRed;
             btn_removeScript.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
-            btn_removeScript.Location = new Point(2, 67);
+            btn_removeScript.Location = new Point(3, 34);
             btn_removeScript.Name = "btn_removeScript";
             btn_removeScript.Size = new Size(195, 28);
             btn_removeScript.TabIndex = 5;
@@ -422,10 +423,10 @@
             // 
             // button7
             // 
-            button7.BackColor = Color.DeepSkyBlue;
+            button7.BackColor = Color.LimeGreen;
             button7.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 136);
             button7.ForeColor = SystemColors.ControlText;
-            button7.Location = new Point(2, 35);
+            button7.Location = new Point(3, 67);
             button7.Margin = new Padding(2);
             button7.Name = "button7";
             button7.Size = new Size(195, 28);
@@ -452,7 +453,7 @@
             panel3.Controls.Add(lstScripts);
             panel3.Location = new Point(266, 13);
             panel3.Name = "panel3";
-            panel3.Size = new Size(204, 330);
+            panel3.Size = new Size(200, 330);
             panel3.TabIndex = 20;
             // 
             // label6
@@ -514,7 +515,7 @@
             panel1.Controls.Add(btn_DeleteMap);
             panel1.Location = new Point(10, 365);
             panel1.Name = "panel1";
-            panel1.Size = new Size(209, 106);
+            panel1.Size = new Size(205, 100);
             panel1.TabIndex = 18;
             // 
             // btn_saveScript
@@ -787,7 +788,7 @@
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "FrmMain";
-            Text = "AGVS 腳本派車系統";
+            Text = "AGVS 腳本模擬系統";
             Load += Form1_Load;
             tabControl1.ResumeLayout(false);
             tabPage4.ResumeLayout(false);

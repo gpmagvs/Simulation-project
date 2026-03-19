@@ -840,7 +840,7 @@ namespace AutoProjectSystem
                 await Task.Delay(pollInterval, ct);
             }
         }
-        
+
         private CancellationTokenSource _cancelCts;
         private async void btn_CancelTasks_Click(object sender, EventArgs e)
         {
@@ -1278,7 +1278,7 @@ namespace AutoProjectSystem
                 if (taskname.Count == 0)
                 {
                     var cancelbox = MessageBox.Show(
-                       $"任務皆已經完成");
+                       $"沒有idle任務可取消");
                     logger.Info("不用取消任務因為任務皆已完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
@@ -1395,7 +1395,7 @@ namespace AutoProjectSystem
                 if (taskname.Count == 0)
                 {
                     var cancelbox = MessageBox.Show(
-                       $"任務皆已經完成");
+                       $"沒有running任務可取消");
                     logger.Info("不用取消任務因為任務皆已完成");
                     if (cancelbox != DialogResult.OK) return;
                 }
@@ -1585,6 +1585,25 @@ namespace AutoProjectSystem
         private void btnSaveJson_Click(object sender, EventArgs e)
         {
             // 取得程式執行目錄 (bin\Debug\netX.0)
+            if (DGV_Script.Rows.Count == 0)
+            {
+                MessageBox.Show("任務列表無任務", "錯誤",
+            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            foreach (DataGridViewRow row in DGV_Script.Rows)
+            {
+                if (row.IsNewRow) continue;
+                string agvName = GetCellStringSafe(row, "AGVName"); // 可以用欄位名稱或 header text
+                string start = GetCellStringSafe(row, "Start");
+                string End = GetCellStringSafe(row, "End");
+                if (string.IsNullOrEmpty(agvName) || string.IsNullOrEmpty(start) || string.IsNullOrEmpty(End))
+                {
+                    MessageBox.Show("請確認任務列表是否有空值", "任務列表錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
             string debugFolder = Application.StartupPath;
             string filePath = Path.Combine(debugFolder, "multi-maps_test.json");
 
@@ -1596,7 +1615,6 @@ namespace AutoProjectSystem
 
             if (result != DialogResult.Yes)
                 return;
-
             var opt = new JsonSerializerOptions { WriteIndented = true };
             File.WriteAllText(filePath, JsonSerializer.Serialize(_data, opt), System.Text.Encoding.UTF8);
 
@@ -1770,13 +1788,18 @@ namespace AutoProjectSystem
             {
                 m.Scripts.Remove(s);
                 _scriptBS.ResetBindings(false);
-                logger.Info("刪除腳本:"+scriptName+"完成");
+                logger.Info("刪除腳本:" + scriptName + "完成");
                 // 刪除後調整選取（若還有腳本則選第一筆，否則清除選取）
                 if (m.Scripts.Count > 0)
                     lstScripts.SelectedIndex = 0;
                 else
                     lstScripts.SelectedIndex = -1;
             }
+
+        }
+
+        private void tabPage4_Click(object sender, EventArgs e)
+        {
 
         }
     }
